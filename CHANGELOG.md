@@ -47,6 +47,7 @@ The format follows Keep a Changelog principles. Product versions will follow Sem
 - Phase 6 accessibility and responsive audit coverage across implemented V1 routes.
 - Phase 6 baseline security headers and E2E header smoke coverage.
 - Phase 6 security audit, deployment preparation document and ADR 0013 for the production authentication/session stop condition.
+- ADR 0015 selecting Vercel, Neon Postgres and Auth.js Google OAuth as the production preparation stack.
 - Zod server-environment validation.
 - Vitest, Testing Library and Playwright smoke coverage.
 - GitHub Actions baseline CI and separate Playwright E2E workflow.

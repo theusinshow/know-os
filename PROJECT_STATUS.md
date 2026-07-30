@@ -4,7 +4,7 @@ Last updated: 2026-07-30
 
 ## Current phase
 
-`V1 LOCAL ROADMAP COMPLETE — PRODUCTION DEPLOYMENT BLOCKED PENDING AUTH/SESSION DECISION`
+`V1 LOCAL ROADMAP COMPLETE — STEP 2 PRODUCTION READINESS IN PROGRESS`
 
 Phase 0 repository foundation is implemented and verified. The repository now contains a Next.js App Router scaffold with TypeScript strict mode, Tailwind/token generation, minimal accessible shell, Drizzle/PostgreSQL foundation, Zod validation, Vitest/Testing Library/Playwright smoke tests and GitHub Actions CI.
 
@@ -20,7 +20,7 @@ Phase 5 projects and gamification is implemented and verified. The implemented s
 
 Phase 6 portability and hardening is implemented and verified. The V1 local product now includes import preview/hardening, Backup/Progress/Teacher Context exports, non-destructive Backup restore for Pack manifests, accessibility/responsive audit coverage, baseline security headers, security audit documentation and deployment preparation within local-only guardrails.
 
-No public production deployment is authorized. ADR 0013 requires a dedicated authentication/session decision and threat review before internet-accessible hosting. ADR 0014 keeps append-only user-state replay/merge out of V1 restore.
+No public production deployment is authorized. ADR 0013 requires a dedicated authentication/session decision and threat review before internet-accessible hosting. ADR 0015 now selects Vercel, Neon Postgres and Auth.js Google OAuth for production preparation. ADR 0014 keeps append-only user-state replay/merge out of V1 restore.
 
 ## Agent operating mode
 
@@ -128,7 +128,7 @@ Codex may progress through approved V1 roadmap phases without routine user confi
 
 ## Not implemented
 
-Authentication, public production deployment, external sync, full user-state replay/merge restore, persisted badge award tables and persisted mission progress tables.
+Auth.js implementation, public production deployment, external sync, full user-state replay/merge restore, persisted badge award tables and persisted mission progress tables.
 
 ## Verification
 
@@ -277,13 +277,13 @@ Do not run `pnpm typecheck` concurrently with `pnpm build`; Next mutates generat
 
 ## Next milestone
 
-No in-scope V1 local implementation remains. Git is initialized locally on `main`, and `origin` points to `https://github.com/theusinshow/know-os.git`. The next milestone requires user confirmation before external write: push `main` to `origin`, or approve a production authentication/session ADR and deployment target before any internet-accessible deployment work.
+Continue Step 2.3: update the environment contract for Vercel + Neon + Auth.js Google OAuth without committing real secrets.
 
 ## Risk register
 
 - Browser code execution is isolated through the current QuickJS child-process adapter, but any broader runtime support needs a fresh threat review.
 - Pack versioning must be finalized before public content distribution.
-- Authentication is intentionally deferred from local V1 and blocks public deployment.
+- Authentication implementation is intentionally deferred from local V1 and blocks public deployment until Step 2 auth work is complete and validated.
 - Gamification must not distort mastery or reward empty activity.
 - High autonomy must remain bounded to the repository and approved V1 scope.
 - Local checkpoint commits are now available after Git initialization. External push still requires user confirmation.
@@ -294,4 +294,4 @@ No in-scope V1 local implementation remains. Git is initialized locally on `main
 
 ## NEXT ACTION
 
-No in-scope V1 local implementation work remains. Next action requires user confirmation before external write: push `main` to `origin`, or approve a production authentication/session ADR and deployment target before any internet-accessible deployment work.
+Continue Step 2.3: update `.env.example`, `src/lib/env.ts`, deployment docs and tests for Vercel + Neon + Auth.js Google OAuth environment variables. Do not add real secrets.

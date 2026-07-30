@@ -10,14 +10,14 @@ Deliver the approved KNOW/OS V1 through verified roadmap phases, without collaps
 
 ## Current phase
 
-Status: `COMPLETE`
+Status: `IN PROGRESS`
 Owner: Codex lead agent
-Phase: `PHASE 6 — PORTABILITY AND HARDENING`
+Phase: `STEP 2 — PRODUCTION READINESS`
 Autonomy: `HIGH WITH GUARDRAILS`
 
 ### Objective
 
-Harden V1 portability, import/export boundaries, accessibility, security and deployment preparation without performing production deployment or choosing external services without approval.
+Prepare the completed local V1 for a production path one explicit step at a time, without deploying or creating external resources until the user confirms each external-write boundary.
 
 ### Acceptance criteria
 
@@ -39,6 +39,25 @@ Harden V1 portability, import/export boundaries, accessibility, security and dep
 - Owner authentication requires a durable provider decision if it goes beyond local-only preparation; create an ADR or stop for confirmation when needed.
 - Content/user-state separation, append-only attempts/evidence/events/XP and RUN/SUBMIT boundaries remain non-negotiable.
 - `memory://local` remains a disposable E2E harness; Drizzle/PGlite tests continue to cover migration-backed repository behavior.
+- Production stack is now user-approved as Vercel + Neon Postgres + Auth.js Google OAuth.
+- No Vercel project, Neon database, Google OAuth credential, secret, deployment or external configuration may be created without a separate user confirmation.
+
+### Production readiness increments
+
+- [x] 2.1 Choose production stack.
+  - Accepted stack: Vercel hosting, Neon Postgres, Auth.js with Google OAuth.
+- [x] 2.2 Record production stack ADR.
+  - Added ADR 0015 for Vercel + Neon + Google OAuth, single-owner e-mail allowlist and owner mapping.
+- [ ] 2.3 Environment contract.
+  - Update `.env.example`, `src/lib/env.ts`, deployment docs and tests for `AUTH_SECRET`, `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, `KNOW_OS_ALLOWED_GOOGLE_EMAILS`, `APP_URL`, `DATABASE_URL` and `KNOW_OS_OWNER_ID`.
+- [ ] 2.4 Auth foundation.
+  - Add Auth.js dependencies, Google provider route and server auth helpers.
+- [ ] 2.5 Owner resolution and route/API protection.
+  - Map allowed Google account to `KNOW_OS_OWNER_ID`; protect user-state pages and private/mutating APIs in production mode.
+- [ ] 2.6 Neon migration/deployment runbook.
+  - Document Neon/Vercel setup, migration command path and health-check expectations without committing secrets.
+- [ ] 2.7 Validation, commit and push.
+  - Run the relevant validation gate, commit locally and ask before push if an external write is needed.
 
 ### Planned increments
 
@@ -470,6 +489,8 @@ Add timestamped commands and exact outcomes during implementation.
 2026-07-30 BRT — git init -b main: passed; initialized local repository.
 2026-07-30 BRT — git remote add origin https://github.com/theusinshow/know-os.git: passed.
 2026-07-30 BRT — git commit -m "Initial KNOW/OS V1 implementation": passed; initial local checkpoint created.
+2026-07-30 BRT — Step 2.1 stack decision: user approved Vercel + Neon Postgres + Auth.js Google OAuth.
+2026-07-30 BRT — Step 2.2 ADR: added ADR 0015 for the production preparation stack and updated deployment/status/changelog docs.
 ```
 
 ## Blockers
@@ -481,4 +502,4 @@ No real local PostgreSQL service is available (`DATABASE_URL` empty, no `psql`, 
 
 ## NEXT ACTION
 
-No in-scope V1 local implementation work remains. Git is initialized locally and `origin` points to `https://github.com/theusinshow/know-os.git`. Next action requires user confirmation before external write: push `main` to `origin`, or approve a production authentication/session ADR and deployment target before any internet-accessible deployment work.
+Continue Step 2.3: update `.env.example`, `src/lib/env.ts`, deployment docs and tests for Vercel + Neon + Auth.js Google OAuth environment variables. Do not add real secrets.
