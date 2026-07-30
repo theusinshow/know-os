@@ -57,6 +57,7 @@ The format follows Keep a Changelog principles. Product versions will follow Sem
 - Custom Auth.js sign-in page at `/auth/signin` using the KNOW/OS Design System and Google account selection via `prompt=select_account`.
 - Design-system motion pass for the app shell, sign-in surface and recurring content primitives, including Playwright coverage for normal and reduced-motion modes.
 - Product import surface at `/import` with bundled example loading, paste/file JSON input, preview-before-apply behavior and E2E coverage.
+- Production activation of the bundled JavaScript Track Pack on Neon, with service-level validation of catalog read, RUN, SUBMIT SOLUTION, progress, history and export availability.
 - Zod server-environment validation.
 - Vitest, Testing Library and Playwright smoke coverage.
 - GitHub Actions baseline CI and separate Playwright E2E workflow.

@@ -6,7 +6,7 @@ KNOW/OS é um sistema pessoal para estruturar aprendizado, prática, revisão e 
 
 ## Estado do projeto
 
-- Fase atual: **V1 publicado em produção com Neon Postgres, Vercel e Auth.js Google OAuth**.
+- Fase atual: **V1 publicado em produção com Neon Postgres, Vercel e Auth.js Google OAuth; Pack exemplo ativado e validado em produção**.
 - Design System oficial: `design-system/`, versão 2.2.
 - Implementação: Next.js App Router com TypeScript strict, Tailwind, token pipeline, shell acessível, fundação Drizzle/PostgreSQL, Zod, Vitest, Testing Library, Playwright e CI.
 - V1 local implementado e verificado: importar conteúdo por `/import`, navegar por trilhas/lições/conceitos, executar JavaScript com RUN, registrar tentativa com SUBMIT SOLUTION, reabrir feedback persistido, ver progresso, histórico, contrato de runtime, stdout/stderr/testes, diff da tentativa, atividade inicial de debug, mastery determinístico, agenda de review, erros categorizados, projetos opcionais, XP/ranks/badges/missões, mapa de conhecimento acessível, recomendações locais, preview de import/export/restore, exports Backup/Progress/Teacher Context, auditoria de acessibilidade e preparação de segurança/deploy local.

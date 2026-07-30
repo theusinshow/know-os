@@ -4,7 +4,7 @@ Last updated: 2026-07-30
 
 ## Current phase
 
-`V1 PRODUCTION DEPLOYED — MANUAL OWNER LOGIN VALIDATION PENDING`
+`V1 PRODUCTION IMPORT ACTIVATED — AUTHENTICATED UI WALKTHROUGH NEXT`
 
 Phase 0 repository foundation is implemented and verified. The repository now contains a Next.js App Router scaffold with TypeScript strict mode, Tailwind/token generation, minimal accessible shell, Drizzle/PostgreSQL foundation, Zod validation, Vitest/Testing Library/Playwright smoke tests and GitHub Actions CI.
 
@@ -20,7 +20,7 @@ Phase 5 projects and gamification is implemented and verified. The implemented s
 
 Phase 6 portability and hardening is implemented and verified. The V1 local product now includes import preview/hardening, Backup/Progress/Teacher Context exports, non-destructive Backup restore for Pack manifests, accessibility/responsive audit coverage, baseline security headers, security audit documentation and deployment preparation within local-only guardrails.
 
-Production deployment is live at `https://know-os.vercel.app` using the ADR 0015 stack: Vercel, Neon Postgres and Auth.js Google OAuth. Step 2 implementation includes the Auth.js Google foundation, production environment contract, central session guard and Neon/Vercel runbook. Neon migrations have been applied and unauthenticated production smoke checks pass. The sign-in surface now uses the custom `/auth/signin` page following the KNOW/OS Design System, and Google OAuth requests include `prompt=select_account` so account selection is explicit. After a Google `invalid_client` response, Vercel Production OAuth/Auth environment values were re-applied from ignored local values, production was redeployed and the Google page was verified without `invalid_client`. A design-system motion pass now applies approved short motion tokens to app shell, sign-in and recurring content primitives while preserving reduced-motion behavior. Step 3.1 adds a real `/import` product surface for example/paste/file Track Pack activation with preview-before-apply semantics. ADR 0014 keeps append-only user-state replay/merge out of V1 restore.
+Production deployment is live at `https://know-os.vercel.app` using the ADR 0015 stack: Vercel, Neon Postgres and Auth.js Google OAuth. Step 2 implementation includes the Auth.js Google foundation, production environment contract, central session guard and Neon/Vercel runbook. Neon migrations have been applied and unauthenticated production smoke checks pass. The sign-in surface now uses the custom `/auth/signin` page following the KNOW/OS Design System, and Google OAuth requests include `prompt=select_account` so account selection is explicit. After a Google `invalid_client` response, Vercel Production OAuth/Auth environment values were re-applied from ignored local values, production was redeployed and the Google page was verified without `invalid_client`. A design-system motion pass now applies approved short motion tokens to app shell, sign-in and recurring content primitives while preserving reduced-motion behavior. Step 3 adds a real `/import` product surface for example/paste/file Track Pack activation with preview-before-apply semantics, deploys it to production and validates the first production learning loop at service level. ADR 0014 keeps append-only user-state replay/merge out of V1 restore.
 
 ## Agent operating mode
 
@@ -128,7 +128,7 @@ Codex may progress through approved V1 roadmap phases without routine user confi
 
 ## Not implemented
 
-Manual owner login validation after the OAuth environment repair, external sync, full user-state replay/merge restore, persisted badge award tables and persisted mission progress tables.
+Authenticated owner browser walkthrough/polish after service-level production validation, external sync, full user-state replay/merge restore, persisted badge award tables and persisted mission progress tables.
 
 ## Verification
 
@@ -142,6 +142,19 @@ pnpm test — passed, 29 files and 72 tests.
 pnpm build — passed.
 pnpm test:e2e — passed, 20 tests across desktop Chromium and mobile Chrome profiles.
 git diff --check — passed.
+```
+
+Latest Step 3.2 production import and vertical-slice results:
+
+```text
+pnpm dlx vercel@latest --prod --yes — passed, deployment `dpl_6DevBvMk8iDgmw1PBroFEHnaGwW8` ready and aliased to `https://know-os.vercel.app`.
+production smoke `/api/health/db` — passed, 200 OK.
+production smoke `/import` — passed, 307 redirect to `/auth/signin`.
+production smoke `/tracks` — passed, 307 redirect to `/auth/signin`.
+production smoke `/api/import/track/example` — passed, 401 Unauthorized.
+production Track Pack import through application service — passed, imported `know-os.javascript-fundamentals` version `1`, `track=javascript`, `lessons=1`, `activities=2`.
+production vertical-slice service validation — passed: catalog read `tracks=1`; RUN completed without recording an attempt; both activity submissions passed; lesson progress `2/2`; track progress `1/1`; study history has 2 submission events; exports expose `backup`, `progress`, `teacher_context`.
+production progress readback script — passed, lesson progress `passed=2/2 attempted=2`, track progress `completedLessons=1/1 passed=2/2 attempted=2`.
 ```
 
 Latest Step 2.9 motion pass results:
@@ -334,13 +347,13 @@ Do not run `pnpm typecheck` concurrently with `pnpm build`; Next mutates generat
 
 ## Next milestone
 
-Complete manual browser validation: sign in at `https://know-os.vercel.app` with the allowed Google account, confirm the account chooser appears, import the example Track Pack, run `RUN`, submit with `SUBMIT SOLUTION`, then verify history/export behavior.
+Step 4 — authenticated UI walkthrough and first-use polish: sign in at `https://know-os.vercel.app`, verify `/import`, `/tracks`, `/tracks/javascript`, `/lessons/js-fundamentals-001`, `RUN`, `SUBMIT SOLUTION`, `/history` and `/exports` in the browser, then fix only observed UI/UX defects before moving to additional content breadth.
 
 ## Risk register
 
 - Browser code execution is isolated through the current QuickJS child-process adapter, but any broader runtime support needs a fresh threat review.
 - Pack versioning must be finalized before public content distribution.
-- Production authentication is configured for Google OAuth with e-mail allowlist; manual sign-in with the allowed account remains to be validated in a browser session.
+- Production authentication is configured for Google OAuth with e-mail allowlist; protected redirects and service-level production flow are validated, while authenticated browser walkthrough remains user-session dependent.
 - Gamification must not distort mastery or reward empty activity.
 - High autonomy must remain bounded to the repository and approved V1 scope.
 - Local checkpoint commits are now available after Git initialization. External push still requires user confirmation.
@@ -351,4 +364,4 @@ Complete manual browser validation: sign in at `https://know-os.vercel.app` with
 
 ## NEXT ACTION
 
-Complete manual browser validation: sign in at `https://know-os.vercel.app` with the allowed Google account, confirm the account chooser appears, import the example Track Pack, run `RUN`, submit with `SUBMIT SOLUTION`, then verify history/export behavior.
+Step 4 — authenticated UI walkthrough and first-use polish: sign in at `https://know-os.vercel.app`, verify `/import`, `/tracks`, `/tracks/javascript`, `/lessons/js-fundamentals-001`, `RUN`, `SUBMIT SOLUTION`, `/history` and `/exports` in the browser, then fix only observed UI/UX defects before moving to additional content breadth.

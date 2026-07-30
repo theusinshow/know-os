@@ -10,14 +10,14 @@ Deliver the approved KNOW/OS V1 through verified roadmap phases, without collaps
 
 ## Current phase
 
-Status: `IN PROGRESS`
+Status: `COMPLETE`
 Owner: Codex lead agent
-Phase: `STEP 2 — PRODUCTION READINESS`
+Phase: `STEP 3 — PRODUCT IMPORT ACTIVATION`
 Autonomy: `HIGH WITH GUARDRAILS`
 
 ### Objective
 
-Prepare the completed local V1 for a production path one explicit step at a time, without deploying or creating external resources until the user confirms each external-write boundary.
+Turn the production deployment from a protected technical installation into a usable first product path: the owner can activate the bundled Track Pack through the UI, then complete the first lesson loop in production.
 
 ### Acceptance criteria
 
@@ -75,11 +75,16 @@ Prepare the completed local V1 for a production path one explicit step at a time
   - Add a real `/import` product surface for Track Pack JSON instead of instructing users to call `POST /api/import/track`.
   - Support loading the bundled example Pack, paste/file JSON input, server preview, conflict/error feedback and apply-only-after-valid-preview behavior.
   - Link empty Today/Tracks states and primary navigation to the import flow.
-- [ ] 3.2 Production import and vertical-slice validation.
+- [x] 3.2 Production import and vertical-slice validation.
   - Deploy the `/import` product surface.
   - Use the protected production UI/API to import the bundled JavaScript example Pack.
   - Validate `/tracks`, `/tracks/javascript`, `/lessons/js-fundamentals-001`, RUN/SUBMIT behavior and `/exports` after import.
   - Record exact production smoke results, checkpoint and continue.
+  - Deployed commit `7e9246f` to production deployment `dpl_6DevBvMk8iDgmw1PBroFEHnaGwW8`, aliased to `https://know-os.vercel.app`.
+  - Confirmed unauthenticated production protection: `/import` and `/tracks` redirect to `/auth/signin`; `/api/import/track/example` returns `401`; `/api/health/db` returns `200`.
+  - Imported `know-os.javascript-fundamentals` version `1` into Neon through the production service boundary.
+  - Validated the production vertical slice at service level: catalog read returns `tracks=1`, `track=javascript`, `lesson=js-fundamentals-001`, `activities=2`; `RUN` completed without creating attempts; `SUBMIT SOLUTION` passed both activities; lesson progress is `2/2`; track progress is `1/1`; export kinds are `backup`, `progress` and `teacher_context`.
+  - Browser-session UI validation remains user-operated because the agent does not have the owner's authenticated Google browser session in this environment.
 
 ### Planned increments
 
@@ -560,15 +565,28 @@ Add timestamped commands and exact outcomes during implementation.
 2026-07-30 BRT — vercel --prod --yes: passed after custom sign-in, deployment ready and aliased to `https://know-os.vercel.app`.
 2026-07-30 BRT — production smoke after custom sign-in: `/api/health/db` returned 200, `/` returned 307 to `/auth/signin`, `/auth/signin` returned 200, `/api/export/preview` returned 401 unauthenticated.
 2026-07-30 BRT — production Google OAuth redirect request after custom sign-in: passed, observed `accounts.google.com` request with `prompt=select_account`.
+2026-07-30 BRT — pnpm lint for Step 3.1 import surface — passed.
+2026-07-30 BRT — pnpm typecheck for Step 3.1 import surface — initially failed when run concurrently with `pnpm build` because Next regenerated `.next/types`; rerun after build passed.
+2026-07-30 BRT — pnpm exec playwright test tests/e2e/import-ui.spec.ts --project=chromium — passed, 1 test after scoping the import status region by accessible name.
+2026-07-30 BRT — pnpm test for Step 3.1 import surface — passed, 29 files and 72 tests.
+2026-07-30 BRT — pnpm build for Step 3.1 import surface — passed.
+2026-07-30 BRT — pnpm test:e2e for Step 3.1 import surface — passed, 20 tests across desktop Chromium and mobile Chrome profiles.
+2026-07-30 BRT — git diff --check for Step 3.1 import surface — passed.
+2026-07-30 BRT — git commit -m "Add product import surface" — passed, commit `7e9246f`.
+2026-07-30 BRT — git push origin main after Step 3.1 — passed, pushed `7e9246f`.
+2026-07-30 BRT — vercel --prod --yes after Step 3.1 — passed, deployment `dpl_6DevBvMk8iDgmw1PBroFEHnaGwW8` ready and aliased to `https://know-os.vercel.app`.
+2026-07-30 BRT — production smoke after Step 3.1: `/api/health/db` returned 200; `/import` and `/tracks` returned 307 to `/auth/signin`; `/api/import/track/example` returned 401 unauthenticated.
+2026-07-30 BRT — production Track Pack import through application service — passed, imported `know-os.javascript-fundamentals` version `1`, `track=javascript`, `lessons=1`, `activities=2`.
+2026-07-30 BRT — production vertical-slice service validation — passed: catalog read `tracks=1`; RUN completed without recording an attempt; both activity submissions passed; lesson progress `2/2`; track progress `1/1`; study history has 2 submission events; exports expose `backup`, `progress`, `teacher_context`.
 ```
 
 ## Blockers
 
 ```text
 No real local PostgreSQL service is available outside `.env.local`; production database is Neon and must not be written to destructively without explicit confirmation.
-Interactive Google sign-in with the allowed owner account still requires browser/manual validation after the custom sign-in deploy.
+Interactive Google sign-in with the allowed owner account is user-operated in this environment; production route protection and service-level vertical behavior have been validated.
 ```
 
 ## NEXT ACTION
 
-Complete manual browser validation: sign in at `https://know-os.vercel.app` with the allowed Google account, confirm the account chooser appears, import the example Track Pack, run `RUN`, submit with `SUBMIT SOLUTION`, then verify history/export behavior.
+Step 4 — authenticated UI walkthrough and first-use polish: with the owner signed in at `https://know-os.vercel.app`, verify `/import`, `/tracks`, `/tracks/javascript`, `/lessons/js-fundamentals-001`, `RUN`, `SUBMIT SOLUTION`, `/history` and `/exports` in the browser; fix only observed UI/UX defects before moving to additional content breadth.
