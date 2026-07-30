@@ -10,14 +10,14 @@ Deliver the approved KNOW/OS V1 through verified roadmap phases, without collaps
 
 ## Current phase
 
-Status: `PAUSED`
+Status: `READY`
 Owner: Codex lead agent
-Phase: `STEP 13 — UI ALIGNMENT PASS`
+Phase: `STEP 14 — GENERATION MODES AND DEEPSEEK PROVIDER`
 Autonomy: `HIGH WITH GUARDRAILS`
 
 ### Objective
 
-Align all implemented product screens with the approved KNOW/OS Design System and Claude Design visual references, focusing on clear section separation, structural color differentiation, boxed records, shell chrome and reusable UI primitives. Keep the pending Neon production migration blocker separate because it requires explicit approval for an external database schema write.
+Implement first-release content generation with two modes: Manual Copy and Paste and Direct AI Generation with DeepSeek. Both modes must use the same normalized `GenerationSpec`, prompt compiler, JSON parsing, Pack schema validation, semantic validation, preview/diff and atomic import pipeline. DeepSeek integration must be server-only, provider-abstracted and visibly available even when unconfigured.
 
 ### Acceptance criteria
 
@@ -39,6 +39,23 @@ Align all implemented product screens with the approved KNOW/OS Design System an
 - [x] UI changes reuse generated design tokens and official `public/branding` assets; no Design System source files are modified.
 - [x] Motion remains state-driven, short and compatible with `prefers-reduced-motion`.
 - [x] Lint, typecheck, tests, build and focused Playwright visual/accessibility smoke pass locally.
+
+### Step 14 acceptance criteria
+
+- [ ] `/import` or a dedicated generation surface exposes a mode selector with `MANUAL / COPY AND PASTE` and `AI / DEEPSEEK`.
+- [ ] Manual mode is fully functional: Configure -> Compile Prompt -> Copy Prompt -> Paste AI JSON -> Validate -> Preview -> Import.
+- [ ] A persisted `GenerationJob` survives the manual waiting state with status `waiting_external_response`.
+- [ ] DeepSeek mode has complete UI, domain contract, configuration detection and provider adapter; the card remains visible as `UNCONFIGURED` when `DEEPSEEK_API_KEY` is absent.
+- [ ] Server env supports `DEEPSEEK_API_KEY`, `DEEPSEEK_BASE_URL`, `DEEPSEEK_DEFAULT_MODEL`, `DEEPSEEK_PRO_MODEL` without exposing secrets to client code.
+- [ ] Provider abstraction includes `ManualGenerationProvider` and `DeepSeekGenerationProvider`; app code outside the adapter does not import DeepSeek/OpenAI-compatible client specifics directly.
+- [ ] DeepSeek defaults to `deepseek-v4-flash`, supports advanced `deepseek-v4-pro`, and never uses retired `deepseek-chat` or `deepseek-reasoner`.
+- [ ] DeepSeek requests execute only from server-only modules, use `response_format: { type: "json_object" }`, explicitly request JSON, include a compact JSON example, require `caderno.lesson.v1`, prohibit Markdown outside JSON and default Thinking Mode off.
+- [ ] Empty or transient provider failures retry once; authentication, insufficient balance and deterministic validation errors do not retry automatically.
+- [ ] Failure UI preserves `GenerationSpec` and compiled prompt and offers Retry, Switch to Manual, Copy Prompt and View Technical Details.
+- [ ] Generation statuses include: `draft`, `compiled`, `waiting_external_response`, `ready`, `generating`, `receiving`, `validating`, `repairing`, `ready_to_import`, `invalid`, `rate_limited`, `insufficient_balance`, `timeout`, `failed`, `imported`.
+- [ ] Provider usage is persisted when returned with model, input tokens, output tokens, cache-hit tokens, estimated cost and timestamp; pricing lives in one versioned configuration module and UI labels cost as an estimate.
+- [ ] Manual and DeepSeek outputs use exactly the same parser, schema validator, business validator, preview, diff and atomic importer. No raw model response can be imported directly.
+- [ ] Required tests cover unconfigured DeepSeek, client secret isolation, model defaults, mode switching state preservation, valid/invalid DeepSeek JSON validation, empty-response retry, auth failure no-retry, failure-to-manual fallback, usage persistence and import bypass prevention.
 
 ### Post-V1 hardening increments
 
@@ -152,7 +169,40 @@ Align all implemented product screens with the approved KNOW/OS Design System an
 - [x] 13.2 UI alignment validation gate.
   - Run lint, typecheck, unit tests, build, focused Playwright smoke and local screenshot capture.
   - Update durable status/changelog and checkpoint/push when the gate passes.
-  - Implemented locally; user requested pause before any push/deployment.
+  - Implemented, checkpointed and pushed as `81f4ce3`.
+- [ ] 14.0 Deep orientation.
+  - Read/update: `docs/11-PACK-SPEC.md`, `docs/13-IMPORT-EXPORT.md`, `docs/16-SECURITY-ARCHITECTURE.md`, `docs/20-ACCEPTANCE-CRITERIA.md`, `docs/22-API-CONVENTIONS.md`, `docs/23-ERROR-HANDLING.md`, ADR 0010 and applicable import/domain files.
+  - Confirm whether generation imports `caderno.lesson.v1` directly or wraps validated Lesson Packs into an atomic Track/Module import boundary; if this is a durable Pack-pipeline choice, create an ADR.
+- [ ] 14.1 Generation contracts and environment.
+  - Create/update: `src/features/generation/**`, `src/lib/env.ts`, `.env.example`, tests/unit env/provider readiness tests.
+  - Define `GenerationSpec`, `GenerationStatus`, provider-independent request/result/errors, prompt compiler and server-only provider interface.
+  - Add DeepSeek configuration detection with defaults: base URL `https://api.deepseek.com`, default model `deepseek-v4-flash`, pro model `deepseek-v4-pro`.
+- [ ] 14.2 Persistence foundation.
+  - Create/update: `src/db/schema/user-state.ts`, `src/db/repositories/generation-job-repository.ts`, memory repository, generated migration and integration tests.
+  - Persist `GenerationJob`, selected mode/model, normalized spec, compiled prompt, status timeline, raw response metadata hash where safe, validation result references and provider usage estimates.
+  - Never persist API keys, client secrets or unredacted provider credentials.
+- [ ] 14.3 Lesson Pack parser and shared validation pipeline.
+  - Create/update: lesson Pack schema/semantic validator under `src/features/import/application/**` or a new Pack-validation module, plus fixtures/tests.
+  - Add `caderno.lesson.v1` parser and semantic validation, then route manual/DeepSeek outputs into the same preview/diff/import path.
+  - Ensure unsupported schema versions, malformed JSON and business-rule failures are blocked before preview/import.
+- [ ] 14.4 Manual generation product flow.
+  - Create/update: generation UI components and server actions/API routes.
+  - Implement Configure -> Compile Prompt -> Copy Prompt -> Paste AI JSON -> Validate -> Preview -> Import with `waiting_external_response` persistence.
+  - Preserve form data when switching modes.
+- [ ] 14.5 DeepSeek provider adapter.
+  - Create/update: `src/features/generation/infrastructure/deepseek-generation-provider.server.ts`, provider tests and request handler.
+  - Use the OpenAI-compatible DeepSeek API from server-only code, `response_format: { type: "json_object" }`, timeout/cancellation support, one retry for empty/transient responses and no retry for auth/balance/validation failures.
+  - Map errors to `invalid`, `rate_limited`, `insufficient_balance`, `timeout` and `failed` statuses with technical details available without exposing secrets.
+- [ ] 14.6 Usage/cost estimates.
+  - Create/update: versioned pricing config module and usage persistence/read models.
+  - Persist provider usage when returned and label estimated cost as an estimate everywhere in UI/API.
+- [ ] 14.7 Failure recovery UI.
+  - Add Retry, Switch to Manual, Copy Prompt and View Technical Details actions for failed generation without losing `GenerationSpec` or compiled prompt.
+  - Keep DeepSeek mode visible while unconfigured and disable only the direct generation action.
+- [ ] 14.8 Generation validation gate.
+  - Run focused unit/component/integration tests for generation, import validation reuse and provider behavior.
+  - Run `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, focused Playwright generation smoke and `git diff --check`.
+  - Checkpoint locally and ask before push/deployment.
 
 ### Assumptions
 
@@ -796,9 +846,10 @@ Add timestamped commands and exact outcomes during implementation.
 ```text
 No real local PostgreSQL service is available outside `.env.local`; `pnpm test:postgres` validates the configured PostgreSQL service through a disposable schema and production database writes must remain non-destructive and explicitly scoped.
 Authenticated Chrome walkthrough is available, but `/exports` and `/achievements` fail in production with Server Components render errors after Step 11 deployment. The likely repair is applying checked-in migrations `0007_icy_vengeance.sql` and `0008_pale_shiver_man.sql` to Neon production with `pnpm db:migrate`, which requires explicit user confirmation as an external database schema write.
-User requested pausing Step 13 before any push/deployment. Local implementation and validation are complete; changes remain in the working tree until checkpointed/pushed on resume.
+Step 13 UI alignment has been checkpointed and pushed as `81f4ce3`.
+Step 14 is planned and ready to implement next. No DeepSeek credentials should be requested or exposed; use an unconfigured provider state unless the user configures `DEEPSEEK_API_KEY` in ignored server environment.
 ```
 
 ## NEXT ACTION
 
-On resume, review the Step 13 local diff and screenshots, create/push the UI alignment checkpoint if approved, then separately await explicit confirmation before running `pnpm db:migrate` against Neon production and rerunning `/exports` plus `/achievements`.
+Begin Step 14 with increment 14.0: orient from Pack/import/security/API/error docs and current import pipeline, then implement generation contracts and server-only DeepSeek configuration detection. Keep the separate Neon production migration blocker untouched until explicit confirmation.
