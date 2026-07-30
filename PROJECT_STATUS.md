@@ -128,7 +128,7 @@ Codex may progress through approved V1 roadmap phases without routine user confi
 
 ## Not implemented
 
-Neon/Vercel migration runbook, public production deployment, external sync, full user-state replay/merge restore, persisted badge award tables and persisted mission progress tables.
+Final Step 2 validation/push, public production deployment, external sync, full user-state replay/merge restore, persisted badge award tables and persisted mission progress tables.
 
 ## Verification
 
@@ -277,7 +277,7 @@ Do not run `pnpm typecheck` concurrently with `pnpm build`; Next mutates generat
 
 ## Next milestone
 
-Continue Step 2.6: write the Neon/Vercel migration and deployment runbook without creating external resources or committing secrets.
+Continue Step 2.7: run the full validation gate, commit locally, then request confirmation before pushing external changes.
 
 ## Risk register
 
@@ -294,4 +294,4 @@ Continue Step 2.6: write the Neon/Vercel migration and deployment runbook withou
 
 ## NEXT ACTION
 
-Continue Step 2.6: write the Neon/Vercel migration and deployment runbook without creating external resources or committing secrets.
+Continue Step 2.7: run the full validation gate, commit locally, then request confirmation before pushing external changes.

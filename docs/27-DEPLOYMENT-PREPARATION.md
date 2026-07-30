@@ -64,3 +64,5 @@ Production remains blocked until all items below are resolved:
 ## Deployment policy
 
 Autonomous agents may prepare local configuration and documentation. They must not deploy, publish, push secrets, create external infrastructure, or select an authentication provider without user confirmation.
+
+Operational deployment steps are maintained in `28-PRODUCTION-RUNBOOK.md`.

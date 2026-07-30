@@ -57,8 +57,9 @@ Prepare the completed local V1 for a production path one explicit step at a time
 - [x] 2.5 Owner resolution and route/API protection.
   - Map allowed Google account to `KNOW_OS_OWNER_ID`; protect user-state pages and private/mutating APIs in production mode.
   - Added central middleware guard: local mode stays open when Google auth is absent; configured Google OAuth mode requires an allowed session for private pages and APIs.
-- [ ] 2.6 Neon migration/deployment runbook.
+- [x] 2.6 Neon migration/deployment runbook.
   - Document Neon/Vercel setup, migration command path and health-check expectations without committing secrets.
+  - Added `pnpm db:migrate`, migration README notes and `docs/28-PRODUCTION-RUNBOOK.md`.
 - [ ] 2.7 Validation, commit and push.
   - Run the relevant validation gate, commit locally and ask before push if an external write is needed.
 
@@ -510,6 +511,9 @@ Add timestamped commands and exact outcomes during implementation.
 2026-07-30 BRT — pnpm build: passed for Step 2.5; middleware/proxy included in build output.
 2026-07-30 BRT — pnpm test:e2e: passed for Step 2.5, 12 tests; local no-OAuth harness remains operable.
 2026-07-30 BRT — pnpm test: passed for Step 2.5, 28 files and 70 tests.
+2026-07-30 BRT — pnpm exec drizzle-kit migrate --help: passed; confirmed migration command exists.
+2026-07-30 BRT — pnpm install --frozen-lockfile: passed for Step 2.6, already up to date after script/doc changes.
+2026-07-30 BRT — pnpm typecheck: passed for Step 2.6.
 ```
 
 ## Blockers
@@ -521,4 +525,4 @@ No real local PostgreSQL service is available (`DATABASE_URL` empty, no `psql`, 
 
 ## NEXT ACTION
 
-Continue Step 2.6: write the Neon/Vercel migration and deployment runbook without creating external resources or committing secrets.
+Continue Step 2.7: run the full validation gate, commit locally, then request confirmation before pushing external changes.
