@@ -1,0 +1,239 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "$version": "2.1.0",
+  "$changelog": [
+    {
+      "version": "2.1.0",
+      "date": "2026-07-30",
+      "changes": [
+        "Clarified Lucide geometry and proprietary symbols",
+        "Changed primary CTA rule from viewport to decision context",
+        "Removed automatic system dark-theme behavior; dimmedPaper is manual",
+        "Added technical-width exceptions for code, diff and terminal",
+        "Refined non-color communication requirements",
+        "Added breakpoints, focus, state, editor, terminal, execution, density and touch tokens"
+      ]
+    },
+    {
+      "version": "2.0.0",
+      "date": "2026-07-30",
+      "changes": [
+        "Expanded design system for implementation"
+      ]
+    }
+  ],
+  "color": {
+    "ink": "#0E0E0C",
+    "paper": "#EFEBE1",
+    "dimmedPaper": "#E6E0D4",
+    "panel": "#FBF9F4",
+    "dim": "#6F6C62",
+    "desk": "#D9D4C7",
+    "machine": "#141412",
+    "machineText": "#E9E5D8",
+    "machineRule": "#3A3A34",
+    "signal": "#F5C518",
+    "signalInk": "#5B4800",
+    "success": "#1E6F49",
+    "warning": "#8B5A00",
+    "error": "#B83220",
+    "info": "#2B4FC8",
+    "overlay": "rgba(14,14,12,0.62)",
+    "mastery": {
+      "0": "#B9B4A8",
+      "1": "#9C978D",
+      "2": "#77736A",
+      "3": "#4E4B45",
+      "4": "#252421",
+      "5": "#0E0E0C"
+    }
+  },
+  "state": {
+    "disabledOpacity": 0.48,
+    "hoverOpacity": 0.92,
+    "selectedPattern": "solid-rule",
+    "criticalChannels": 2,
+    "defaultNonColorChannels": 1
+  },
+  "focus": {
+    "width": "2px",
+    "offset": "2px",
+    "style": "solid",
+    "color": "{color.info}",
+    "machineColor": "{color.signal}"
+  },
+  "typography": {
+    "display": {
+      "family": "Archivo",
+      "weight": 800,
+      "tracking": "-0.045em",
+      "sizes": {
+        "2xl": "64px",
+        "xl": "56px",
+        "lg": "48px",
+        "md": "38px",
+        "sm": "28px"
+      }
+    },
+    "body": {
+      "family": "Archivo",
+      "weights": {
+        "regular": 400,
+        "semibold": 600,
+        "bold": 700
+      },
+      "sizes": {
+        "lg": "17px",
+        "md": "16px",
+        "sm": "14px"
+      },
+      "leading": 1.55
+    },
+    "technical": {
+      "family": "JetBrains Mono",
+      "weights": {
+        "regular": 400,
+        "bold": 700
+      },
+      "sizes": {
+        "md": "13px",
+        "sm": "12px",
+        "xs": "10px"
+      },
+      "tracking": "0.12em"
+    },
+    "code": {
+      "family": "JetBrains Mono",
+      "size": "14px",
+      "leading": 1.7
+    }
+  },
+  "spacing": {
+    "1": "2px",
+    "2": "4px",
+    "3": "6px",
+    "4": "8px",
+    "5": "10px",
+    "6": "12px",
+    "8": "16px",
+    "10": "20px",
+    "12": "24px",
+    "16": "32px",
+    "20": "40px",
+    "24": "48px",
+    "32": "64px"
+  },
+  "border": {
+    "hair": "1px",
+    "rule": "2px",
+    "accent": "8px",
+    "navActive": "4px"
+  },
+  "radius": {
+    "none": "0px",
+    "sm": "2px",
+    "md": "4px"
+  },
+  "shadow": {
+    "structural": "3px 3px 0 {color.ink}",
+    "raised": "4px 4px 0 {color.ink}",
+    "window": "10px 10px 0 rgba(14,14,12,0.90)",
+    "pressed": "2px 2px 0 {color.ink}"
+  },
+  "motion": {
+    "fast": "120ms",
+    "base": "140ms",
+    "slow": "180ms",
+    "easing": "ease-out",
+    "linear": "linear",
+    "travelMin": "2px",
+    "travelMax": "4px"
+  },
+  "breakpoint": {
+    "mobile": "0px",
+    "tablet": "768px",
+    "desktop": "1200px",
+    "wide": "1440px"
+  },
+  "size": {
+    "buttonDefault": "44px",
+    "buttonCompact": "32px",
+    "inputDefault": "44px",
+    "sidebar": "214px",
+    "drawer": "360px",
+    "paletteMax": "660px",
+    "statusbar": "28px"
+  },
+  "icon": {
+    "sm": "16px",
+    "md": "20px",
+    "lg": "24px",
+    "stroke": "2px",
+    "library": "Lucide"
+  },
+  "touch": {
+    "minimum": "44px"
+  },
+  "density": {
+    "compactRow": "32px",
+    "defaultRow": "44px",
+    "focusGap": "24px",
+    "compactAllowedMin": "768px"
+  },
+  "editor": {
+    "background": "{color.machine}",
+    "foreground": "{color.machineText}",
+    "border": "{color.machineRule}",
+    "caret": "{color.signal}",
+    "selection": "rgba(245,197,24,0.24)",
+    "lineNumber": "#8C887D"
+  },
+  "terminal": {
+    "background": "{color.machine}",
+    "foreground": "{color.machineText}",
+    "stdout": "{color.machineText}",
+    "stderr": "#FF8E7A",
+    "system": "#BEB8AA",
+    "success": "#7FD1A8",
+    "warning": "#E9C66A"
+  },
+  "execution": {
+    "running": "{color.info}",
+    "passed": "{color.success}",
+    "failed": "{color.error}",
+    "timeout": "{color.warning}",
+    "idle": "{color.dim}"
+  },
+  "zIndex": {
+    "base": 0,
+    "panel": 10,
+    "sticky": 20,
+    "drawer": 30,
+    "modal": 40,
+    "palette": 50,
+    "toast": 60,
+    "tooltip": 70
+  },
+  "mastery": {
+    "0": "○ não visto",
+    "1": "◔ introduzido",
+    "2": "◑ entendido",
+    "3": "◕ praticando",
+    "4": "● forte",
+    "5": "★ dominado"
+  },
+  "diff": {
+    "added": "rgba(30,111,73,0.16)",
+    "removed": "rgba(184,50,32,0.14)",
+    "changed": "rgba(245,197,24,0.20)"
+  },
+  "toast": {
+    "width": "360px",
+    "durationInfo": "5000ms",
+    "durationCritical": "persistent"
+  },
+  "theme": {
+    "systemDarkMode": false,
+    "dimmedPaperMode": "manual"
+  }
+}

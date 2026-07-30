@@ -1,0 +1,118 @@
+import { createHash } from "node:crypto";
+
+import { trackPackSchema, type TrackPack } from "@/features/import/application/track-pack-schema";
+
+export type TrackPackIssue = Readonly<{
+  code: "invalid_schema" | "duplicate_id" | "missing_concept";
+  message: string;
+  path: string;
+}>;
+
+export type TrackPackValidationResult =
+  | Readonly<{ ok: true; pack: TrackPack; contentHash: string }>
+  | Readonly<{ ok: false; issues: TrackPackIssue[] }>;
+
+export function validateTrackPack(input: unknown): TrackPackValidationResult {
+  const parsed = trackPackSchema.safeParse(input);
+
+  if (!parsed.success) {
+    return {
+      ok: false,
+      issues: parsed.error.issues.map((issue) => ({
+        code: "invalid_schema",
+        message: issue.message,
+        path: issue.path.join(".")
+      }))
+    };
+  }
+
+  const semanticIssues = validateSemantics(parsed.data);
+
+  if (semanticIssues.length > 0) {
+    return { ok: false, issues: semanticIssues };
+  }
+
+  return {
+    ok: true,
+    pack: parsed.data,
+    contentHash: hashTrackPack(parsed.data)
+  };
+}
+
+export function hashTrackPack(pack: TrackPack) {
+  return createHash("sha256").update(canonicalJson(pack)).digest("hex");
+}
+
+function validateSemantics(pack: TrackPack): TrackPackIssue[] {
+  const issues: TrackPackIssue[] = [];
+  const ids = new Map<string, string>();
+
+  addUnique(ids, issues, pack.track.id, "track.id");
+
+  pack.track.modules.forEach((module, moduleIndex) => {
+    const modulePath = `track.modules.${moduleIndex}`;
+    addUnique(ids, issues, module.id, `${modulePath}.id`);
+
+    module.lessons.forEach((lesson, lessonIndex) => {
+      const lessonPath = `${modulePath}.lessons.${lessonIndex}`;
+      const conceptIds = new Set<string>();
+
+      addUnique(ids, issues, lesson.id, `${lessonPath}.id`);
+
+      lesson.concepts.forEach((concept, conceptIndex) => {
+        conceptIds.add(concept.id);
+        addUnique(ids, issues, concept.id, `${lessonPath}.concepts.${conceptIndex}.id`);
+      });
+
+      lesson.blocks.forEach((block, blockIndex) => {
+        addUnique(ids, issues, block.id, `${lessonPath}.blocks.${blockIndex}.id`);
+      });
+
+      lesson.activities.forEach((activity, activityIndex) => {
+        addUnique(ids, issues, activity.id, `${lessonPath}.activities.${activityIndex}.id`);
+
+        activity.conceptIds.forEach((conceptId, conceptIndex) => {
+          if (!conceptIds.has(conceptId)) {
+            issues.push({
+              code: "missing_concept",
+              message: `Activity references unknown concept '${conceptId}'.`,
+              path: `${lessonPath}.activities.${activityIndex}.conceptIds.${conceptIndex}`
+            });
+          }
+        });
+      });
+    });
+  });
+
+  return issues;
+}
+
+function addUnique(ids: Map<string, string>, issues: TrackPackIssue[], id: string, path: string) {
+  const existingPath = ids.get(id);
+
+  if (existingPath) {
+    issues.push({
+      code: "duplicate_id",
+      message: `Stable ID '${id}' is already used at ${existingPath}.`,
+      path
+    });
+    return;
+  }
+
+  ids.set(id, path);
+}
+
+function canonicalJson(value: unknown): string {
+  if (Array.isArray(value)) {
+    return `[${value.map(canonicalJson).join(",")}]`;
+  }
+
+  if (value && typeof value === "object") {
+    return `{${Object.entries(value)
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([key, nested]) => `${JSON.stringify(key)}:${canonicalJson(nested)}`)
+      .join(",")}}`;
+  }
+
+  return JSON.stringify(value);
+}

@@ -1,0 +1,69 @@
+# 06 — Data Model
+
+## Ownership
+
+Every user-owned record includes `owner_id`, even while V1 uses a single seeded owner. Imported catalog content is not duplicated per owner unless modification or provenance requires it.
+
+## Planned relational tables
+
+### Content
+
+- `tracks`
+- `modules`
+- `lessons`
+- `concepts`
+- `lesson_concepts`
+- `content_blocks`
+- `activities`
+- `content_versions`
+- `pack_imports`
+
+### User state
+
+- `owners`
+- `track_progress`
+- `lesson_progress`
+- `concept_evidence`
+- `concept_progress`
+- `attempts`
+- `attempt_test_results`
+- `mistakes`
+- `review_schedules`
+- `study_events`
+- `project_contexts`
+- `project_concepts`
+- `project_activities`
+
+### Gamification
+
+- `xp_transactions`
+- `badge_definitions`
+- `badge_awards`
+- `missions`
+- `mission_progress`
+
+## JSONB use
+
+JSONB is acceptable for flexible block payloads, activity configuration, validator configuration, import manifests and raw provenance. Core identity, relations, status, dates and query-critical evidence remain relational.
+
+## Append-only tables
+
+- `attempts`
+- `concept_evidence`
+- `study_events`
+- `xp_transactions`
+- `badge_awards`
+
+Corrections are represented through new records or explicit revocation/compensation records, not destructive updates.
+
+## Implemented V1 notes
+
+Current migrations implement imported content tables, owner-scoped progress/attempt/evidence/review/mistake state, optional project context joins to imported concepts and activities, and append-only XP transactions. Badge, rank and mission state is currently derived deterministically from existing evidence/read models rather than persisted in separate award/progress tables.
+
+## Time
+
+Persist timestamps in UTC. Display in the user's configured timezone. Review scheduling uses absolute timestamps plus scheduling metadata.
+
+## Deletion
+
+User-requested deletion may physically remove private data. Normal application behavior must not mutate historical evidence merely to simplify UI.

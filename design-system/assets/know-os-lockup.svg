@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 40" width="260" height="40" role="img" aria-label="KNOW/OS">
+  <title>KNOW/OS</title>
+  <g stroke="#0E0E0C" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter">
+    <rect x="1" y="6" width="3" height="28" fill="#EFEBE1"></rect>
+    <rect x="48" y="6" width="3" height="28" fill="#EFEBE1"></rect>
+    <rect x="5" y="3" width="20" height="34" fill="#EFEBE1"></rect>
+    <rect x="27" y="3" width="20" height="34" fill="#F5C518"></rect>
+  </g>
+  <rect x="25" y="1" width="2" height="38" fill="#0E0E0C"></rect>
+  <text x="66" y="28" font-family="&#39;JetBrains Mono&#39;,ui-monospace,monospace" font-size="24" font-weight="700" letter-spacing="4.8" fill="#0E0E0C">KNOW/OS</text>
+</svg>

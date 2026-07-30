@@ -1,0 +1,98 @@
+{
+  "schema": "caderno.track.v1",
+  "packId": "know-os.javascript-fundamentals",
+  "version": 1,
+  "language": "pt-BR",
+  "track": {
+    "id": "javascript",
+    "title": "JavaScript",
+    "description": "Fundamentos iniciais usados no primeiro vertical slice.",
+    "modules": [
+      {
+        "id": "js-fundamentals",
+        "title": "Fundamentos",
+        "lessons": [
+          {
+            "id": "js-fundamentals-001",
+            "version": 1,
+            "title": "Variáveis, tipos e operadores",
+            "concepts": [
+              {
+                "id": "js-type-string",
+                "title": "String",
+                "summary": "Representa texto."
+              },
+              {
+                "id": "js-type-number",
+                "title": "Number",
+                "summary": "Representa valores numéricos."
+              },
+              {
+                "id": "js-logical-and",
+                "title": "Logical AND",
+                "summary": "Retorna verdadeiro quando ambas as condições são verdadeiras."
+              }
+            ],
+            "blocks": [
+              {
+                "id": "block-intro",
+                "type": "text",
+                "content": "Valores numéricos não devem ser armazenados como texto quando serão usados em cálculos."
+              },
+              {
+                "id": "block-number",
+                "type": "code",
+                "language": "javascript",
+                "code": "const hourlyRate = 55;"
+              }
+            ],
+            "activities": [
+              {
+                "id": "js-logical-and-code-001",
+                "type": "code",
+                "conceptIds": [
+                  "js-logical-and"
+                ],
+                "prompt": "Crie uma condição que libere o documento somente quando ele existir e o usuário estiver autorizado.",
+                "starterCode": "const documentExists = true;\nconst userAuthorized = false;\n\nconst canOpen = false;\nconsole.log(canOpen);",
+                "tests": [
+                  {
+                    "name": "uses both conditions",
+                    "kind": "source-contains",
+                    "value": "&&"
+                  },
+                  {
+                    "name": "current example is false",
+                    "kind": "stdout-equals",
+                    "value": "false"
+                  }
+                ]
+              },
+              {
+                "id": "js-number-debug-001",
+                "type": "debug",
+                "conceptIds": [
+                  "js-type-number"
+                ],
+                "prompt": "Corrija o bug para que a soma numérica imprima 7, não uma concatenação de texto.",
+                "starterCode": "const base = \"5\";\nconst bonus = 2;\n\nconst total = base + bonus;\nconsole.log(total);",
+                "tests": [
+                  {
+                    "name": "converts the text value",
+                    "kind": "source-contains",
+                    "value": "Number("
+                  },
+                  {
+                    "name": "prints numeric sum",
+                    "kind": "stdout-equals",
+                    "value": "7"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

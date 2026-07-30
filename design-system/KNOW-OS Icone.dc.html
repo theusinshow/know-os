@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas" />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+:root{--signal:#F5C518;--ink:#0E0E0C;--dim:#6F6C62;--paper:#EFEBE1;--panel:#FBF9F4;}
+*{box-sizing:border-box;font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0;}
+body{margin:0;background:#D9D4C7;font-family:Archivo,'Helvetica Neue',Helvetica,sans-serif;color:#0E0E0C;-webkit-font-smoothing:antialiased;}
+a{color:#0E0E0C;} a:hover{color:#8A6E00;}
+@keyframes knowflip{
+  0%{transform:rotateY(0deg);opacity:1;}
+  40%{transform:rotateY(-176deg);opacity:1;}
+  46%{transform:rotateY(-180deg);opacity:1;}
+  47%{transform:rotateY(-180deg);opacity:0;}
+  48%{transform:rotateY(0deg);opacity:0;}
+  99%{transform:rotateY(0deg);opacity:0;}
+  100%{transform:rotateY(0deg);opacity:1;}
+}
+[data-flip] .pg{animation:knowflip 1560ms linear infinite;animation-play-state:paused;}
+[data-flip]:hover .pg{animation-play-state:running;}
+@media (prefers-reduced-motion: reduce){[data-flip]:hover .pg{animation-play-state:paused;}}
+@keyframes knowwave{0%,100%{transform:skewX(-14deg) translateX(0);}30%,62%{transform:skewX(-14deg) translateX(9px);}}
+@keyframes knowlift{0%,100%{transform:skewX(-14deg) translateY(0);}38%,58%{transform:skewX(-14deg) translateY(-8px);}}
+@keyframes knowribbon{0%,100%{transform:translateY(0);}44%,60%{transform:translateY(14px);}}
+@keyframes knowslide{0%,100%{transform:translateX(0);}40%,62%{transform:translateX(13px);}}
+[data-anim] .wv{animation:knowwave 1200ms linear infinite;animation-play-state:paused;}
+[data-anim] .lf{animation:knowlift 1100ms linear infinite;animation-play-state:paused;}
+[data-anim] .rb{animation:knowribbon 1300ms linear infinite;animation-play-state:paused;}
+[data-anim] .cv{animation:knowslide 1200ms linear infinite;animation-play-state:paused;}
+[data-anim]:hover .wv,[data-anim]:hover .lf,[data-anim]:hover .rb,[data-anim]:hover .cv{animation-play-state:running;}
+@media (prefers-reduced-motion: reduce){[data-anim]:hover .wv,[data-anim]:hover .lf,[data-anim]:hover .rb,[data-anim]:hover .cv{animation-play-state:paused;}}
+</style>
+</helmet>
+
+<section style="padding:36px 36px 0;display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start;">
+
+  <div id="2a" style="width:360px;border:2px solid var(--ink);background:var(--paper);box-shadow:6px 6px 0 rgba(14,14,12,.9);">
+    <div style="display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--ink);background:var(--signal);padding:7px 10px;">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.14em;">2a</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;">PILHA / ONDA</span>
+    </div>
+    <div data-anim="1" style="height:248px;display:flex;align-items:center;justify-content:center;background:var(--panel);border-bottom:2px solid var(--ink);cursor:pointer;">
+      <div style="position:relative;width:132px;height:120px;">
+        <div class="wv" style="position:absolute;left:8px;top:82px;width:104px;height:26px;border:3px solid var(--ink);background:var(--paper);transform:skewX(-14deg);animation-delay:0ms;">
+          <div style="position:absolute;right:5px;top:4px;bottom:4px;width:2px;background:var(--ink);opacity:.3;"></div>
+        </div>
+        <div class="wv" style="position:absolute;left:8px;top:47px;width:104px;height:26px;border:3px solid var(--ink);background:var(--paper);transform:skewX(-14deg);animation-delay:130ms;">
+          <div style="position:absolute;right:5px;top:4px;bottom:4px;width:2px;background:var(--ink);opacity:.3;"></div>
+        </div>
+        <div class="wv" style="position:absolute;left:8px;top:12px;width:104px;height:26px;border:3px solid var(--ink);background:var(--signal);transform:skewX(-14deg);animation-delay:260ms;">
+          <div style="position:absolute;left:9px;top:8px;width:44px;height:4px;background:var(--ink);"></div>
+        </div>
+      </div>
+    </div>
+    <div style="padding:12px;font-size:14px;line-height:1.5;">A pilha original, com corte de página visível em cada volume e um título gravado no de cima. No hover a onda percorre a pilha de baixo para cima, 9px por camada — folhear sem tirar da mesa.</div>
+    <div style="border-top:1px solid rgba(14,14,12,.25);padding:10px 12px;display:flex;align-items:center;gap:14px;">
+      <div style="width:26px;height:26px;position:relative;">
+        <div style="position:absolute;left:2px;top:16px;width:21px;height:6px;border:1.5px solid var(--ink);background:var(--paper);transform:skewX(-14deg);"></div>
+        <div style="position:absolute;left:2px;top:9px;width:21px;height:6px;border:1.5px solid var(--ink);background:var(--paper);transform:skewX(-14deg);"></div>
+        <div style="position:absolute;left:2px;top:2px;width:21px;height:6px;border:1.5px solid var(--ink);background:var(--signal);transform:skewX(-14deg);"></div>
+      </div>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--dim);">26PX · FAVICON</span>
+    </div>
+  </div>
+
+  <div id="2b" style="width:360px;border:2px solid var(--ink);background:var(--paper);box-shadow:6px 6px 0 rgba(14,14,12,.9);">
+    <div style="display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--ink);background:var(--signal);padding:7px 10px;">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.14em;">2b</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;">PILHA / QUATRO CAMADAS</span>
+    </div>
+    <div data-anim="1" style="height:248px;display:flex;align-items:center;justify-content:center;background:var(--panel);border-bottom:2px solid var(--ink);cursor:pointer;">
+      <div style="position:relative;width:132px;height:120px;">
+        <div class="lf" style="position:absolute;left:8px;top:88px;width:104px;height:20px;border:3px solid var(--ink);background:var(--paper);transform:skewX(-14deg);animation-delay:0ms;"></div>
+        <div class="lf" style="position:absolute;left:8px;top:62px;width:104px;height:20px;border:3px solid var(--ink);background:var(--paper);transform:skewX(-14deg);animation-delay:110ms;"></div>
+        <div class="lf" style="position:absolute;left:8px;top:36px;width:104px;height:20px;border:3px solid var(--ink);background:var(--paper);transform:skewX(-14deg);animation-delay:220ms;"></div>
+        <div class="lf" style="position:absolute;left:8px;top:10px;width:104px;height:20px;border:3px solid var(--ink);background:var(--signal);transform:skewX(-14deg);animation-delay:330ms;"></div>
+      </div>
+    </div>
+    <div style="padding:12px;font-size:14px;line-height:1.5;">Quatro camadas mais finas — lê como um arquivo, não como um livro. No hover cada camada levanta 8px em sequência: a pilha "conta" a si mesma. Perde legibilidade em 26px, precisa cair para três.</div>
+    <div style="border-top:1px solid rgba(14,14,12,.25);padding:10px 12px;display:flex;align-items:center;gap:14px;">
+      <div style="width:26px;height:26px;position:relative;">
+        <div style="position:absolute;left:2px;top:18px;width:21px;height:4px;border:1.5px solid var(--ink);background:var(--paper);transform:skewX(-14deg);"></div>
+        <div style="position:absolute;left:2px;top:12px;width:21px;height:4px;border:1.5px solid var(--ink);background:var(--paper);transform:skewX(-14deg);"></div>
+        <div style="position:absolute;left:2px;top:6px;width:21px;height:4px;border:1.5px solid var(--ink);background:var(--paper);transform:skewX(-14deg);"></div>
+        <div style="position:absolute;left:2px;top:0px;width:21px;height:4px;border:1.5px solid var(--ink);background:var(--signal);transform:skewX(-14deg);"></div>
+      </div>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--dim);">26PX · LIMITE</span>
+    </div>
+  </div>
+
+  <div id="2c" style="width:360px;border:2px solid var(--ink);background:var(--paper);box-shadow:6px 6px 0 rgba(14,14,12,.9);">
+    <div style="display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--ink);background:var(--signal);padding:7px 10px;">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.14em;">2c</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;">PILHA + MARCADOR</span>
+    </div>
+    <div data-anim="1" style="height:248px;display:flex;align-items:center;justify-content:center;background:var(--panel);border-bottom:2px solid var(--ink);cursor:pointer;">
+      <div style="position:relative;width:132px;height:120px;">
+        <div style="position:absolute;left:8px;top:82px;width:104px;height:26px;border:3px solid var(--ink);background:var(--paper);transform:skewX(-14deg);"></div>
+        <div style="position:absolute;left:8px;top:47px;width:104px;height:26px;border:3px solid var(--ink);background:var(--paper);transform:skewX(-14deg);"></div>
+        <div style="position:absolute;left:8px;top:12px;width:104px;height:26px;border:3px solid var(--ink);background:var(--paper);transform:skewX(-14deg);"></div>
+        <div class="rb" style="position:absolute;left:74px;top:12px;width:14px;height:52px;background:var(--signal);border:3px solid var(--ink);"></div>
+      </div>
+    </div>
+    <div style="padding:12px;font-size:14px;line-height:1.5;">Pilha neutra em preto e branco, com o sinal concentrado num único elemento: o marcador. No hover ele desce 14px, como quem marca o ponto onde parou. É a leitura mais próxima de "retomar de onde você estava".</div>
+    <div style="border-top:1px solid rgba(14,14,12,.25);padding:10px 12px;display:flex;align-items:center;gap:14px;">
+      <div style="width:26px;height:26px;position:relative;">
+        <div style="position:absolute;left:2px;top:16px;width:21px;height:6px;border:1.5px solid var(--ink);background:var(--paper);transform:skewX(-14deg);"></div>
+        <div style="position:absolute;left:2px;top:9px;width:21px;height:6px;border:1.5px solid var(--ink);background:var(--paper);transform:skewX(-14deg);"></div>
+        <div style="position:absolute;left:2px;top:2px;width:21px;height:6px;border:1.5px solid var(--ink);background:var(--paper);transform:skewX(-14deg);"></div>
+        <div style="position:absolute;left:15px;top:2px;width:5px;height:13px;background:var(--signal);border:1.5px solid var(--ink);"></div>
+      </div>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--dim);">26PX · FAVICON</span>
+    </div>
+  </div>
+
+  <div id="2d" style="width:360px;border:2px solid var(--ink);background:var(--paper);box-shadow:6px 6px 0 rgba(14,14,12,.9);">
+    <div style="display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--ink);background:var(--signal);padding:7px 10px;">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.14em;">2d</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;">PILHA / CAPA DESLIZANTE</span>
+    </div>
+    <div data-anim="1" style="height:248px;display:flex;align-items:center;justify-content:center;background:var(--panel);border-bottom:2px solid var(--ink);cursor:pointer;">
+      <div style="position:relative;width:132px;height:120px;">
+        <div style="position:absolute;left:8px;top:82px;width:104px;height:26px;border:3px solid var(--ink);background:var(--paper);transform:skewX(-14deg);"></div>
+        <div style="position:absolute;left:8px;top:47px;width:104px;height:26px;border:3px solid var(--ink);background:var(--signal);transform:skewX(-14deg);"></div>
+        <div class="cv" style="position:absolute;left:8px;top:12px;width:104px;height:26px;border:3px solid var(--ink);background:var(--ink);transform:skewX(-14deg);">
+          <div style="position:absolute;left:9px;top:8px;width:44px;height:4px;background:var(--paper);"></div>
+          <div style="position:absolute;right:9px;top:7px;width:6px;height:6px;background:var(--signal);"></div>
+        </div>
+      </div>
+    </div>
+    <div style="padding:12px;font-size:14px;line-height:1.5;">A capa é sólida em tinta — vira barra de título, igual ao chrome do KNOW/OS. No hover ela desliza 13px para a direita e revela a página de sinal embaixo: abrir o sistema, não folhear um livro. É a variante mais "OS" das quatro.</div>
+    <div style="border-top:1px solid rgba(14,14,12,.25);padding:10px 12px;display:flex;align-items:center;gap:14px;">
+      <div style="width:26px;height:26px;position:relative;">
+        <div style="position:absolute;left:2px;top:16px;width:21px;height:6px;border:1.5px solid var(--ink);background:var(--paper);transform:skewX(-14deg);"></div>
+        <div style="position:absolute;left:2px;top:9px;width:21px;height:6px;border:1.5px solid var(--ink);background:var(--signal);transform:skewX(-14deg);"></div>
+        <div style="position:absolute;left:5px;top:2px;width:21px;height:6px;background:var(--ink);transform:skewX(-14deg);"></div>
+      </div>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--dim);">26PX · FAVICON</span>
+    </div>
+  </div>
+
+</section>
+
+<section style="padding:36px;display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start;">
+
+  <div id="1a" style="width:360px;border:2px solid var(--ink);background:var(--paper);box-shadow:6px 6px 0 rgba(14,14,12,.9);">
+    <div style="display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--ink);background:var(--signal);padding:7px 10px;">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.14em;">1a</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;">CADERNO EMPILHADO</span>
+    </div>
+    <div onMouseEnter="{{ enter1 }}" onMouseLeave="{{ leave }}" style="height:220px;display:flex;align-items:center;justify-content:center;background:var(--panel);border-bottom:2px solid var(--ink);cursor:pointer;">
+      <div style="width:120px;height:120px;position:relative;">
+        <div style="{{ a3 }}"></div>
+        <div style="{{ a2 }}"></div>
+        <div style="{{ a1 }}"></div>
+      </div>
+    </div>
+    <div style="padding:12px;font-size:14px;line-height:1.5;">Três cadernos empilhados e inclinados — a página do topo é o sinal. No hover a pilha se abre 4px, como quem folheia.</div>
+    <div style="border-top:1px solid rgba(14,14,12,.25);padding:10px 12px;display:flex;align-items:center;gap:14px;">
+      <div style="width:26px;height:26px;position:relative;">
+        <div style="position:absolute;left:2px;top:16px;width:20px;height:5px;border:1.5px solid var(--ink);background:var(--paper);transform:skewX(-14deg);"></div>
+        <div style="position:absolute;left:2px;top:10px;width:20px;height:5px;border:1.5px solid var(--ink);background:var(--paper);transform:skewX(-14deg);"></div>
+        <div style="position:absolute;left:2px;top:4px;width:20px;height:5px;border:1.5px solid var(--ink);background:var(--signal);transform:skewX(-14deg);"></div>
+      </div>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--dim);">26PX · FAVICON</span>
+    </div>
+  </div>
+
+  <div id="1b" style="width:360px;border:2px solid var(--ink);background:var(--paper);box-shadow:6px 6px 0 rgba(14,14,12,.9);">
+    <div style="display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--ink);background:var(--signal);padding:7px 10px;">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.14em;">1b</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;">LOMBADA / SPINE</span>
+    </div>
+    <div onMouseEnter="{{ enter2 }}" onMouseLeave="{{ leave }}" style="height:220px;display:flex;align-items:center;justify-content:center;background:var(--panel);border-bottom:2px solid var(--ink);cursor:pointer;">
+      <div style="width:120px;height:120px;border:3px solid var(--ink);background:var(--paper);display:flex;overflow:hidden;">
+        <div style="{{ b1 }}"></div>
+        <div style="flex:1;padding:14px 12px;display:flex;flex-direction:column;gap:9px;justify-content:center;">
+          <div style="{{ b2 }}"></div>
+          <div style="{{ b3 }}"></div>
+          <div style="{{ b4 }}"></div>
+        </div>
+      </div>
+    </div>
+    <div style="padding:12px;font-size:14px;line-height:1.5;">Um volume visto de frente: lombada grossa + linhas de conteúdo. No hover a lombada engrossa e as linhas revelam da esquerda para a direita.</div>
+    <div style="border-top:1px solid rgba(14,14,12,.25);padding:10px 12px;display:flex;align-items:center;gap:14px;">
+      <div style="width:26px;height:26px;border:2px solid var(--ink);display:flex;">
+        <div style="width:6px;background:var(--ink);"></div>
+        <div style="flex:1;padding:4px 3px;display:flex;flex-direction:column;gap:3px;justify-content:center;">
+          <div style="height:2px;background:var(--ink);"></div>
+          <div style="height:2px;background:var(--ink);width:70%;"></div>
+        </div>
+      </div>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--dim);">26PX · FAVICON</span>
+    </div>
+  </div>
+
+  <div id="1c" style="width:360px;border:2px solid var(--ink);background:var(--paper);box-shadow:6px 6px 0 rgba(14,14,12,.9);">
+    <div style="display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--ink);background:var(--signal);padding:7px 10px;">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.14em;">1c</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;">LIVRO ABERTO / PÁGINA VIRANDO</span>
+    </div>
+    <div data-flip="1" style="height:248px;display:flex;align-items:center;justify-content:center;background:var(--panel);border-bottom:2px solid var(--ink);cursor:pointer;">
+      <div style="position:relative;width:172px;height:120px;perspective:680px;">
+
+        <div style="position:absolute;left:0;top:10px;width:7px;height:100px;border:2px solid var(--ink);background:var(--paper);"></div>
+        <div style="position:absolute;left:5px;top:6px;width:7px;height:108px;border:2px solid var(--ink);background:var(--paper);"></div>
+        <div style="position:absolute;right:0;top:10px;width:7px;height:100px;border:2px solid var(--ink);background:var(--paper);"></div>
+        <div style="position:absolute;right:5px;top:6px;width:7px;height:108px;border:2px solid var(--ink);background:var(--paper);"></div>
+
+        <div style="position:absolute;left:11px;top:0;width:76px;height:120px;border:3px solid var(--ink);background:var(--paper);display:flex;flex-direction:column;justify-content:center;gap:9px;padding:0 12px 0 14px;">
+          <div style="height:5px;background:var(--ink);"></div>
+          <div style="height:5px;background:var(--ink);width:76%;"></div>
+          <div style="height:5px;background:var(--ink);width:88%;"></div>
+        </div>
+
+        <div style="position:absolute;right:11px;top:0;width:76px;height:120px;border:3px solid var(--ink);background:var(--paper);display:flex;flex-direction:column;justify-content:center;gap:9px;padding:0 14px 0 12px;">
+          <div style="height:5px;background:var(--ink);opacity:.28;"></div>
+          <div style="height:5px;background:var(--ink);opacity:.28;width:64%;"></div>
+        </div>
+
+        <div class="pg" style="position:absolute;left:84px;top:0;width:76px;height:120px;transform-origin:left center;transform-style:preserve-3d;animation-delay:0ms;z-index:3;">
+          <div style="position:absolute;inset:0;border:3px solid var(--ink);background:var(--paper);backface-visibility:hidden;"></div>
+          <div style="position:absolute;inset:0;border:3px solid var(--ink);background:var(--signal);transform:rotateY(180deg);backface-visibility:hidden;"></div>
+        </div>
+        <div class="pg" style="position:absolute;left:84px;top:0;width:76px;height:120px;transform-origin:left center;transform-style:preserve-3d;animation-delay:520ms;z-index:2;">
+          <div style="position:absolute;inset:0;border:3px solid var(--ink);background:var(--paper);backface-visibility:hidden;"></div>
+          <div style="position:absolute;inset:0;border:3px solid var(--ink);background:var(--paper);transform:rotateY(180deg);backface-visibility:hidden;"></div>
+        </div>
+        <div class="pg" style="position:absolute;left:84px;top:0;width:76px;height:120px;transform-origin:left center;transform-style:preserve-3d;animation-delay:1040ms;z-index:1;">
+          <div style="position:absolute;inset:0;border:3px solid var(--ink);background:var(--paper);backface-visibility:hidden;"></div>
+          <div style="position:absolute;inset:0;border:3px solid var(--ink);background:var(--paper);transform:rotateY(180deg);backface-visibility:hidden;"></div>
+        </div>
+
+        <div style="position:absolute;left:84px;top:-5px;width:4px;height:130px;background:var(--ink);z-index:4;"></div>
+      </div>
+    </div>
+    <div style="padding:12px;font-size:14px;line-height:1.5;">Livro aberto com volume: cortes de página nas laterais, texto lido à esquerda, página em branco à direita. No hover, três páginas viram continuamente da direita para a esquerda — o verso da primeira é o sinal, então o amarelo pisca uma vez por ciclo. Parado, as páginas descansam fechadas sobre a página direita.</div>
+    <div style="border-top:1px solid rgba(14,14,12,.25);padding:10px 12px;display:flex;align-items:center;gap:14px;">
+      <div style="width:26px;height:26px;position:relative;">
+        <div style="position:absolute;left:1px;top:4px;width:10px;height:18px;border:2px solid var(--ink);background:var(--paper);"></div>
+        <div style="position:absolute;right:1px;top:4px;width:10px;height:18px;border:2px solid var(--ink);background:var(--signal);"></div>
+        <div style="position:absolute;left:12px;top:2px;width:2px;height:22px;background:var(--ink);"></div>
+      </div>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--dim);">26PX · FAVICON</span>
+    </div>
+  </div>
+
+  <div id="1d" style="width:360px;border:2px solid var(--ink);background:var(--paper);box-shadow:6px 6px 0 rgba(14,14,12,.9);">
+    <div style="display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--ink);background:var(--signal);padding:7px 10px;">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.14em;">1d</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;">CADERNO + BARRA /OS</span>
+    </div>
+    <div onMouseEnter="{{ enter4 }}" onMouseLeave="{{ leave }}" style="height:220px;display:flex;align-items:center;justify-content:center;background:var(--panel);border-bottom:2px solid var(--ink);cursor:pointer;">
+      <div style="width:120px;height:120px;position:relative;">
+        <div style="position:absolute;left:0;top:0;width:104px;height:104px;border:3px solid var(--ink);background:var(--paper);"></div>
+        <div style="position:absolute;left:0;top:0;width:104px;height:16px;background:var(--ink);"></div>
+        <div style="{{ d1 }}"></div>
+        <div style="{{ d2 }}"></div>
+        <div style="{{ d3 }}"></div>
+      </div>
+    </div>
+    <div style="padding:12px;font-size:14px;line-height:1.5">Janela-caderno: barra de título sólida + a barra diagonal do <b>/OS</b> atravessando a página. No hover a diagonal corre 4px e o bloco do cursor pisca uma vez.</div>
+    <div style="border-top:1px solid rgba(14,14,12,.25);padding:10px 12px;display:flex;align-items:center;gap:14px;">
+      <div style="width:26px;height:26px;position:relative;border:2px solid var(--ink);">
+        <div style="position:absolute;left:0;top:0;right:0;height:5px;background:var(--ink);"></div>
+        <div style="position:absolute;left:9px;top:6px;width:3px;height:16px;background:var(--ink);transform:skewX(-16deg);"></div>
+        <div style="position:absolute;left:15px;top:15px;width:5px;height:5px;background:var(--signal);border:1px solid var(--ink);"></div>
+      </div>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--dim);">26PX · FAVICON</span>
+    </div>
+  </div>
+
+  <div id="1e" style="width:360px;border:2px solid var(--ink);background:var(--paper);box-shadow:6px 6px 0 rgba(14,14,12,.9);">
+    <div style="display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--ink);background:var(--signal);padding:7px 10px;">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.14em;">1e</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;">LOCKUP · 1C + WORDMARK</span>
+    </div>
+    <div data-flip="1" style="padding:24px 20px;display:flex;flex-direction:column;gap:22px;background:var(--panel);border-bottom:2px solid var(--ink);cursor:pointer;">
+
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div style="position:relative;width:52px;height:36px;perspective:220px;flex:none;">
+          <div style="position:absolute;left:0;top:3px;width:4px;height:30px;border:1.5px solid var(--ink);background:var(--paper);"></div>
+          <div style="position:absolute;right:0;top:3px;width:4px;height:30px;border:1.5px solid var(--ink);background:var(--paper);"></div>
+          <div style="position:absolute;left:4px;top:0;width:22px;height:36px;border:2px solid var(--ink);background:var(--paper);"></div>
+          <div style="position:absolute;right:4px;top:0;width:22px;height:36px;border:2px solid var(--ink);background:var(--paper);"></div>
+          <div class="pg" style="position:absolute;left:24px;top:0;width:22px;height:36px;transform-origin:left center;transform-style:preserve-3d;animation-delay:0ms;z-index:3;">
+            <div style="position:absolute;inset:0;border:2px solid var(--ink);background:var(--paper);backface-visibility:hidden;"></div>
+            <div style="position:absolute;inset:0;border:2px solid var(--ink);background:var(--signal);transform:rotateY(180deg);backface-visibility:hidden;"></div>
+          </div>
+          <div class="pg" style="position:absolute;left:24px;top:0;width:22px;height:36px;transform-origin:left center;transform-style:preserve-3d;animation-delay:520ms;z-index:2;">
+            <div style="position:absolute;inset:0;border:2px solid var(--ink);background:var(--paper);backface-visibility:hidden;"></div>
+            <div style="position:absolute;inset:0;border:2px solid var(--ink);background:var(--paper);transform:rotateY(180deg);backface-visibility:hidden;"></div>
+          </div>
+          <div style="position:absolute;left:24px;top:-2px;width:2px;height:40px;background:var(--ink);z-index:4;"></div>
+        </div>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;letter-spacing:.20em;">KNOW/OS</span>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:14px;border-top:1px solid rgba(14,14,12,.25);padding-top:20px;">
+        <div style="position:relative;width:30px;height:21px;flex:none;">
+          <div style="position:absolute;left:0;top:2px;width:13px;height:17px;border:2px solid var(--ink);background:var(--paper);"></div>
+          <div style="position:absolute;right:0;top:2px;width:13px;height:17px;border:2px solid var(--ink);background:var(--signal);"></div>
+          <div style="position:absolute;left:14px;top:0;width:2px;height:21px;background:var(--ink);"></div>
+        </div>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;letter-spacing:.22em;">KNOW/OS</span>
+      </div>
+    </div>
+    <div style="padding:12px;font-size:14px;line-height:1.5;">Lockup horizontal: altura do ícone = altura da caixa maiúscula, gap de 14px, wordmark em JetBrains Mono 700 com tracking .20em. Abaixo, a versão mínima (21px) que perde o virar de página e mantém só a silhueta.</div>
+  </div>
+
+  <div style="width:360px;border:2px solid var(--ink);background:var(--ink);color:var(--paper);box-shadow:6px 6px 0 rgba(14,14,12,.9);">
+    <div style="border-bottom:2px solid var(--paper);padding:7px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;">REGRAS DA MARCA</div>
+    <div style="padding:14px;font-size:14px;line-height:1.6;">
+      Traço de 3px em 120px (escala 1:40 do lado). Raio 0. Nenhum ícone usa mais de uma cor além do preto e do sinal. Motion: 140ms ease-out, deslocamento de 4px, sem elástico. Em 26px, o ícone perde as linhas internas e mantém só a silhueta.
+      <div style="margin-top:12px;display:flex;gap:8px;">
+        <div style="width:34px;height:34px;background:var(--paper);"></div>
+        <div style="width:34px;height:34px;background:var(--signal);"></div>
+        <div style="width:34px;height:34px;border:2px solid var(--paper);"></div>
+      </div>
+    </div>
+  </div>
+
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;signal&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#F5C518&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#F5C518&quot;,&quot;#E8501E&quot;,&quot;#1F7A4D&quot;,&quot;#2B4FC8&quot;]}}">
+class Component extends DCLogic {
+  state = { h: 0 };
+
+  hover(i){ return () => this.setState({ h: i }); }
+
+  renderVals(){
+    const h = this.state.h;
+    const T = 'transition:all 140ms ease-out;';
+    const on1 = h===1, on2 = h===2, on3 = h===3, on4 = h===4;
+
+    const page = (top, bg) => 'position:absolute;left:8px;width:96px;height:24px;border:3px solid var(--ink);background:'+bg+';transform:skewX(-14deg);'+T+'top:'+top+'px;';
+
+    return {
+      enter1:this.hover(1), enter2:this.hover(2), enter3:this.hover(3), enter4:this.hover(4),
+      leave:this.hover(0),
+
+      a3: page(on1 ? 84 : 76, 'var(--paper)'),
+      a2: page(on1 ? 52 : 50, 'var(--paper)'),
+      a1: page(on1 ? 16 : 24, 'var(--signal)'),
+
+      b1: 'width:'+(on2?26:18)+'px;background:var(--ink);'+T,
+      b2: 'height:6px;background:var(--ink);'+T+'width:'+(on2?'100%':'70%')+';',
+      b3: 'height:6px;background:var(--ink);'+T+'width:'+(on2?'78%':'52%')+';transition-delay:'+(on2?'40ms':'0ms')+';',
+      b4: 'height:6px;background:var(--signal);border:2px solid var(--ink);'+T+'width:'+(on2?'56%':'34%')+';transition-delay:'+(on2?'80ms':'0ms')+';',
+
+      c1: 'width:52px;height:96px;border:3px solid var(--ink);background:var(--paper);'+T+'transform:translateX('+(on3?-4:0)+'px);',
+      c2: 'width:52px;height:96px;border:3px solid var(--ink);'+T+'transform:translateX('+(on3?4:0)+'px);background:'+(on3?'var(--signal)':'var(--paper)')+';',
+
+      d1: 'position:absolute;left:34px;top:30px;width:12px;height:62px;background:var(--ink);transform:skewX(-18deg) translateX('+(on4?4:0)+'px);'+T,
+      d2: 'position:absolute;left:56px;top:64px;width:30px;height:6px;background:var(--ink);'+T+'opacity:'+(on4?1:.35)+';',
+      d3: 'position:absolute;left:56px;top:78px;width:16px;height:16px;background:var(--signal);border:3px solid var(--ink);'+T+'transform:translateY('+(on4?-3:0)+'px);',
+    };
+  }
+}
+</script>
+</body>
+</html>

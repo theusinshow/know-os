@@ -1,0 +1,39 @@
+import type { ReactNode } from "react";
+
+import type { SourceDiffLine } from "@/features/attempts/source-diff";
+import type { CodeActivityConfig } from "@/features/activities/application/code-activity-config";
+import type { JavaScriptExecutionResult, JavaScriptTestResult } from "@/runtime/javascript/api";
+
+export type ActivityRecord = Readonly<{
+  stableId: string;
+  type: string;
+  prompt: string;
+  config: unknown;
+}>;
+
+export type ActivityConfigByType = {
+  code: CodeActivityConfig;
+  debug: CodeActivityConfig;
+};
+
+export type KnownActivityType = keyof ActivityConfigByType;
+
+export type ActivityAttemptFeedback = Readonly<{
+  attemptNumber: number;
+  outcome: "passed" | "failed";
+  execution: JavaScriptExecutionResult;
+  tests: JavaScriptTestResult[];
+  sourceDiff: SourceDiffLine[];
+  submittedAt: string;
+}>;
+
+export type ActivityDefinition<Type extends KnownActivityType = KnownActivityType> = Readonly<{
+  type: Type;
+  label: string;
+  parseConfig: (config: unknown) => ActivityConfigByType[Type];
+  render: (props: {
+    activity: ActivityRecord;
+    config: ActivityConfigByType[Type];
+    feedback: ActivityAttemptFeedback | null;
+  }) => ReactNode;
+}>;

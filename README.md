@@ -1,0 +1,154 @@
+# KNOW/OS
+
+**Personal Learning Operating System**
+
+KNOW/OS é um sistema pessoal para estruturar aprendizado, prática, revisão e aplicação em projetos reais. A primeira extensão de domínio é programação, começando por JavaScript, mas o núcleo é agnóstico de assunto.
+
+## Estado do projeto
+
+- Fase atual: **V1 local completo; produção bloqueada até decisão de autenticação/deploy**.
+- Design System oficial: `design-system/`, versão 2.2.
+- Implementação: Next.js App Router com TypeScript strict, Tailwind, token pipeline, shell acessível, fundação Drizzle/PostgreSQL, Zod, Vitest, Testing Library, Playwright e CI.
+- V1 local implementado e verificado: importar conteúdo, navegar por trilhas/lições/conceitos, executar JavaScript com RUN, registrar tentativa com SUBMIT SOLUTION, reabrir feedback persistido, ver progresso, histórico, contrato de runtime, stdout/stderr/testes, diff da tentativa, atividade inicial de debug, mastery determinístico, agenda de review, erros categorizados, projetos opcionais, XP/ranks/badges/missões, mapa de conhecimento acessível, recomendações locais, preview de import/export/restore, exports Backup/Progress/Teacher Context, auditoria de acessibilidade e preparação de segurança/deploy local.
+- Modo de execução do Codex: **autonomia elevada com limites de repositório**.
+
+## Desenvolvimento local
+
+Pré-requisitos descobertos durante Phase 0:
+
+- Node.js `24.14.0`
+- pnpm `11.9.0`
+
+```powershell
+pnpm install --frozen-lockfile
+pnpm dev
+```
+
+O app local usa o padrão do Next.js em `http://localhost:3000`. Os testes Playwright usam `http://127.0.0.1:3210` com servidor próprio e execução serial para evitar conflito com outros servidores locais e com o harness descartável `memory://local`.
+
+## Comandos canônicos
+
+```text
+pnpm install --frozen-lockfile
+pnpm dev
+pnpm generate:tokens
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm test:e2e
+pnpm build
+pnpm db:generate
+```
+
+`pnpm generate:tokens` lê `design-system/design-tokens.json` e atualiza `src/styles/generated/design-tokens.css`. O arquivo gerado é versionado e não deve ser editado manualmente.
+
+## Banco de dados
+
+Phase 1 adiciona o schema mínimo PostgreSQL/Drizzle do vertical slice. Configure `DATABASE_URL` localmente usando `.env.example` como referência; credenciais reais não devem ser commitadas.
+
+O endpoint de desenvolvimento `GET /api/health/db` retorna:
+
+- `ok` quando a conexão responde;
+- `not_configured` quando `DATABASE_URL` está ausente;
+- `unavailable` quando a conexão falha, sem expor detalhes sensíveis.
+
+Para testes locais sem PostgreSQL externo:
+
+- Vitest usa PGlite em memória para validar repositórios Drizzle e a migration gerada.
+- Playwright usa `DATABASE_URL=memory://local` como harness descartável de UI porque PGlite não empacota de forma confiável no servidor Next dev.
+
+Esse modo não substitui PostgreSQL de produção.
+
+## Vertical slice
+
+Com um banco migrado ou com o harness Playwright:
+
+1. `POST /api/import/track` importa `packs/examples/javascript-fundamentals.track.json`.
+2. `/tracks` lista trilhas importadas.
+3. `/lessons/js-fundamentals-001` abre a atividade de código.
+4. `RUN` executa sem registrar Attempt.
+5. `SUBMIT SOLUTION` registra Attempt, resultados de teste, progresso simples, diff de tentativa e StudyEvent.
+6. A lição reabre a última tentativa persistida com stdout/stderr e resultados de teste.
+7. A mesma lição inclui uma atividade de debug que reutiliza o runtime isolado por meio do registro de atividades.
+8. `/tracks/javascript` e `/lessons/js-fundamentals-001` mostram progresso de navegação sem declarar mastery de conceitos.
+9. `/concepts/js-logical-and` mostra mastery calculado por `mastery.v1` a partir de evidência.
+10. `/review` mostra revisões vencidas pela política `review.v1`.
+11. `/mistakes` mostra erros categorizados e preserva erros resolvidos.
+12. `/projects` mostra contextos opcionais que vinculam conceitos e atividades importadas sem substituir o fluxo principal.
+13. `/progress` mostra XP append-only e transações auditáveis.
+14. `/achievements` mostra rank, badges e missões derivadas por regras transparentes.
+15. `/knowledge-map` lista conceitos importados com relações de lições/trilhas sem depender de canvas.
+16. `/` recomenda a próxima ação por regras determinísticas: review, erro ativo, continuidade e aplicação em projeto.
+17. `/history` mostra eventos como `activity_submitted` e `review_completed`.
+18. `/exports` mostra previews de Backup, Progress e Teacher Context com categorias e avisos de privacidade.
+
+## Portabilidade e segurança V1
+
+- `POST /api/import/track/preview` valida e resume um Track Pack antes de mutação.
+- `POST /api/import/track` aplica limite de tamanho, validação e conflito por hash de conteúdo.
+- `GET /api/export/preview` e `GET /api/export` produzem contratos JSON `know-os.export.v1`.
+- `POST /api/restore/preview` valida Backups e lista categorias.
+- `POST /api/restore` aplica manifests de Pack de forma não destrutiva. O Backup preserva categorias de estado do usuário, mas ADR 0014 deixa replay/merge de estado append-only fora do restore V1.
+- Respostas incluem headers básicos: `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options` e `Permissions-Policy`.
+- Deployment público continua bloqueado por ADR 0013 até haver decisão de autenticação/sessão e revisão de ameaça.
+
+## Começando com Codex
+
+1. Leia `START-HERE.md`.
+2. Confirme permissões automatizadas limitadas ao workspace usando `/permissions`.
+3. Cole `PROMPT-CODEX-START.md` no Codex.
+
+```powershell
+cd C:\Dev\pessoal\know-os
+codex
+```
+
+O prompt inicial autoriza o agente a avançar fase por fase pelo V1, desde que cada gate passe. Ele não autoriza pushes, deploys, publicação, compras, acesso a segredos reais, operações destrutivas em dados externos ou expansão de escopo.
+
+Se uma sessão for interrompida, use `PROMPT-CODEX-RESUME.md`.
+
+## Autonomia
+
+`AUTONOMY.md` define:
+
+- ações locais autorizadas;
+- ações que exigem confirmação;
+- ciclo planejar–implementar–validar–corrigir–continuar;
+- gates por fase;
+- política de decisão sob ambiguidade;
+- checkpoints locais;
+- recuperação após interrupções;
+- condições objetivas de parada.
+
+A autonomia reduz pedidos de confirmação, mas não remove planejamento, testes, documentação, segurança ou controle de escopo.
+
+## Fontes de verdade
+
+1. Regras permanentes de agentes: `AGENTS.md`.
+2. Protocolo de autonomia: `AUTONOMY.md`.
+3. Produto e escopo: `docs/`.
+4. Decisões arquiteturais: `docs/ADR/`.
+5. Design visual e interação: `design-system/DESIGN_SYSTEM_INDEX.md`.
+6. Plano e estado atuais: `PLANS.md` e `PROJECT_STATUS.md`.
+
+## Estrutura
+
+```text
+know-os/
+├── AGENTS.md
+├── AUTONOMY.md
+├── PROMPT-CODEX-START.md
+├── PROMPT-CODEX-RESUME.md
+├── PLANS.md
+├── docs/
+├── design-system/
+├── packs/
+├── public/branding/
+├── src/
+├── tests/
+├── scripts/
+├── package.json
+└── pnpm-lock.yaml
+```
+
+Consulte `docs/21-REPOSITORY-STRUCTURE.md` para a estrutura planejada após o scaffold.

@@ -1,0 +1,74 @@
+# Changelog
+
+All notable changes to this repository specification are documented here.
+
+The format follows Keep a Changelog principles. Product versions will follow Semantic Versioning once the application scaffold exists.
+
+## [Unreleased]
+
+### Added
+
+- Phase 0 Next.js App Router scaffold with TypeScript strict mode and pinned pnpm dependencies.
+- Tailwind CSS foundation and generated CSS custom properties from `design-system/design-tokens.json`.
+- Minimal responsive accessible application shell using official branding assets, skip link, navigation placeholders, main landmark and status region.
+- PostgreSQL/Drizzle foundation with schema placeholder, migration configuration, connection helper and development-safe database health endpoint.
+- Initial Phase 1 Drizzle content/user-state schema and generated migration for the import-to-attempt vertical slice.
+- Track Pack Zod validation, semantic validation, deterministic content hashing and import idempotency/conflict service.
+- Drizzle-backed Track Pack import repository and `POST /api/import/track` API boundary.
+- Imported track, lesson, code activity and history routes for the Phase 1 vertical slice.
+- QuickJS child-process JavaScript runtime with timeout and output limits.
+- RUN and SUBMIT SOLUTION API boundaries with tests proving RUN creates no Attempt and SUBMIT creates one Attempt plus append-only StudyEvent.
+- Simple lesson/track progress projection after successful submission.
+- `memory://local` disposable Playwright harness and PGlite-backed Drizzle integration tests.
+- ADR 0011 for the initial JavaScript runtime adapter.
+- Phase 2 concept detail page, concept read model, lesson concept links and concept navigation tests.
+- Phase 2 lesson block renderer registry with safe renderers for initial block types and unsupported/invalid block states.
+- Phase 2 activity registry for typed code activity parsing/rendering and persisted latest Attempt feedback after reload.
+- Phase 2 lesson and track progress summaries derived from append-only Attempt evidence without implying concept mastery.
+- Phase 3 JavaScript runtime contract metadata and coverage for timeout, output limits, runtime errors, stdout/stderr and blocked DOM/network/process access.
+- Phase 3 programming activity feedback UI with separated runtime metadata, STDOUT, STDERR and test summary.
+- Phase 3 display-only attempt diff generated from immutable submitted source against starter code.
+- Phase 3 debug activity registry path and example fixture using the isolated JavaScript evaluator.
+- Phase 3 verified Programming Lab gate covering runtime contract, terminal/test feedback, attempt diff and debug activity behavior.
+- Phase 4 append-only concept evidence model with ADR 0012 and generated migration.
+- Phase 4 deterministic `mastery.v1` concept policy with explainable concept-page output.
+- Phase 4 deterministic `review.v1` scheduling, `/review` queue and review completion evidence/events.
+- Phase 4 mistake categorization, active/resolved mistake state and `/mistakes` page.
+- Phase 4 deterministic Today recommendations ordered by due review, active mistake and catalog continuation.
+- Phase 5 optional project contexts with imported concept and activity links plus `/projects`.
+- Phase 5 append-only XP ledger, first-pass SUBMIT awards and `/progress` audit surface.
+- Phase 5 deterministic rank, badge and mission read models plus `/achievements`.
+- Phase 5 accessible `/knowledge-map` list fallback for imported concept relationships.
+- Phase 5 project-aware Today recommendations after due review, active mistake and catalog continuation.
+- Phase 6 import hardening with request size limits, preview endpoint and same-version content-hash conflict reporting.
+- Phase 6 export contracts for Backup, Progress and Teacher Context with category previews and privacy warnings.
+- Phase 6 restore preview/application endpoints using non-destructive Pack manifest restore and ADR 0014 for user-state replay boundaries.
+- Phase 6 `/exports` portability surface.
+- Phase 6 accessibility and responsive audit coverage across implemented V1 routes.
+- Phase 6 baseline security headers and E2E header smoke coverage.
+- Phase 6 security audit, deployment preparation document and ADR 0013 for the production authentication/session stop condition.
+- Zod server-environment validation.
+- Vitest, Testing Library and Playwright smoke coverage.
+- GitHub Actions baseline CI and separate Playwright E2E workflow.
+- Guarded autonomy protocol in `AUTONOMY.md`.
+- Persistent autonomous phase progression and recovery rules.
+- `PROMPT-CODEX-RESUME.md` for context/session interruption recovery.
+- Explicit local-action authorization and external/destructive stop boundaries.
+- Phase gates, checkpoint rules, verification logs and durable `NEXT ACTION` requirements.
+
+### Changed
+
+- `AGENTS.md`, `README.md`, `PLANS.md` and `PROJECT_STATUS.md` now describe the real Phase 0 scaffold and canonical commands.
+- Playwright E2E now runs with a fresh owned serial server because the local `memory://local` harness is process-global.
+- Initial Codex prompt now authorizes phase-by-phase V1 execution instead of stopping after Phase 0.
+- `AGENTS.md`, `PLANS.md`, `PROJECT_STATUS.md`, `README.md`, `START-HERE.md`, and roadmap now support high-autonomy execution with repository guardrails.
+
+## [0.1.0] — 2026-07-30
+
+### Added
+
+- Initial KNOW/OS product, architecture and Design System specification repository.
+- Design System v2.2 and official branding assets.
+- Product, domain, data, Pack, Programming Lab, testing, security and roadmap documentation.
+- ADR set for foundational architectural decisions.
+- Initial Codex Phase 0 bootstrap prompt.
