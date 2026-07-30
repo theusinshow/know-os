@@ -159,6 +159,21 @@ After the user explicitly authorizes deployment:
 7. Run the JavaScript vertical slice.
 8. Confirm export preview does not expose data to unauthenticated requests.
 
+## OAuth troubleshooting
+
+If Google shows `Erro 401: invalid_client` or `The OAuth client was not found`, treat it as a production environment/configuration issue before changing application code:
+
+1. Confirm the production `AUTH_GOOGLE_ID` is the OAuth Client ID from the Google Cloud project that has this redirect URI:
+
+```text
+https://know-os.vercel.app/api/auth/callback/google
+```
+
+2. Confirm `AUTH_GOOGLE_SECRET` belongs to the same OAuth client.
+3. Re-apply `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, `AUTH_SECRET`, `APP_URL` and `AUTH_TRUST_HOST` in Vercel Production without printing values.
+4. Redeploy production; existing deployments do not reliably pick up changed environment values.
+5. Validate `/auth/signin`, click `Continuar com Google` and confirm Google no longer shows `invalid_client`.
+
 ## Stop conditions
 
 Stop immediately if:

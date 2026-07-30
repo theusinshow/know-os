@@ -69,6 +69,7 @@ The format follows Keep a Changelog principles. Product versions will follow Sem
 - `AGENTS.md`, `README.md`, `PLANS.md` and `PROJECT_STATUS.md` now describe the real Phase 0 scaffold and canonical commands.
 - Playwright E2E now runs with a fresh owned serial server because the local `memory://local` harness is process-global.
 - Production deployment status now reflects the live Vercel + Neon + Google OAuth path and remaining manual owner-login validation.
+- Production Google OAuth environment values were re-applied in Vercel after a Google `invalid_client` response, then redeployed and smoke-tested without exposing secrets.
 - Initial Codex prompt now authorizes phase-by-phase V1 execution instead of stopping after Phase 0.
 - `AGENTS.md`, `PLANS.md`, `PROJECT_STATUS.md`, `README.md`, `START-HERE.md`, and roadmap now support high-autonomy execution with repository guardrails.
 

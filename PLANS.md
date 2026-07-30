@@ -62,6 +62,10 @@ Prepare the completed local V1 for a production path one explicit step at a time
   - Added `pnpm db:migrate`, migration README notes and `docs/28-PRODUCTION-RUNBOOK.md`.
 - [x] 2.7 Validation, commit and push.
   - Validation gate passed and Step 2 production-readiness commits were pushed to GitHub.
+- [x] 2.8 Production OAuth sign-in repair.
+  - Custom sign-in page was already live; production Google OAuth returned `invalid_client`.
+  - Re-applied Vercel Production `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, `AUTH_SECRET`, `APP_URL` and `AUTH_TRUST_HOST` from ignored local environment values without printing secrets.
+  - Redeployed production and verified Google opens with `prompt=select_account` and without `invalid_client`.
 
 ### Planned increments
 
