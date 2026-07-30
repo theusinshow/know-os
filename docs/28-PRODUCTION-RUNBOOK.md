@@ -52,8 +52,11 @@ Do not commit the connection string.
 Local validation, only after the user provides a disposable or intended target `DATABASE_URL`:
 
 ```text
+pnpm test:postgres
 pnpm db:migrate
 ```
+
+`pnpm test:postgres` creates a uniquely named disposable `know_os_real_pg_*` schema, applies the checked-in migrations inside that schema, runs a minimal import/RUN/SUBMIT/progress smoke, and drops only that schema during cleanup. It reads `TEST_DATABASE_URL` first and falls back to `DATABASE_URL`, including from ignored `.env.local`, without printing credentials. Because the generated migrations contain foreign keys qualified as `"public".*`, the isolated validation rebinds those FK references to the disposable schema at runtime; it does not modify migration files or production tables.
 
 `pnpm db:migrate` runs `drizzle-kit migrate` against the configured `DATABASE_URL`.
 

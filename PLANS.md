@@ -12,12 +12,12 @@ Deliver the approved KNOW/OS V1 through verified roadmap phases, without collaps
 
 Status: `COMPLETE`
 Owner: Codex lead agent
-Phase: `STEP 3 — PRODUCT IMPORT ACTIVATION`
+Phase: `STEP 4 — REAL POSTGRESQL VALIDATION`
 Autonomy: `HIGH WITH GUARDRAILS`
 
 ### Objective
 
-Turn the production deployment from a protected technical installation into a usable first product path: the owner can activate the bundled Track Pack through the UI, then complete the first lesson loop in production.
+Validate the migration-backed repository behavior against a real PostgreSQL engine without mutating production application tables, then continue through the remaining publication-hardening roadmap one point at a time.
 
 ### Acceptance criteria
 
@@ -30,6 +30,29 @@ Turn the production deployment from a protected technical installation into a us
 - [x] Owner authentication/deployment preparation is documented or implemented only within approved local scope; external deployment remains blocked pending user confirmation.
 - [x] Unit, integration, component and E2E coverage includes import conflict handling, export/restore behavior and audit-relevant smoke paths.
 - [x] Documentation, changelog, `PROJECT_STATUS.md` and this plan reflect Phase 6 behavior.
+
+### Post-V1 hardening increments
+
+- [x] 4.1 Real PostgreSQL validation harness.
+  - Add a guarded script that loads a real PostgreSQL URL from `TEST_DATABASE_URL` or ignored local env, creates a uniquely named disposable schema, applies checked-in SQL migrations inside that schema, runs a minimal Track Pack import/read/RUN/SUBMIT/progress smoke, and drops only that schema in cleanup.
+  - The script must redact connection strings, refuse `memory://local`, avoid production `public` schema, and report exact counts/results.
+  - Added `pnpm test:postgres`, `scripts/run-real-postgres-test.mjs` and `tests/integration/real-postgres.test.ts`.
+  - The normal `pnpm test` suite skips the real PostgreSQL test unless the runner sets `KNOW_OS_RUN_REAL_POSTGRES_TESTS=1`.
+  - The harness creates and drops only a validated `know_os_real_pg_*` schema. It discovered that generated Drizzle foreign keys in existing migrations qualify references as `"public".*`; the isolated harness rebinds those references to the disposable schema at runtime without modifying migration files or production tables.
+- [x] 4.2 Real PostgreSQL validation gate.
+  - Run the new validation against the configured PostgreSQL service when a URL is available.
+  - Record exact results and keep production application data untouched.
+  - `pnpm test:postgres` passed against the configured real PostgreSQL URL from ignored local environment using a disposable schema. Validation covered 7 migrations, 1 imported track, 2 activities, RUN with 0 attempts and SUBMIT with 1 attempt plus progress assertions.
+- [ ] 5.1 Security publication hardening.
+  - Add dependency vulnerability scanning command/documentation.
+  - Define and test a production CSP candidate without breaking current Auth.js/Google/Vercel behavior.
+- [ ] 6.1 Pack publication hardening.
+  - Consolidate Pack versioning/distribution rules before public content publication.
+  - Add compatibility fixtures/tests for accepted Pack versions.
+- [ ] 7.1 Persisted gamification awards.
+  - Add append-only or auditable persisted badge award / mission progress tables only if they do not blur mastery versus gamification.
+- [ ] 8.1 User-state restore policy.
+  - Design the conflict-safe append-only replay/merge policy before implementing restore of attempts, XP, history, mistakes or review state.
 
 ### Assumptions
 
@@ -578,15 +601,24 @@ Add timestamped commands and exact outcomes during implementation.
 2026-07-30 BRT — production smoke after Step 3.1: `/api/health/db` returned 200; `/import` and `/tracks` returned 307 to `/auth/signin`; `/api/import/track/example` returned 401 unauthenticated.
 2026-07-30 BRT — production Track Pack import through application service — passed, imported `know-os.javascript-fundamentals` version `1`, `track=javascript`, `lessons=1`, `activities=2`.
 2026-07-30 BRT — production vertical-slice service validation — passed: catalog read `tracks=1`; RUN completed without recording an attempt; both activity submissions passed; lesson progress `2/2`; track progress `1/1`; study history has 2 submission events; exports expose `backup`, `progress`, `teacher_context`.
+2026-07-30 BRT — pnpm exec vitest run tests/integration/real-postgres.test.ts without the real-Postgres flag — passed with 1 skipped file/test; normal test suite does not access external PostgreSQL.
+2026-07-30 BRT — pnpm typecheck after adding real PostgreSQL harness — passed.
+2026-07-30 BRT — pnpm test:postgres initial run — failed before database access because the Windows runner used `spawn` without shell handling for `pnpm.cmd`; fixed the runner.
+2026-07-30 BRT — pnpm test:postgres second run — failed on a real PostgreSQL FK violation because generated migrations qualify FK references as `"public".*` while the harness applied tables to a disposable schema; fixed the harness to rebind those references to the disposable schema at runtime.
+2026-07-30 BRT — pnpm test:postgres final run — passed, 1 test; applied 7 migrations in a disposable real PostgreSQL schema, imported 1 track and 2 activities, verified RUN records 0 attempts and SUBMIT records 1 attempt with progress.
+2026-07-30 BRT — pnpm typecheck after final real PostgreSQL harness — passed.
+2026-07-30 BRT — pnpm lint after final real PostgreSQL harness — passed.
+2026-07-30 BRT — pnpm test after final real PostgreSQL harness — passed, 29 files and 72 tests, plus 1 skipped real-Postgres file/test.
+2026-07-30 BRT — pnpm build after final real PostgreSQL harness — passed.
 ```
 
 ## Blockers
 
 ```text
-No real local PostgreSQL service is available outside `.env.local`; production database is Neon and must not be written to destructively without explicit confirmation.
+No real local PostgreSQL service is available outside `.env.local`; `pnpm test:postgres` validates the configured PostgreSQL service through a disposable schema and production database writes must remain non-destructive and explicitly scoped.
 Interactive Google sign-in with the allowed owner account is user-operated in this environment; production route protection and service-level vertical behavior have been validated.
 ```
 
 ## NEXT ACTION
 
-Step 4 — authenticated UI walkthrough and first-use polish: with the owner signed in at `https://know-os.vercel.app`, verify `/import`, `/tracks`, `/tracks/javascript`, `/lessons/js-fundamentals-001`, `RUN`, `SUBMIT SOLUTION`, `/history` and `/exports` in the browser; fix only observed UI/UX defects before moving to additional content breadth.
+Step 5 — security publication hardening: add a dependency vulnerability scanning command/documentation, define a production CSP candidate, and validate that the CSP/security headers do not break current Auth.js/Google/Vercel behavior.

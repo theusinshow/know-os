@@ -10,6 +10,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "test:postgres": "node scripts/run-real-postgres-test.mjs",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "build": "pnpm generate:tokens && next build",

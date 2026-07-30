@@ -58,6 +58,7 @@ The format follows Keep a Changelog principles. Product versions will follow Sem
 - Design-system motion pass for the app shell, sign-in surface and recurring content primitives, including Playwright coverage for normal and reduced-motion modes.
 - Product import surface at `/import` with bundled example loading, paste/file JSON input, preview-before-apply behavior and E2E coverage.
 - Production activation of the bundled JavaScript Track Pack on Neon, with service-level validation of catalog read, RUN, SUBMIT SOLUTION, progress, history and export availability.
+- Guarded `pnpm test:postgres` validation against a real PostgreSQL engine using a disposable schema and migration-backed import/RUN/SUBMIT/progress smoke.
 - Zod server-environment validation.
 - Vitest, Testing Library and Playwright smoke coverage.
 - GitHub Actions baseline CI and separate Playwright E2E workflow.

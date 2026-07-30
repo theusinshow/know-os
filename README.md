@@ -35,6 +35,7 @@ pnpm generate:tokens
 pnpm lint
 pnpm typecheck
 pnpm test
+pnpm test:postgres
 pnpm test:e2e
 pnpm build
 pnpm db:generate
@@ -58,6 +59,14 @@ Para testes locais sem PostgreSQL externo:
 - Playwright usa `DATABASE_URL=memory://local` como harness descartável de UI porque PGlite não empacota de forma confiável no servidor Next dev.
 
 Esse modo não substitui PostgreSQL de produção.
+
+Para validar um PostgreSQL real sem tocar nas tabelas da aplicação:
+
+```powershell
+pnpm test:postgres
+```
+
+O comando lê `TEST_DATABASE_URL` ou `DATABASE_URL` do ambiente ou do `.env.local` ignorado pelo Git, cria um schema descartável `know_os_real_pg_*`, aplica as migrations nele, roda importação/RUN/SUBMIT/progresso e remove apenas esse schema ao final. Durante essa validação isolada, referências de FK geradas como `"public".*` são reescopadas para o schema descartável; `pnpm db:migrate` continua sendo o caminho para aplicar as migrations reais no schema `public` do alvo escolhido.
 
 ## Produção planejada
 

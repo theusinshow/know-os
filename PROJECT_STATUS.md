@@ -4,7 +4,7 @@ Last updated: 2026-07-30
 
 ## Current phase
 
-`V1 PRODUCTION IMPORT ACTIVATED — AUTHENTICATED UI WALKTHROUGH NEXT`
+`V1 REAL POSTGRESQL VALIDATED — SECURITY PUBLICATION HARDENING NEXT`
 
 Phase 0 repository foundation is implemented and verified. The repository now contains a Next.js App Router scaffold with TypeScript strict mode, Tailwind/token generation, minimal accessible shell, Drizzle/PostgreSQL foundation, Zod validation, Vitest/Testing Library/Playwright smoke tests and GitHub Actions CI.
 
@@ -20,7 +20,7 @@ Phase 5 projects and gamification is implemented and verified. The implemented s
 
 Phase 6 portability and hardening is implemented and verified. The V1 local product now includes import preview/hardening, Backup/Progress/Teacher Context exports, non-destructive Backup restore for Pack manifests, accessibility/responsive audit coverage, baseline security headers, security audit documentation and deployment preparation within local-only guardrails.
 
-Production deployment is live at `https://know-os.vercel.app` using the ADR 0015 stack: Vercel, Neon Postgres and Auth.js Google OAuth. Step 2 implementation includes the Auth.js Google foundation, production environment contract, central session guard and Neon/Vercel runbook. Neon migrations have been applied and unauthenticated production smoke checks pass. The sign-in surface now uses the custom `/auth/signin` page following the KNOW/OS Design System, and Google OAuth requests include `prompt=select_account` so account selection is explicit. After a Google `invalid_client` response, Vercel Production OAuth/Auth environment values were re-applied from ignored local values, production was redeployed and the Google page was verified without `invalid_client`. A design-system motion pass now applies approved short motion tokens to app shell, sign-in and recurring content primitives while preserving reduced-motion behavior. Step 3 adds a real `/import` product surface for example/paste/file Track Pack activation with preview-before-apply semantics, deploys it to production and validates the first production learning loop at service level. ADR 0014 keeps append-only user-state replay/merge out of V1 restore.
+Production deployment is live at `https://know-os.vercel.app` using the ADR 0015 stack: Vercel, Neon Postgres and Auth.js Google OAuth. Step 2 implementation includes the Auth.js Google foundation, production environment contract, central session guard and Neon/Vercel runbook. Neon migrations have been applied and unauthenticated production smoke checks pass. The sign-in surface now uses the custom `/auth/signin` page following the KNOW/OS Design System, and Google OAuth requests include `prompt=select_account` so account selection is explicit. After a Google `invalid_client` response, Vercel Production OAuth/Auth environment values were re-applied from ignored local values, production was redeployed and the Google page was verified without `invalid_client`. A design-system motion pass now applies approved short motion tokens to app shell, sign-in and recurring content primitives while preserving reduced-motion behavior. Step 3 adds a real `/import` product surface for example/paste/file Track Pack activation with preview-before-apply semantics, deploys it to production and validates the first production learning loop at service level. Step 4 adds and runs guarded real-PostgreSQL validation through a disposable schema, covering checked-in migrations plus import/RUN/SUBMIT/progress behavior without touching production application tables. ADR 0014 keeps append-only user-state replay/merge out of V1 restore.
 
 ## Agent operating mode
 
@@ -128,7 +128,7 @@ Codex may progress through approved V1 roadmap phases without routine user confi
 
 ## Not implemented
 
-Authenticated owner browser walkthrough/polish after service-level production validation, external sync, full user-state replay/merge restore, persisted badge award tables and persisted mission progress tables.
+Authenticated owner browser walkthrough/polish after service-level production validation, external sync, full user-state replay/merge restore, persisted badge award tables, persisted mission progress tables, final CSP and public Pack distribution/versioning policy.
 
 ## Verification
 
@@ -155,6 +155,19 @@ production smoke `/api/import/track/example` — passed, 401 Unauthorized.
 production Track Pack import through application service — passed, imported `know-os.javascript-fundamentals` version `1`, `track=javascript`, `lessons=1`, `activities=2`.
 production vertical-slice service validation — passed: catalog read `tracks=1`; RUN completed without recording an attempt; both activity submissions passed; lesson progress `2/2`; track progress `1/1`; study history has 2 submission events; exports expose `backup`, `progress`, `teacher_context`.
 production progress readback script — passed, lesson progress `passed=2/2 attempted=2`, track progress `completedLessons=1/1 passed=2/2 attempted=2`.
+```
+
+Latest Step 4 real PostgreSQL validation results:
+
+```text
+pnpm exec vitest run tests/integration/real-postgres.test.ts — passed with 1 skipped file/test when the real-Postgres flag is absent; normal unit/integration suite does not access external PostgreSQL.
+pnpm test:postgres — initially failed on Windows runner `spawn EINVAL`; fixed runner shell handling.
+pnpm test:postgres — then failed on real PostgreSQL FK references from generated migrations qualifying `"public".*` while testing in a disposable schema; fixed the harness to rebind those FK references to the disposable schema at runtime.
+pnpm test:postgres — passed, 1 test against configured real PostgreSQL URL from ignored local env; applied 7 migrations in `know_os_real_pg_*`, imported 1 track and 2 activities, verified RUN records 0 attempts, SUBMIT records 1 attempt and progress read models update.
+pnpm typecheck — passed.
+pnpm lint — passed.
+pnpm test — passed, 29 files and 72 tests, plus 1 skipped real-Postgres file/test.
+pnpm build — passed.
 ```
 
 Latest Step 2.9 motion pass results:
@@ -347,7 +360,7 @@ Do not run `pnpm typecheck` concurrently with `pnpm build`; Next mutates generat
 
 ## Next milestone
 
-Step 4 — authenticated UI walkthrough and first-use polish: sign in at `https://know-os.vercel.app`, verify `/import`, `/tracks`, `/tracks/javascript`, `/lessons/js-fundamentals-001`, `RUN`, `SUBMIT SOLUTION`, `/history` and `/exports` in the browser, then fix only observed UI/UX defects before moving to additional content breadth.
+Step 5 — security publication hardening: add dependency vulnerability scanning, define a production CSP candidate and validate security headers against current Auth.js/Google/Vercel behavior.
 
 ## Risk register
 
@@ -358,10 +371,10 @@ Step 4 — authenticated UI walkthrough and first-use polish: sign in at `https:
 - High autonomy must remain bounded to the repository and approved V1 scope.
 - Local checkpoint commits are now available after Git initialization. External push still requires user confirmation.
 - Playwright uses port `3210`; port `3000` was already serving another local app during validation.
-- No real local PostgreSQL service is available outside `.env.local`; production database is Neon and destructive writes require explicit confirmation.
+- No real local PostgreSQL service is available outside `.env.local`; `pnpm test:postgres` validates the configured PostgreSQL service through a disposable schema and destructive production database operations remain out of scope.
 - Playwright uses `memory://local` because PGlite works for Vitest/Drizzle integration but cannot be bundled reliably inside the Next dev server.
 - Backup restore applies Pack manifests only in V1. User-state replay/merge is intentionally blocked by ADR 0014 until a conflict-safe append-only restore policy exists.
 
 ## NEXT ACTION
 
-Step 4 — authenticated UI walkthrough and first-use polish: sign in at `https://know-os.vercel.app`, verify `/import`, `/tracks`, `/tracks/javascript`, `/lessons/js-fundamentals-001`, `RUN`, `SUBMIT SOLUTION`, `/history` and `/exports` in the browser, then fix only observed UI/UX defects before moving to additional content breadth.
+Step 5 — security publication hardening: add dependency vulnerability scanning, define a production CSP candidate and validate security headers against current Auth.js/Google/Vercel behavior.
