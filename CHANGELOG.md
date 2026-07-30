@@ -56,6 +56,7 @@ The format follows Keep a Changelog principles. Product versions will follow Sem
 - Production Auth.js `AUTH_TRUST_HOST` environment contract for Vercel proxy deployment.
 - Custom Auth.js sign-in page at `/auth/signin` using the KNOW/OS Design System and Google account selection via `prompt=select_account`.
 - Design-system motion pass for the app shell, sign-in surface and recurring content primitives, including Playwright coverage for normal and reduced-motion modes.
+- Product import surface at `/import` with bundled example loading, paste/file JSON input, preview-before-apply behavior and E2E coverage.
 - Zod server-environment validation.
 - Vitest, Testing Library and Playwright smoke coverage.
 - GitHub Actions baseline CI and separate Playwright E2E workflow.
@@ -72,6 +73,7 @@ The format follows Keep a Changelog principles. Product versions will follow Sem
 - Production deployment status now reflects the live Vercel + Neon + Google OAuth path and remaining manual owner-login validation.
 - Production Google OAuth environment values were re-applied in Vercel after a Google `invalid_client` response, then redeployed and smoke-tested without exposing secrets.
 - App interaction states now consume approved motion tokens for short reveal, hover, active, focus-within and state feedback rather than rendering as fully static surfaces.
+- Empty Today and Tracks states now route users to the import product surface instead of asking them to call an API endpoint manually.
 - Initial Codex prompt now authorizes phase-by-phase V1 execution instead of stopping after Phase 0.
 - `AGENTS.md`, `PLANS.md`, `PROJECT_STATUS.md`, `README.md`, `START-HERE.md`, and roadmap now support high-autonomy execution with repository guardrails.
 

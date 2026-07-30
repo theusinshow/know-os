@@ -11,7 +11,8 @@ import {
   Map,
   RotateCcw,
   ShieldCheck,
-  TriangleAlert
+  TriangleAlert,
+  Upload
 } from "lucide-react";
 import type { ReactNode } from "react";
 
@@ -48,6 +49,10 @@ export function AppShell({ children }: Readonly<{ children: ReactNode }>) {
           <Link className="nav-link" href="/tracks">
             <BookOpen aria-hidden="true" />
             <span>Trilhas</span>
+          </Link>
+          <Link className="nav-link" href="/import">
+            <Upload aria-hidden="true" />
+            <span>Importar</span>
           </Link>
           <Link className="nav-link" href="/history">
             <History aria-hidden="true" />

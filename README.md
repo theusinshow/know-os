@@ -9,7 +9,7 @@ KNOW/OS é um sistema pessoal para estruturar aprendizado, prática, revisão e 
 - Fase atual: **V1 publicado em produção com Neon Postgres, Vercel e Auth.js Google OAuth**.
 - Design System oficial: `design-system/`, versão 2.2.
 - Implementação: Next.js App Router com TypeScript strict, Tailwind, token pipeline, shell acessível, fundação Drizzle/PostgreSQL, Zod, Vitest, Testing Library, Playwright e CI.
-- V1 local implementado e verificado: importar conteúdo, navegar por trilhas/lições/conceitos, executar JavaScript com RUN, registrar tentativa com SUBMIT SOLUTION, reabrir feedback persistido, ver progresso, histórico, contrato de runtime, stdout/stderr/testes, diff da tentativa, atividade inicial de debug, mastery determinístico, agenda de review, erros categorizados, projetos opcionais, XP/ranks/badges/missões, mapa de conhecimento acessível, recomendações locais, preview de import/export/restore, exports Backup/Progress/Teacher Context, auditoria de acessibilidade e preparação de segurança/deploy local.
+- V1 local implementado e verificado: importar conteúdo por `/import`, navegar por trilhas/lições/conceitos, executar JavaScript com RUN, registrar tentativa com SUBMIT SOLUTION, reabrir feedback persistido, ver progresso, histórico, contrato de runtime, stdout/stderr/testes, diff da tentativa, atividade inicial de debug, mastery determinístico, agenda de review, erros categorizados, projetos opcionais, XP/ranks/badges/missões, mapa de conhecimento acessível, recomendações locais, preview de import/export/restore, exports Backup/Progress/Teacher Context, auditoria de acessibilidade e preparação de segurança/deploy local.
 - Modo de execução do Codex: **autonomia elevada com limites de repositório**.
 
 ## Desenvolvimento local
@@ -89,7 +89,7 @@ O callback Google OAuth deve terminar em `/api/auth/callback/google`, por exempl
 
 Com um banco migrado ou com o harness Playwright:
 
-1. `POST /api/import/track` importa `packs/examples/javascript-fundamentals.track.json`.
+1. `/import` carrega o Pack exemplo ou aceita JSON colado/selecionado, executa preview e aplica o Track Pack válido.
 2. `/tracks` lista trilhas importadas.
 3. `/lessons/js-fundamentals-001` abre a atividade de código.
 4. `RUN` executa sem registrar Attempt.
@@ -112,6 +112,7 @@ Com um banco migrado ou com o harness Playwright:
 
 - `POST /api/import/track/preview` valida e resume um Track Pack antes de mutação.
 - `POST /api/import/track` aplica limite de tamanho, validação e conflito por hash de conteúdo.
+- `GET /api/import/track/example` entrega o Pack exemplo versionado para ativação inicial pela UI protegida.
 - `GET /api/export/preview` e `GET /api/export` produzem contratos JSON `know-os.export.v1`.
 - `POST /api/restore/preview` valida Backups e lista categorias.
 - `POST /api/restore` aplica manifests de Pack de forma não destrutiva. O Backup preserva categorias de estado do usuário, mas ADR 0014 deixa replay/merge de estado append-only fora do restore V1.

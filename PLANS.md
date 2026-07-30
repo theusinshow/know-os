@@ -71,6 +71,15 @@ Prepare the completed local V1 for a production path one explicit step at a time
   - Add state feedback for hover, focus, active, reveals and status changes without continuous decorative animation.
   - Preserve `prefers-reduced-motion`, focus visibility and the technical-brutalist visual direction.
   - Validated lint, typecheck, build, focused Playwright motion/accessibility/auth smoke and local screenshot capture before push/deployment.
+- [x] 3.1 Product import activation.
+  - Add a real `/import` product surface for Track Pack JSON instead of instructing users to call `POST /api/import/track`.
+  - Support loading the bundled example Pack, paste/file JSON input, server preview, conflict/error feedback and apply-only-after-valid-preview behavior.
+  - Link empty Today/Tracks states and primary navigation to the import flow.
+- [ ] 3.2 Production import and vertical-slice validation.
+  - Deploy the `/import` product surface.
+  - Use the protected production UI/API to import the bundled JavaScript example Pack.
+  - Validate `/tracks`, `/tracks/javascript`, `/lessons/js-fundamentals-001`, RUN/SUBMIT behavior and `/exports` after import.
+  - Record exact production smoke results, checkpoint and continue.
 
 ### Planned increments
 

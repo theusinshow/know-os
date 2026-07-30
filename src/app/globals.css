@@ -629,6 +629,77 @@ a {
   gap: var(--kos-spacing-8);
 }
 
+.import-workspace {
+  display: grid;
+  gap: var(--kos-spacing-8);
+  margin-top: var(--kos-spacing-12);
+}
+
+.import-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--kos-spacing-6);
+}
+
+.import-file-action {
+  width: fit-content;
+}
+
+.visually-hidden-file {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.import-source {
+  min-height: 340px;
+}
+
+.import-preview {
+  display: grid;
+  gap: var(--kos-spacing-6);
+  border: var(--kos-border-rule) solid var(--kos-color-ink);
+  background: var(--kos-color-paper);
+  box-shadow: var(--kos-shadow-pressed);
+  padding: var(--kos-spacing-8);
+  animation: kos-state-enter var(--kos-motion-base) var(--kos-motion-easing);
+}
+
+.import-summary {
+  display: grid;
+  gap: var(--kos-spacing-4);
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  margin: 0;
+}
+
+.import-summary div {
+  border-top: var(--kos-border-hair) solid var(--kos-color-ink);
+  padding-top: var(--kos-spacing-4);
+}
+
+.import-summary dt,
+.import-summary dd {
+  margin: 0;
+}
+
+.import-summary dt {
+  font-family: var(--kos-typography-technical-family), monospace;
+  font-size: var(--kos-typography-technical-sizes-xs);
+  font-weight: var(--kos-typography-technical-weights-bold);
+  letter-spacing: var(--kos-typography-technical-tracking);
+  text-transform: uppercase;
+}
+
+.import-summary dd {
+  margin-top: var(--kos-spacing-2);
+  color: var(--kos-color-dim);
+  font-size: var(--kos-typography-body-sizes-sm);
+}
+
 .activity-panel {
   border: var(--kos-border-rule) solid var(--kos-color-ink);
   background: var(--kos-color-paper);
@@ -1218,6 +1289,7 @@ a {
   .terminal-panel,
   .execution-meta div,
   .terminal-stream,
+  .import-preview,
   .test-results li,
   .attempt-diff li,
   .auth-panel,

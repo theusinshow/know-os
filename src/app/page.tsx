@@ -25,6 +25,9 @@ export default async function HomePage() {
           <div className="lesson-callout" role="status">
             <strong>Nenhuma ação disponível.</strong>
             <span>Importe uma trilha para iniciar recomendações locais.</span>
+            <Link className="secondary-action" href="/import">
+              Abrir importação
+            </Link>
           </div>
         )}
 

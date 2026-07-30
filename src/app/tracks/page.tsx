@@ -16,7 +16,13 @@ export default async function TracksPage() {
         {tracks.status === "not_configured" ? (
           <p>Configure `DATABASE_URL` ou use `pglite://memory` em desenvolvimento para importar conteúdo.</p>
         ) : tracks.items.length === 0 ? (
-          <p>Nenhuma trilha importada. Use o endpoint `POST /api/import/track` com um Track Pack válido.</p>
+          <div className="lesson-callout" role="status">
+            <strong>Nenhuma trilha importada.</strong>
+            <span>Use a tela de importação para validar o Pack antes de aplicar ao catálogo.</span>
+            <Link className="secondary-action" href="/import">
+              Importar Track Pack
+            </Link>
+          </div>
         ) : (
           <ul className="record-list" aria-label="Trilhas disponíveis">
             {tracks.items.map((track) => (
