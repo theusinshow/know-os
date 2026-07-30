@@ -1,0 +1,26 @@
+import type { ServerEnv } from "@/lib/env";
+
+import { isAllowedGoogleEmail, isGoogleAuthConfigured } from "./auth-readiness";
+
+export type AuthGuardDecision = "allow" | "unauthenticated" | "forbidden";
+
+export function getAuthGuardDecision(email: string | null | undefined, env: ServerEnv): AuthGuardDecision {
+  if (!isGoogleAuthConfigured(env)) {
+    return "allow";
+  }
+
+  if (!email) {
+    return "unauthenticated";
+  }
+
+  return isAllowedGoogleEmail(email, env) ? "allow" : "forbidden";
+}
+
+export function isPublicRuntimePath(pathname: string) {
+  return (
+    pathname.startsWith("/api/auth") ||
+    pathname === "/api/health/db" ||
+    pathname.startsWith("/branding/") ||
+    pathname === "/favicon.ico"
+  );
+}

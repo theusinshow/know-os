@@ -54,8 +54,9 @@ Prepare the completed local V1 for a production path one explicit step at a time
 - [x] 2.4 Auth foundation.
   - Add Auth.js dependencies, Google provider route and server auth helpers.
   - Installed `next-auth@5.0.0-beta.32`, added `src/auth.ts`, `/api/auth/[...nextauth]` and auth readiness helpers/tests.
-- [ ] 2.5 Owner resolution and route/API protection.
+- [x] 2.5 Owner resolution and route/API protection.
   - Map allowed Google account to `KNOW_OS_OWNER_ID`; protect user-state pages and private/mutating APIs in production mode.
+  - Added central middleware guard: local mode stays open when Google auth is absent; configured Google OAuth mode requires an allowed session for private pages and APIs.
 - [ ] 2.6 Neon migration/deployment runbook.
   - Document Neon/Vercel setup, migration command path and health-check expectations without committing secrets.
 - [ ] 2.7 Validation, commit and push.
@@ -503,6 +504,12 @@ Add timestamped commands and exact outcomes during implementation.
 2026-07-30 BRT — pnpm typecheck: passed for Step 2.4.
 2026-07-30 BRT — pnpm lint: passed for Step 2.4.
 2026-07-30 BRT — pnpm build: passed for Step 2.4; `/api/auth/[...nextauth]` built as a dynamic route.
+2026-07-30 BRT — pnpm exec vitest run tests/unit/session-guard.test.ts tests/unit/auth-readiness.test.ts tests/unit/env.test.ts: passed, 3 files and 10 tests for Step 2.5.
+2026-07-30 BRT — pnpm typecheck: passed for Step 2.5.
+2026-07-30 BRT — pnpm lint: passed for Step 2.5.
+2026-07-30 BRT — pnpm build: passed for Step 2.5; middleware/proxy included in build output.
+2026-07-30 BRT — pnpm test:e2e: passed for Step 2.5, 12 tests; local no-OAuth harness remains operable.
+2026-07-30 BRT — pnpm test: passed for Step 2.5, 28 files and 70 tests.
 ```
 
 ## Blockers
@@ -514,4 +521,4 @@ No real local PostgreSQL service is available (`DATABASE_URL` empty, no `psql`, 
 
 ## NEXT ACTION
 
-Continue Step 2.5: map allowed Google sessions to `KNOW_OS_OWNER_ID` and protect private user-state pages and APIs in production mode. Do not add real secrets or deploy.
+Continue Step 2.6: write the Neon/Vercel migration and deployment runbook without creating external resources or committing secrets.
