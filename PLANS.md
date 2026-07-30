@@ -537,6 +537,11 @@ Add timestamped commands and exact outcomes during implementation.
 2026-07-30 BRT — pnpm test: passed for custom sign-in gate, 29 files and 72 tests.
 2026-07-30 BRT — pnpm build: passed for custom sign-in gate; `/auth/signin` built as a dynamic route.
 2026-07-30 BRT — pnpm test:e2e: passed for custom sign-in gate, 14 Playwright tests across desktop Chromium and mobile Chrome.
+2026-07-30 BRT — git commit -m "Add custom Google sign-in surface": passed, commit `dc236a3`.
+2026-07-30 BRT — git push origin main: passed, pushed `dc236a3`.
+2026-07-30 BRT — vercel --prod --yes: passed after custom sign-in, deployment ready and aliased to `https://know-os.vercel.app`.
+2026-07-30 BRT — production smoke after custom sign-in: `/api/health/db` returned 200, `/` returned 307 to `/auth/signin`, `/auth/signin` returned 200, `/api/export/preview` returned 401 unauthenticated.
+2026-07-30 BRT — production Google OAuth redirect request after custom sign-in: passed, observed `accounts.google.com` request with `prompt=select_account`.
 ```
 
 ## Blockers
@@ -548,4 +553,4 @@ Interactive Google sign-in with the allowed owner account still requires browser
 
 ## NEXT ACTION
 
-Commit and push the custom sign-in fix, redeploy production and smoke-test `/auth/signin` plus Google account-selection redirect.
+Complete manual browser validation: sign in at `https://know-os.vercel.app` with the allowed Google account, confirm the account chooser appears, import the example Track Pack, run `RUN`, submit with `SUBMIT SOLUTION`, then verify history/export behavior.
