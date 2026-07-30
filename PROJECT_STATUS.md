@@ -128,7 +128,7 @@ Codex may progress through approved V1 roadmap phases without routine user confi
 
 ## Not implemented
 
-Auth.js route/helper implementation, public production deployment, external sync, full user-state replay/merge restore, persisted badge award tables and persisted mission progress tables.
+Route/API auth protection, public production deployment, external sync, full user-state replay/merge restore, persisted badge award tables and persisted mission progress tables.
 
 ## Verification
 
@@ -277,7 +277,7 @@ Do not run `pnpm typecheck` concurrently with `pnpm build`; Next mutates generat
 
 ## Next milestone
 
-Continue Step 2.4: add Auth.js dependencies, Google provider route and server-side auth helpers without adding real secrets or deploying.
+Continue Step 2.5: map allowed Google sessions to `KNOW_OS_OWNER_ID` and protect private user-state pages and APIs in production mode. Do not add real secrets or deploy.
 
 ## Risk register
 
@@ -294,4 +294,4 @@ Continue Step 2.4: add Auth.js dependencies, Google provider route and server-si
 
 ## NEXT ACTION
 
-Continue Step 2.4: add Auth.js dependencies, Google provider route and server-side auth helpers. Do not add real secrets or deploy.
+Continue Step 2.5: map allowed Google sessions to `KNOW_OS_OWNER_ID` and protect private user-state pages and APIs in production mode. Do not add real secrets or deploy.

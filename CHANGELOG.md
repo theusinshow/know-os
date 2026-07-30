@@ -49,6 +49,7 @@ The format follows Keep a Changelog principles. Product versions will follow Sem
 - Phase 6 security audit, deployment preparation document and ADR 0013 for the production authentication/session stop condition.
 - ADR 0015 selecting Vercel, Neon Postgres and Auth.js Google OAuth as the production preparation stack.
 - Step 2.3 production environment contract for Auth.js Google OAuth and Neon/Vercel readiness placeholders.
+- Step 2.4 Auth.js v5 foundation with Google provider route, readiness helpers and tests.
 - Zod server-environment validation.
 - Vitest, Testing Library and Playwright smoke coverage.
 - GitHub Actions baseline CI and separate Playwright E2E workflow.

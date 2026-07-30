@@ -51,8 +51,9 @@ Prepare the completed local V1 for a production path one explicit step at a time
 - [x] 2.3 Environment contract.
   - Update `.env.example`, `src/lib/env.ts`, deployment docs and tests for `AUTH_SECRET`, `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, `KNOW_OS_ALLOWED_GOOGLE_EMAILS`, `APP_URL`, `DATABASE_URL` and `KNOW_OS_OWNER_ID`.
   - Implemented optional local auth env parsing, Google e-mail allowlist parsing, `.env.example` placeholders and README/deployment docs.
-- [ ] 2.4 Auth foundation.
+- [x] 2.4 Auth foundation.
   - Add Auth.js dependencies, Google provider route and server auth helpers.
+  - Installed `next-auth@5.0.0-beta.32`, added `src/auth.ts`, `/api/auth/[...nextauth]` and auth readiness helpers/tests.
 - [ ] 2.5 Owner resolution and route/API protection.
   - Map allowed Google account to `KNOW_OS_OWNER_ID`; protect user-state pages and private/mutating APIs in production mode.
 - [ ] 2.6 Neon migration/deployment runbook.
@@ -494,6 +495,14 @@ Add timestamped commands and exact outcomes during implementation.
 2026-07-30 BRT — Step 2.2 ADR: added ADR 0015 for the production preparation stack and updated deployment/status/changelog docs.
 2026-07-30 BRT — pnpm exec vitest run tests/unit/env.test.ts tests/integration/db-health.test.ts: passed, 2 files and 6 tests for Step 2.3 environment contract.
 2026-07-30 BRT — pnpm typecheck: passed for Step 2.3 environment contract.
+2026-07-30 BRT — npm view next-auth version: passed, stable is 4.24.15.
+2026-07-30 BRT — npm view next-auth@beta version: passed, Auth.js v5 package is 5.0.0-beta.32.
+2026-07-30 BRT — pnpm add next-auth@5.0.0-beta.32: passed; lockfile updated.
+2026-07-30 BRT — pnpm peers check: failed on existing transitive `@emnapi/*` peer warnings from `@napi-rs/wasm-runtime`; no NextAuth-specific peer issue found.
+2026-07-30 BRT — pnpm exec vitest run tests/unit/auth-readiness.test.ts tests/unit/env.test.ts: passed, 2 files and 6 tests for Step 2.4.
+2026-07-30 BRT — pnpm typecheck: passed for Step 2.4.
+2026-07-30 BRT — pnpm lint: passed for Step 2.4.
+2026-07-30 BRT — pnpm build: passed for Step 2.4; `/api/auth/[...nextauth]` built as a dynamic route.
 ```
 
 ## Blockers
@@ -505,4 +514,4 @@ No real local PostgreSQL service is available (`DATABASE_URL` empty, no `psql`, 
 
 ## NEXT ACTION
 
-Continue Step 2.4: add Auth.js dependencies, Google provider route and server-side auth helpers. Do not add real secrets or deploy.
+Continue Step 2.5: map allowed Google sessions to `KNOW_OS_OWNER_ID` and protect private user-state pages and APIs in production mode. Do not add real secrets or deploy.
