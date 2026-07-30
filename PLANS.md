@@ -48,8 +48,9 @@ Prepare the completed local V1 for a production path one explicit step at a time
   - Accepted stack: Vercel hosting, Neon Postgres, Auth.js with Google OAuth.
 - [x] 2.2 Record production stack ADR.
   - Added ADR 0015 for Vercel + Neon + Google OAuth, single-owner e-mail allowlist and owner mapping.
-- [ ] 2.3 Environment contract.
+- [x] 2.3 Environment contract.
   - Update `.env.example`, `src/lib/env.ts`, deployment docs and tests for `AUTH_SECRET`, `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, `KNOW_OS_ALLOWED_GOOGLE_EMAILS`, `APP_URL`, `DATABASE_URL` and `KNOW_OS_OWNER_ID`.
+  - Implemented optional local auth env parsing, Google e-mail allowlist parsing, `.env.example` placeholders and README/deployment docs.
 - [ ] 2.4 Auth foundation.
   - Add Auth.js dependencies, Google provider route and server auth helpers.
 - [ ] 2.5 Owner resolution and route/API protection.
@@ -491,6 +492,8 @@ Add timestamped commands and exact outcomes during implementation.
 2026-07-30 BRT — git commit -m "Initial KNOW/OS V1 implementation": passed; initial local checkpoint created.
 2026-07-30 BRT — Step 2.1 stack decision: user approved Vercel + Neon Postgres + Auth.js Google OAuth.
 2026-07-30 BRT — Step 2.2 ADR: added ADR 0015 for the production preparation stack and updated deployment/status/changelog docs.
+2026-07-30 BRT — pnpm exec vitest run tests/unit/env.test.ts tests/integration/db-health.test.ts: passed, 2 files and 6 tests for Step 2.3 environment contract.
+2026-07-30 BRT — pnpm typecheck: passed for Step 2.3 environment contract.
 ```
 
 ## Blockers
@@ -502,4 +505,4 @@ No real local PostgreSQL service is available (`DATABASE_URL` empty, no `psql`, 
 
 ## NEXT ACTION
 
-Continue Step 2.3: update `.env.example`, `src/lib/env.ts`, deployment docs and tests for Vercel + Neon + Auth.js Google OAuth environment variables. Do not add real secrets.
+Continue Step 2.4: add Auth.js dependencies, Google provider route and server-side auth helpers. Do not add real secrets or deploy.

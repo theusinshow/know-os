@@ -59,6 +59,30 @@ Para testes locais sem PostgreSQL externo:
 
 Esse modo não substitui PostgreSQL de produção.
 
+## Produção planejada
+
+ADR 0015 define a stack de preparação para produção:
+
+- Vercel para hosting.
+- Neon Postgres para `DATABASE_URL`.
+- Auth.js com Google OAuth.
+- Allowlist inicial por e-mail em `KNOW_OS_ALLOWED_GOOGLE_EMAILS`.
+
+Variáveis esperadas para produção:
+
+```text
+DATABASE_URL
+APP_URL
+AUTH_SECRET
+AUTH_GOOGLE_ID
+AUTH_GOOGLE_SECRET
+KNOW_OS_ALLOWED_GOOGLE_EMAILS
+KNOW_OS_OWNER_ID
+LOG_LEVEL
+```
+
+O callback Google OAuth deve terminar em `/api/auth/callback/google`, por exemplo `https://seu-dominio/api/auth/callback/google`. Não commite valores reais de OAuth, banco ou `AUTH_SECRET`.
+
 ## Vertical slice
 
 Com um banco migrado ou com o harness Playwright:

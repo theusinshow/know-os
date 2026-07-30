@@ -128,7 +128,7 @@ Codex may progress through approved V1 roadmap phases without routine user confi
 
 ## Not implemented
 
-Auth.js implementation, public production deployment, external sync, full user-state replay/merge restore, persisted badge award tables and persisted mission progress tables.
+Auth.js route/helper implementation, public production deployment, external sync, full user-state replay/merge restore, persisted badge award tables and persisted mission progress tables.
 
 ## Verification
 
@@ -277,7 +277,7 @@ Do not run `pnpm typecheck` concurrently with `pnpm build`; Next mutates generat
 
 ## Next milestone
 
-Continue Step 2.3: update the environment contract for Vercel + Neon + Auth.js Google OAuth without committing real secrets.
+Continue Step 2.4: add Auth.js dependencies, Google provider route and server-side auth helpers without adding real secrets or deploying.
 
 ## Risk register
 
@@ -294,4 +294,4 @@ Continue Step 2.3: update the environment contract for Vercel + Neon + Auth.js G
 
 ## NEXT ACTION
 
-Continue Step 2.3: update `.env.example`, `src/lib/env.ts`, deployment docs and tests for Vercel + Neon + Auth.js Google OAuth environment variables. Do not add real secrets.
+Continue Step 2.4: add Auth.js dependencies, Google provider route and server-side auth helpers. Do not add real secrets or deploy.
