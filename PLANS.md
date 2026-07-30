@@ -61,7 +61,7 @@ Prepare the completed local V1 for a production path one explicit step at a time
   - Document Neon/Vercel setup, migration command path and health-check expectations without committing secrets.
   - Added `pnpm db:migrate`, migration README notes and `docs/28-PRODUCTION-RUNBOOK.md`.
 - [ ] 2.7 Validation, commit and push.
-  - Run the relevant validation gate, commit locally and ask before push if an external write is needed.
+  - Validation gate passed and local control-file update is in progress. External push remains pending user confirmation.
 
 ### Planned increments
 
@@ -514,15 +514,21 @@ Add timestamped commands and exact outcomes during implementation.
 2026-07-30 BRT — pnpm exec drizzle-kit migrate --help: passed; confirmed migration command exists.
 2026-07-30 BRT — pnpm install --frozen-lockfile: passed for Step 2.6, already up to date after script/doc changes.
 2026-07-30 BRT — pnpm typecheck: passed for Step 2.6.
+2026-07-30 BRT — pnpm install --frozen-lockfile: passed for Step 2.7 final gate, already up to date.
+2026-07-30 BRT — pnpm lint: passed for Step 2.7 final gate.
+2026-07-30 BRT — pnpm typecheck: passed for Step 2.7 final gate.
+2026-07-30 BRT — pnpm test: passed for Step 2.7 final gate, 28 files and 70 tests.
+2026-07-30 BRT — pnpm build: passed for Step 2.7 final gate; generated 150 design tokens and built Auth.js route plus middleware/proxy.
+2026-07-30 BRT — pnpm test:e2e: passed for Step 2.7 final gate, 12 Playwright tests across desktop Chromium and mobile Chrome.
 ```
 
 ## Blockers
 
 ```text
-Local checkpoint commits are unavailable because `.git/` is absent. This does not block Phase 3 implementation, but must be reported at every phase gate until Git is initialized.
 No real local PostgreSQL service is available (`DATABASE_URL` empty, no `psql`, no Docker, no running `postgres`). Phase 1 repository behavior is covered by Drizzle/PGlite integration tests; Playwright uses the disposable `memory://local` repository harness because PGlite cannot be bundled reliably inside the Next dev server.
+External push requires explicit user confirmation for the Step 2 commits.
 ```
 
 ## NEXT ACTION
 
-Continue Step 2.7: run the full validation gate, commit locally, then request confirmation before pushing external changes.
+Commit this Step 2.7 control-file update locally, then request confirmation before pushing the Step 2 production-readiness commits to GitHub.

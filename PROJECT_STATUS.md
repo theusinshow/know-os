@@ -4,7 +4,7 @@ Last updated: 2026-07-30
 
 ## Current phase
 
-`V1 LOCAL ROADMAP COMPLETE — STEP 2 PRODUCTION READINESS IN PROGRESS`
+`V1 LOCAL ROADMAP COMPLETE — STEP 2 PRODUCTION READINESS VALIDATED LOCALLY`
 
 Phase 0 repository foundation is implemented and verified. The repository now contains a Next.js App Router scaffold with TypeScript strict mode, Tailwind/token generation, minimal accessible shell, Drizzle/PostgreSQL foundation, Zod validation, Vitest/Testing Library/Playwright smoke tests and GitHub Actions CI.
 
@@ -20,7 +20,7 @@ Phase 5 projects and gamification is implemented and verified. The implemented s
 
 Phase 6 portability and hardening is implemented and verified. The V1 local product now includes import preview/hardening, Backup/Progress/Teacher Context exports, non-destructive Backup restore for Pack manifests, accessibility/responsive audit coverage, baseline security headers, security audit documentation and deployment preparation within local-only guardrails.
 
-No public production deployment is authorized. ADR 0013 requires a dedicated authentication/session decision and threat review before internet-accessible hosting. ADR 0015 now selects Vercel, Neon Postgres and Auth.js Google OAuth for production preparation. ADR 0014 keeps append-only user-state replay/merge out of V1 restore.
+No public production deployment is authorized. ADR 0013 requires a dedicated authentication/session decision and threat review before internet-accessible hosting. ADR 0015 selects Vercel, Neon Postgres and Auth.js Google OAuth for production preparation. Local Step 2 implementation now includes the Auth.js Google foundation, production environment contract, central session guard and Neon/Vercel runbook. ADR 0014 keeps append-only user-state replay/merge out of V1 restore.
 
 ## Agent operating mode
 
@@ -128,7 +128,7 @@ Codex may progress through approved V1 roadmap phases without routine user confi
 
 ## Not implemented
 
-Final Step 2 validation/push, public production deployment, external sync, full user-state replay/merge restore, persisted badge award tables and persisted mission progress tables.
+Step 2 external push, public production deployment, external sync, full user-state replay/merge restore, persisted badge award tables and persisted mission progress tables.
 
 ## Verification
 
@@ -271,19 +271,25 @@ pnpm test for final V1 gate — passed, 25 files and 60 tests.
 pnpm build for final V1 gate — passed, generated 150 design tokens and built all implemented routes.
 pnpm test:e2e for final V1 gate — passed, 12 tests across desktop Chromium and mobile Chrome.
 git status --short --branch for final checkpoint — failed because this checkout has no .git directory.
+pnpm install --frozen-lockfile for Step 2 final gate — passed, already up to date.
+pnpm lint for Step 2 final gate — passed.
+pnpm typecheck for Step 2 final gate — passed.
+pnpm test for Step 2 final gate — passed, 28 files and 70 tests.
+pnpm build for Step 2 final gate — passed, generated 150 design tokens and built Auth.js route plus middleware/proxy.
+pnpm test:e2e for Step 2 final gate — passed, 12 tests across desktop Chromium and mobile Chrome.
 ```
 
 Do not run `pnpm typecheck` concurrently with `pnpm build`; Next mutates generated `.next` types during build.
 
 ## Next milestone
 
-Continue Step 2.7: run the full validation gate, commit locally, then request confirmation before pushing external changes.
+Push the validated Step 2 production-readiness commits to GitHub after explicit user confirmation.
 
 ## Risk register
 
 - Browser code execution is isolated through the current QuickJS child-process adapter, but any broader runtime support needs a fresh threat review.
 - Pack versioning must be finalized before public content distribution.
-- Authentication implementation is intentionally deferred from local V1 and blocks public deployment until Step 2 auth work is complete and validated.
+- Production authentication is locally implemented but not externally configured; public deployment remains blocked until real Google OAuth, Vercel and Neon settings are created and validated.
 - Gamification must not distort mastery or reward empty activity.
 - High autonomy must remain bounded to the repository and approved V1 scope.
 - Local checkpoint commits are now available after Git initialization. External push still requires user confirmation.
@@ -294,4 +300,4 @@ Continue Step 2.7: run the full validation gate, commit locally, then request co
 
 ## NEXT ACTION
 
-Continue Step 2.7: run the full validation gate, commit locally, then request confirmation before pushing external changes.
+Push the validated Step 2 production-readiness commits to GitHub after explicit user confirmation.
