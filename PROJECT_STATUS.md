@@ -4,7 +4,7 @@ Last updated: 2026-07-30
 
 ## Current phase
 
-`V1 RESTORE DRY-RUN UI IMPLEMENTED — USER-STATE APPLY BLOCKED`
+`V1 CSP NONCE HARDENING IMPLEMENTED — AUTHENTICATED WALKTHROUGH NEXT`
 
 Phase 0 repository foundation is implemented and verified. The repository now contains a Next.js App Router scaffold with TypeScript strict mode, Tailwind/token generation, minimal accessible shell, Drizzle/PostgreSQL foundation, Zod validation, Vitest/Testing Library/Playwright smoke tests and GitHub Actions CI.
 
@@ -20,7 +20,7 @@ Phase 5 projects and gamification is implemented and verified. The implemented s
 
 Phase 6 portability and hardening is implemented and verified. The V1 local product now includes import preview/hardening, Backup/Progress/Teacher Context exports, non-destructive Backup restore for Pack manifests, accessibility/responsive audit coverage, baseline security headers, security audit documentation and deployment preparation within local-only guardrails.
 
-Production deployment is live at `https://know-os.vercel.app` using the ADR 0015 stack: Vercel, Neon Postgres and Auth.js Google OAuth. Step 2 implementation includes the Auth.js Google foundation, production environment contract, central session guard and Neon/Vercel runbook. Neon migrations have been applied and unauthenticated production smoke checks pass. The sign-in surface now uses the custom `/auth/signin` page following the KNOW/OS Design System, and Google OAuth requests include `prompt=select_account` so account selection is explicit. After a Google `invalid_client` response, Vercel Production OAuth/Auth environment values were re-applied from ignored local values, production was redeployed and the Google page was verified without `invalid_client`. A design-system motion pass now applies approved short motion tokens to app shell, sign-in and recurring content primitives while preserving reduced-motion behavior. Step 3 adds a real `/import` product surface for example/paste/file Track Pack activation with preview-before-apply semantics, deploys it to production and validates the first production learning loop at service level. Step 4 adds and runs guarded real-PostgreSQL validation through a disposable schema, covering checked-in migrations plus import/RUN/SUBMIT/progress behavior without touching production application tables. Step 5 adds production dependency vulnerability scanning, patched transitive runtime overrides and an enforced CSP candidate with Playwright coverage. Step 6 adds a Pack publication catalog and verifier so the accepted example Pack has immutable schema/ID/version/hash metadata before broader distribution. Step 7 adds persisted gamification projections for badge awards, mission progress and mission status-change audit events while keeping XP/review/mistake/mastery rules authoritative. Step 8 accepts ADR 0016 for conflict-safe full user-state restore replay policy. Step 9 implements the restore provenance schema foundation and a blocked `user_state_dry_run` plan in restore preview. Step 10 exposes that dry-run plan in `/exports` with product UI coverage; append-only user-state replay/merge remains blocked until a future explicit apply mode is approved and implemented.
+Production deployment is live at `https://know-os.vercel.app` using the ADR 0015 stack: Vercel, Neon Postgres and Auth.js Google OAuth. Step 2 implementation includes the Auth.js Google foundation, production environment contract, central session guard and Neon/Vercel runbook. Neon migrations have been applied and unauthenticated production smoke checks pass. The sign-in surface now uses the custom `/auth/signin` page following the KNOW/OS Design System, and Google OAuth requests include `prompt=select_account` so account selection is explicit. After a Google `invalid_client` response, Vercel Production OAuth/Auth environment values were re-applied from ignored local values, production was redeployed and the Google page was verified without `invalid_client`. A design-system motion pass now applies approved short motion tokens to app shell, sign-in and recurring content primitives while preserving reduced-motion behavior. Step 3 adds a real `/import` product surface for example/paste/file Track Pack activation with preview-before-apply semantics, deploys it to production and validates the first production learning loop at service level. Step 4 adds and runs guarded real-PostgreSQL validation through a disposable schema, covering checked-in migrations plus import/RUN/SUBMIT/progress behavior without touching production application tables. Step 5 adds production dependency vulnerability scanning, patched transitive runtime overrides and an enforced CSP candidate with Playwright coverage. Step 6 adds a Pack publication catalog and verifier so the accepted example Pack has immutable schema/ID/version/hash metadata before broader distribution. Step 7 adds persisted gamification projections for badge awards, mission progress and mission status-change audit events while keeping XP/review/mistake/mastery rules authoritative. Step 8 accepts ADR 0016 for conflict-safe full user-state restore replay policy. Step 9 implements the restore provenance schema foundation and a blocked `user_state_dry_run` plan in restore preview. Step 10 exposes that dry-run plan in `/exports` with product UI coverage. Step 11 moves the central guard to the Next.js 16 `src/proxy.ts` convention and applies nonce-bearing CSP to runtime responses; append-only user-state replay/merge remains blocked until a future explicit apply mode is approved and implemented.
 
 ## Agent operating mode
 
@@ -143,6 +143,13 @@ Codex may progress through approved V1 roadmap phases without routine user confi
 - No apply action exists for attempts, XP, history, mistakes, reviews or gamification projections.
 - Component and contract coverage verify the UI readout and missing Pack manifest blocker behavior.
 
+## Implemented in Step 11
+
+- Central auth/session and runtime header guard now lives in `src/proxy.ts`, matching the Next.js 16 file convention for this `src/app` layout.
+- Runtime responses receive a per-request CSP nonce and `x-nonce` request header for dynamic rendering.
+- Production `script-src` no longer includes `unsafe-inline` or `unsafe-eval`; local development keeps `unsafe-eval` only for the Next.js dev server.
+- Unit and Playwright coverage assert nonce-bearing CSP behavior and preserved Google OAuth origins.
+
 ## Implemented in Phase 6
 
 - Track Pack import size limit, preview endpoint and content-hash conflict reporting.
@@ -157,7 +164,7 @@ Codex may progress through approved V1 roadmap phases without routine user confi
 
 ## Not implemented
 
-Authenticated owner browser walkthrough/polish after service-level production validation, external sync, full user-state replay/merge restore, stricter nonce/hash CSP and multi-Pack distribution/release workflow.
+Authenticated owner browser walkthrough/polish after service-level production validation, external sync, full user-state replay/merge restore and multi-Pack distribution/release workflow.
 
 ## Verification
 
@@ -248,6 +255,18 @@ Latest Step 8 user-state restore policy results:
 pnpm lint — passed.
 pnpm typecheck — passed.
 git diff --check — passed.
+```
+
+Latest Step 11 CSP nonce hardening results:
+
+```text
+pnpm exec vitest run tests/unit/security-headers.test.ts — passed, 1 file and 2 tests.
+pnpm typecheck — passed.
+pnpm lint — passed.
+pnpm build — passed and confirmed `ƒ Proxy (Middleware)` is recognized only after moving the guard to `src/proxy.ts`.
+pnpm exec playwright test tests/e2e/security-headers.spec.ts --project=chromium — initially failed because the CSP header was absent while the guard still lived in legacy `middleware.ts`; passed after moving to `src/proxy.ts`, 1 test.
+pnpm security:audit — passed with no known production vulnerabilities.
+pnpm test — passed, 32 files and 79 tests, plus 1 skipped real-Postgres file/test.
 ```
 
 Latest Step 10 restore dry-run UI results:
@@ -467,7 +486,7 @@ Do not run `pnpm typecheck` concurrently with `pnpm build`; Next mutates generat
 
 ## Next milestone
 
-Step 11 — restore apply remains blocked: choose the next safe roadmap increment or stop for explicit approval before implementing any user-state apply mode.
+Step 12 — authenticated owner browser walkthrough/polish: validate the protected production UI with an owner session when available, without applying user-state restore.
 
 ## Risk register
 
@@ -485,4 +504,4 @@ Step 11 — restore apply remains blocked: choose the next safe roadmap incremen
 
 ## NEXT ACTION
 
-Step 11 — restore apply remains blocked: choose the next safe roadmap increment or stop for explicit approval before implementing any user-state apply mode.
+Step 12 — authenticated owner browser walkthrough/polish: validate the protected production UI with an owner session when available, without applying user-state restore.

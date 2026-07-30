@@ -12,12 +12,12 @@ Deliver the approved KNOW/OS V1 through verified roadmap phases, without collaps
 
 Status: `COMPLETE`
 Owner: Codex lead agent
-Phase: `STEP 10 — RESTORE DRY-RUN UI AND COMPATIBILITY`
+Phase: `STEP 11 — CSP NONCE HARDENING`
 Autonomy: `HIGH WITH GUARDRAILS`
 
 ### Objective
 
-Expose the blocked user-state dry-run plan in the product UI and add compatibility coverage before any user-state apply mode.
+Harden the response CSP with per-request nonces while preserving the current Next.js App Router/Auth.js behavior.
 
 ### Acceptance criteria
 
@@ -115,6 +115,16 @@ Expose the blocked user-state dry-run plan in the product UI and add compatibili
 - [x] 10.3 Restore UI validation gate.
   - Run focused component/unit tests, lint, typecheck, full tests, build and diff check.
   - Gate passed with focused tests, lint, typecheck, full tests, production audit, build and diff check.
+- [x] 11.1 CSP nonce builder and proxy application.
+  - Move CSP construction into a tested shared module.
+  - Generate a per-request nonce in the Next.js 16 `src/proxy.ts` guard, set `x-nonce` for dynamic rendering and attach the matching CSP header to runtime responses.
+  - Remove production `script-src 'unsafe-inline'`; allow `unsafe-eval` only outside production if required by the local Next.js dev server.
+- [x] 11.2 Header coverage.
+  - Extend unit and Playwright coverage to assert nonce-bearing CSP behavior and preserved Google OAuth origins.
+  - Confirm security headers remain present on protected redirects and public runtime pages.
+- [x] 11.3 CSP hardening validation gate.
+  - Run focused security tests, lint, typecheck, build, security audit and diff check before checkpoint.
+  - Gate passed with focused CSP unit tests, lint, typecheck, build, focused Playwright security-header smoke, production audit and full tests.
 
 ### Assumptions
 
@@ -731,6 +741,13 @@ Add timestamped commands and exact outcomes during implementation.
 2026-07-30 BRT — pnpm build after restore dry-run UI — passed.
 2026-07-30 BRT — pnpm typecheck after restoring `next-env.d.ts` dev route reference for Step 10 — passed.
 2026-07-30 BRT — git diff --check after restore dry-run UI — passed.
+2026-07-30 BRT — pnpm exec vitest run tests/unit/security-headers.test.ts — passed, 1 file and 2 tests.
+2026-07-30 BRT — pnpm typecheck after CSP nonce builder — passed.
+2026-07-30 BRT — pnpm lint after CSP nonce builder — passed.
+2026-07-30 BRT — pnpm build after moving the guard to `src/proxy.ts` — passed and confirmed `ƒ Proxy (Middleware)` in the build output.
+2026-07-30 BRT — pnpm exec playwright test tests/e2e/security-headers.spec.ts --project=chromium — initially failed while the guard lived in legacy `middleware.ts` because CSP was absent; passed after moving to `src/proxy.ts`, 1 test.
+2026-07-30 BRT — pnpm security:audit after CSP nonce hardening — passed with no known production vulnerabilities.
+2026-07-30 BRT — pnpm test after CSP nonce hardening — passed, 32 files and 79 tests, plus 1 skipped real-Postgres file/test.
 ```
 
 ## Blockers
@@ -742,4 +759,4 @@ Interactive Google sign-in with the allowed owner account is user-operated in th
 
 ## NEXT ACTION
 
-Step 11 — restore apply remains blocked: choose the next safe roadmap increment or stop for explicit approval before implementing any user-state apply mode.
+Step 12 — authenticated owner browser walkthrough/polish: validate the protected production UI with an owner session when available, without applying user-state restore.

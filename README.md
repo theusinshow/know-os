@@ -99,7 +99,7 @@ O callback Google OAuth deve terminar em `/api/auth/callback/google`, por exempl
 
 `pnpm security:audit` roda `pnpm audit --prod --audit-level moderate` e bloqueia vulnerabilidades conhecidas em dependências de produção. Overrides compatíveis ficam em `pnpm-workspace.yaml` para `sharp`, `postcss`, `esbuild` e `brace-expansion` transitivos. A auditoria completa de desenvolvimento ainda pode sinalizar o caminho dev-only `eslint -> minimatch@3 -> brace-expansion`; `brace-expansion@1.1.18` é usado para manter compatibilidade sem quebrar o ESLint.
 
-As respostas incluem uma CSP candidata em modo enforcement, além de `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options` e `Permissions-Policy`. A CSP permite os mínimos atuais para Next.js/Auth.js/Google OAuth/Vercel e deve ser revisada antes de remover `unsafe-inline`/`unsafe-eval`.
+As respostas de runtime passam por `src/proxy.ts` e incluem CSP em modo enforcement com nonce por requisição, além de `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options` e `Permissions-Policy`. Em produção, `script-src` não usa `unsafe-inline` nem `unsafe-eval`; o `unsafe-eval` fica restrito ao servidor local de desenvolvimento do Next.js.
 
 ## Vertical slice
 

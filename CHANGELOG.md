@@ -66,6 +66,7 @@ The format follows Keep a Changelog principles. Product versions will follow Sem
 - ADR 0016 defining the dry-run/apply policy required before full append-only user-state restore.
 - Restore dry-run planner foundation with `restore_provenance` schema, Backup fingerprinting and blocked `user_state_dry_run` preview output.
 - Restore preview UI on `/exports` showing blocked user-state dry-run categories, source fingerprint and blockers.
+- Per-request nonce CSP through `src/proxy.ts`, with production `script-src` no longer using `unsafe-inline` or `unsafe-eval`.
 - Zod server-environment validation.
 - Vitest, Testing Library and Playwright smoke coverage.
 - GitHub Actions baseline CI and separate Playwright E2E workflow.
@@ -83,6 +84,7 @@ The format follows Keep a Changelog principles. Product versions will follow Sem
 - Production Google OAuth environment values were re-applied in Vercel after a Google `invalid_client` response, then redeployed and smoke-tested without exposing secrets.
 - App interaction states now consume approved motion tokens for short reveal, hover, active, focus-within and state feedback rather than rendering as fully static surfaces.
 - Empty Today and Tracks states now route users to the import product surface instead of asking them to call an API endpoint manually.
+- Central route/API guard moved from legacy `middleware.ts` to `src/proxy.ts` so Next.js 16 recognizes the network boundary.
 - Initial Codex prompt now authorizes phase-by-phase V1 execution instead of stopping after Phase 0.
 - `AGENTS.md`, `PLANS.md`, `PROJECT_STATUS.md`, `README.md`, `START-HERE.md`, and roadmap now support high-autonomy execution with repository guardrails.
 

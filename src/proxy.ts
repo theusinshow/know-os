@@ -1,0 +1,93 @@
+import { NextResponse, type NextRequest } from "next/server";
+
+import { auth } from "@/auth";
+import { getAuthGuardDecision, isPublicRuntimePath } from "@/features/auth/session-guard";
+import { getServerEnv } from "@/lib/env";
+import {
+  applyBaseSecurityHeaders,
+  buildContentSecurityPolicy,
+  CSP_NONCE_HEADER
+} from "@/lib/security-headers";
+
+type AuthenticatedRequest = NextRequest & {
+  auth?: {
+    user?: {
+      email?: string | null;
+    };
+  } | null;
+};
+
+function createSecurityContext(request: NextRequest) {
+  const nonce = btoa(crypto.randomUUID());
+  const contentSecurityPolicy = buildContentSecurityPolicy({
+    nonce,
+    isDevelopment: process.env.NODE_ENV !== "production"
+  });
+  const requestHeaders = new Headers(request.headers);
+
+  requestHeaders.set(CSP_NONCE_HEADER, nonce);
+  requestHeaders.set("Content-Security-Policy", contentSecurityPolicy);
+
+  return { contentSecurityPolicy, requestHeaders };
+}
+
+function secureResponse(response: NextResponse, contentSecurityPolicy: string) {
+  applyBaseSecurityHeaders(response.headers);
+  response.headers.set("Content-Security-Policy", contentSecurityPolicy);
+  return response;
+}
+
+function nextSecureResponse(request: NextRequest, contentSecurityPolicy: string, requestHeaders: Headers) {
+  const responseHeaders = new Headers();
+  applyBaseSecurityHeaders(responseHeaders);
+  responseHeaders.set("Content-Security-Policy", contentSecurityPolicy);
+
+  return NextResponse.next({
+    headers: responseHeaders,
+    request: {
+      headers: requestHeaders
+    }
+  });
+}
+
+const authProxy = auth((request: AuthenticatedRequest) => {
+  const { pathname } = request.nextUrl;
+  const { contentSecurityPolicy, requestHeaders } = createSecurityContext(request);
+
+  if (isPublicRuntimePath(pathname)) {
+    return nextSecureResponse(request, contentSecurityPolicy, requestHeaders);
+  }
+
+  const decision = getAuthGuardDecision(request.auth?.user?.email, getServerEnv());
+
+  if (decision === "allow") {
+    return nextSecureResponse(request, contentSecurityPolicy, requestHeaders);
+  }
+
+  if (pathname.startsWith("/api/")) {
+    return secureResponse(
+      NextResponse.json(
+        {
+          code: decision === "unauthenticated" ? "auth_required" : "auth_forbidden",
+          message:
+            decision === "unauthenticated"
+              ? "Autenticação Google é necessária para acessar este recurso."
+              : "Esta conta Google não está autorizada para este KNOW/OS."
+        },
+        { status: decision === "unauthenticated" ? 401 : 403 }
+      ),
+      contentSecurityPolicy
+    );
+  }
+
+  const signInUrl = new URL("/auth/signin", request.url);
+  signInUrl.searchParams.set("callbackUrl", request.nextUrl.href);
+  return secureResponse(NextResponse.redirect(signInUrl), contentSecurityPolicy);
+});
+
+export { authProxy as proxy };
+export default authProxy;
+
+export const config = {
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.(?:png|jpg|jpeg|gif|webp|svg|ico)$).*)"]
+};
