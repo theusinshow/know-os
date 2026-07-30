@@ -53,6 +53,7 @@ The format follows Keep a Changelog principles. Product versions will follow Sem
 - Step 2.5 central auth middleware that protects private pages/APIs when Google OAuth is configured while preserving local no-OAuth development.
 - Step 2.6 Neon/Vercel production runbook and `pnpm db:migrate` command for applying Drizzle migrations.
 - Step 2.7 final local validation gate for production readiness.
+- Production Auth.js `AUTH_TRUST_HOST` environment contract for Vercel proxy deployment.
 - Zod server-environment validation.
 - Vitest, Testing Library and Playwright smoke coverage.
 - GitHub Actions baseline CI and separate Playwright E2E workflow.
@@ -66,6 +67,7 @@ The format follows Keep a Changelog principles. Product versions will follow Sem
 
 - `AGENTS.md`, `README.md`, `PLANS.md` and `PROJECT_STATUS.md` now describe the real Phase 0 scaffold and canonical commands.
 - Playwright E2E now runs with a fresh owned serial server because the local `memory://local` harness is process-global.
+- Production deployment status now reflects the live Vercel + Neon + Google OAuth path and remaining manual owner-login validation.
 - Initial Codex prompt now authorizes phase-by-phase V1 execution instead of stopping after Phase 0.
 - `AGENTS.md`, `PLANS.md`, `PROJECT_STATUS.md`, `README.md`, `START-HERE.md`, and roadmap now support high-autonomy execution with repository guardrails.
 

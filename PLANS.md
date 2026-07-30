@@ -521,15 +521,22 @@ Add timestamped commands and exact outcomes during implementation.
 2026-07-30 BRT — pnpm build: passed for Step 2.7 final gate; generated 150 design tokens and built Auth.js route plus middleware/proxy.
 2026-07-30 BRT — pnpm test:e2e: passed for Step 2.7 final gate, 12 Playwright tests across desktop Chromium and mobile Chrome.
 2026-07-30 BRT — git push origin main: passed; `main` pushed from `bc146fa` to `7adf18e`.
+2026-07-30 BRT — production secret handling: moved user-provided values from tracked `.env.example` into ignored `.env.local` and restored `.env.example` to placeholders without printing secret values.
+2026-07-30 BRT — pnpm db:migrate: passed against Neon Postgres; Drizzle migrations applied successfully.
+2026-07-30 BRT — pnpm build with `.env.local`: passed before deploy.
+2026-07-30 BRT — vercel link --yes --project know-os: passed; linked local checkout to `theusinshows-projects/know-os`.
+2026-07-30 BRT — vercel --prod --yes: passed; production deployment ready and aliased to `https://know-os.vercel.app`.
+2026-07-30 BRT — production smoke: `/api/health/db` returned 200, `/` returned 307 to Auth.js sign-in, `/api/export/preview` returned 401 unauthenticated.
+2026-07-30 BRT — AUTH_TRUST_HOST production env: added after `/api/auth/signin` returned 400 behind Vercel proxy; redeploy passed and `/api/auth/signin` returned 200.
 ```
 
 ## Blockers
 
 ```text
-No real local PostgreSQL service is available (`DATABASE_URL` empty, no `psql`, no Docker, no running `postgres`). Phase 1 repository behavior is covered by Drizzle/PGlite integration tests; Playwright uses the disposable `memory://local` repository harness because PGlite cannot be bundled reliably inside the Next dev server.
-External service configuration requires user action in Neon, Google Cloud and Vercel dashboards.
+No real local PostgreSQL service is available outside `.env.local`; production database is Neon and must not be written to destructively without explicit confirmation.
+Interactive Google sign-in with the allowed owner account still requires browser/manual validation.
 ```
 
 ## NEXT ACTION
 
-Configure external services step by step: Neon Postgres, Google OAuth, Vercel environment variables, production migrations, deployment, and production smoke validation.
+Complete manual browser validation: sign in at `https://know-os.vercel.app` with the allowed Google account, import the example Track Pack, run `RUN`, submit with `SUBMIT SOLUTION`, then verify history/export behavior.

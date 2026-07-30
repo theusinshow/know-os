@@ -5,6 +5,10 @@ const optionalSecret = z.preprocess(
   (value) => (value === "" ? undefined : value),
   z.string().trim().min(1).optional()
 );
+const optionalBooleanString = z.preprocess(
+  (value) => (value === "" ? undefined : value),
+  z.enum(["true", "false"]).optional()
+);
 const emailAllowlist = z.preprocess((value) => {
   if (value === "" || value === undefined) {
     return [];
@@ -25,6 +29,7 @@ export const serverEnvSchema = z.object({
   AUTH_GOOGLE_ID: optionalSecret,
   AUTH_GOOGLE_SECRET: optionalSecret,
   AUTH_SECRET: optionalSecret,
+  AUTH_TRUST_HOST: optionalBooleanString,
   DATABASE_URL: optionalUrl,
   KNOW_OS_ALLOWED_GOOGLE_EMAILS: emailAllowlist,
   KNOW_OS_OWNER_ID: z.string().trim().min(1).default("local-owner"),
@@ -39,6 +44,7 @@ export function getServerEnv(source: Record<string, string | undefined> = proces
     AUTH_GOOGLE_ID: source.AUTH_GOOGLE_ID,
     AUTH_GOOGLE_SECRET: source.AUTH_GOOGLE_SECRET,
     AUTH_SECRET: source.AUTH_SECRET,
+    AUTH_TRUST_HOST: source.AUTH_TRUST_HOST,
     DATABASE_URL: source.DATABASE_URL,
     KNOW_OS_ALLOWED_GOOGLE_EMAILS: source.KNOW_OS_ALLOWED_GOOGLE_EMAILS,
     KNOW_OS_OWNER_ID: source.KNOW_OS_OWNER_ID,

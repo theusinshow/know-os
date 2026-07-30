@@ -83,13 +83,19 @@ Do not commit OAuth credentials.
 User action required:
 
 1. Generate a cryptographically secure `AUTH_SECRET` with at least 32 characters.
-2. Store the allowed Google account e-mail list:
+2. Set Auth.js trusted-host handling for Vercel's reverse proxy:
+
+```text
+AUTH_TRUST_HOST=true
+```
+
+3. Store the allowed Google account e-mail list:
 
 ```text
 KNOW_OS_ALLOWED_GOOGLE_EMAILS=owner@example.com
 ```
 
-3. Store the owner mapping:
+4. Store the owner mapping:
 
 ```text
 KNOW_OS_OWNER_ID=production-owner
@@ -112,6 +118,7 @@ Required Vercel variables:
 DATABASE_URL
 APP_URL
 AUTH_SECRET
+AUTH_TRUST_HOST
 AUTH_GOOGLE_ID
 AUTH_GOOGLE_SECRET
 KNOW_OS_ALLOWED_GOOGLE_EMAILS

@@ -4,7 +4,7 @@ Last updated: 2026-07-30
 
 ## Current phase
 
-`V1 LOCAL ROADMAP COMPLETE — STEP 2 PRODUCTION READINESS PUSHED`
+`V1 PRODUCTION DEPLOYED — MANUAL OWNER LOGIN VALIDATION PENDING`
 
 Phase 0 repository foundation is implemented and verified. The repository now contains a Next.js App Router scaffold with TypeScript strict mode, Tailwind/token generation, minimal accessible shell, Drizzle/PostgreSQL foundation, Zod validation, Vitest/Testing Library/Playwright smoke tests and GitHub Actions CI.
 
@@ -20,7 +20,7 @@ Phase 5 projects and gamification is implemented and verified. The implemented s
 
 Phase 6 portability and hardening is implemented and verified. The V1 local product now includes import preview/hardening, Backup/Progress/Teacher Context exports, non-destructive Backup restore for Pack manifests, accessibility/responsive audit coverage, baseline security headers, security audit documentation and deployment preparation within local-only guardrails.
 
-No public production deployment is authorized. ADR 0013 requires a dedicated authentication/session decision and threat review before internet-accessible hosting. ADR 0015 selects Vercel, Neon Postgres and Auth.js Google OAuth for production preparation. Step 2 implementation now includes the Auth.js Google foundation, production environment contract, central session guard and Neon/Vercel runbook, and has been pushed to GitHub. ADR 0014 keeps append-only user-state replay/merge out of V1 restore.
+Production deployment is live at `https://know-os.vercel.app` using the ADR 0015 stack: Vercel, Neon Postgres and Auth.js Google OAuth. Step 2 implementation includes the Auth.js Google foundation, production environment contract, central session guard and Neon/Vercel runbook. Neon migrations have been applied and unauthenticated production smoke checks pass. ADR 0014 keeps append-only user-state replay/merge out of V1 restore.
 
 ## Agent operating mode
 
@@ -128,7 +128,7 @@ Codex may progress through approved V1 roadmap phases without routine user confi
 
 ## Not implemented
 
-External service configuration, public production deployment, external sync, full user-state replay/merge restore, persisted badge award tables and persisted mission progress tables.
+Manual owner login validation, external sync, full user-state replay/merge restore, persisted badge award tables and persisted mission progress tables.
 
 ## Verification
 
@@ -278,27 +278,35 @@ pnpm test for Step 2 final gate — passed, 28 files and 70 tests.
 pnpm build for Step 2 final gate — passed, generated 150 design tokens and built Auth.js route plus middleware/proxy.
 pnpm test:e2e for Step 2 final gate — passed, 12 tests across desktop Chromium and mobile Chrome.
 git push origin main for Step 2 — passed, pushed main from bc146fa to 7adf18e.
+pnpm db:migrate against Neon Postgres — passed, migrations applied successfully.
+pnpm build with `.env.local` production values — passed.
+vercel link --yes --project know-os — passed, linked to `theusinshows-projects/know-os`.
+vercel --prod --yes — passed, deployed and aliased production to `https://know-os.vercel.app`.
+production smoke `/api/health/db` — passed, 200 OK.
+production smoke `/` — passed, 307 redirect to `/api/auth/signin`.
+production smoke `/api/export/preview` — passed, 401 unauthenticated.
+production smoke `/api/auth/signin` — initially 400 until `AUTH_TRUST_HOST=true` was added; redeploy passed and endpoint returned 200 OK.
 ```
 
 Do not run `pnpm typecheck` concurrently with `pnpm build`; Next mutates generated `.next` types during build.
 
 ## Next milestone
 
-Configure external services step by step: Neon Postgres, Google OAuth, Vercel environment variables, production migrations, deployment, and production smoke validation.
+Complete manual browser validation: sign in at `https://know-os.vercel.app` with the allowed Google account, import the example Track Pack, run `RUN`, submit with `SUBMIT SOLUTION`, then verify history/export behavior.
 
 ## Risk register
 
 - Browser code execution is isolated through the current QuickJS child-process adapter, but any broader runtime support needs a fresh threat review.
 - Pack versioning must be finalized before public content distribution.
-- Production authentication is locally implemented but not externally configured; public deployment remains blocked until real Google OAuth, Vercel and Neon settings are created and validated.
+- Production authentication is configured for Google OAuth with e-mail allowlist; manual sign-in with the allowed account remains to be validated in a browser session.
 - Gamification must not distort mastery or reward empty activity.
 - High autonomy must remain bounded to the repository and approved V1 scope.
 - Local checkpoint commits are now available after Git initialization. External push still requires user confirmation.
 - Playwright uses port `3210`; port `3000` was already serving another local app during validation.
-- No real local PostgreSQL service is available. Current environment evidence: `DATABASE_URL` is empty, `psql` is unavailable, Docker is unavailable, and no `postgres` process is running.
+- No real local PostgreSQL service is available outside `.env.local`; production database is Neon and destructive writes require explicit confirmation.
 - Playwright uses `memory://local` because PGlite works for Vitest/Drizzle integration but cannot be bundled reliably inside the Next dev server.
 - Backup restore applies Pack manifests only in V1. User-state replay/merge is intentionally blocked by ADR 0014 until a conflict-safe append-only restore policy exists.
 
 ## NEXT ACTION
 
-Configure external services step by step: Neon Postgres, Google OAuth, Vercel environment variables, production migrations, deployment, and production smoke validation.
+Complete manual browser validation: sign in at `https://know-os.vercel.app` with the allowed Google account, import the example Track Pack, run `RUN`, submit with `SUBMIT SOLUTION`, then verify history/export behavior.

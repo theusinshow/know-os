@@ -6,7 +6,7 @@ KNOW/OS é um sistema pessoal para estruturar aprendizado, prática, revisão e 
 
 ## Estado do projeto
 
-- Fase atual: **V1 local completo; produção bloqueada até decisão de autenticação/deploy**.
+- Fase atual: **V1 publicado em produção com Neon Postgres, Vercel e Auth.js Google OAuth**.
 - Design System oficial: `design-system/`, versão 2.2.
 - Implementação: Next.js App Router com TypeScript strict, Tailwind, token pipeline, shell acessível, fundação Drizzle/PostgreSQL, Zod, Vitest, Testing Library, Playwright e CI.
 - V1 local implementado e verificado: importar conteúdo, navegar por trilhas/lições/conceitos, executar JavaScript com RUN, registrar tentativa com SUBMIT SOLUTION, reabrir feedback persistido, ver progresso, histórico, contrato de runtime, stdout/stderr/testes, diff da tentativa, atividade inicial de debug, mastery determinístico, agenda de review, erros categorizados, projetos opcionais, XP/ranks/badges/missões, mapa de conhecimento acessível, recomendações locais, preview de import/export/restore, exports Backup/Progress/Teacher Context, auditoria de acessibilidade e preparação de segurança/deploy local.
@@ -74,6 +74,7 @@ Variáveis esperadas para produção:
 DATABASE_URL
 APP_URL
 AUTH_SECRET
+AUTH_TRUST_HOST
 AUTH_GOOGLE_ID
 AUTH_GOOGLE_SECRET
 KNOW_OS_ALLOWED_GOOGLE_EMAILS
@@ -81,7 +82,7 @@ KNOW_OS_OWNER_ID
 LOG_LEVEL
 ```
 
-O callback Google OAuth deve terminar em `/api/auth/callback/google`, por exemplo `https://seu-dominio/api/auth/callback/google`. Não commite valores reais de OAuth, banco ou `AUTH_SECRET`.
+O callback Google OAuth deve terminar em `/api/auth/callback/google`, por exemplo `https://seu-dominio/api/auth/callback/google`. Em Vercel, `AUTH_TRUST_HOST=true` mantém o Auth.js confiando nos headers encaminhados pelo proxy. Não commite valores reais de OAuth, banco ou `AUTH_SECRET`.
 
 ## Vertical slice
 
@@ -114,7 +115,7 @@ Com um banco migrado ou com o harness Playwright:
 - `POST /api/restore/preview` valida Backups e lista categorias.
 - `POST /api/restore` aplica manifests de Pack de forma não destrutiva. O Backup preserva categorias de estado do usuário, mas ADR 0014 deixa replay/merge de estado append-only fora do restore V1.
 - Respostas incluem headers básicos: `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options` e `Permissions-Policy`.
-- Deployment público continua bloqueado por ADR 0013 até haver decisão de autenticação/sessão e revisão de ameaça.
+- Deployment público usa a decisão de ADR 0015: Google OAuth com allowlist de e-mail para o proprietário inicial, Neon Postgres e Vercel. Rotas privadas exigem sessão permitida; APIs privadas retornam `401` sem sessão.
 
 ## Começando com Codex
 
