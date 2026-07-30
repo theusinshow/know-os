@@ -67,6 +67,7 @@ The format follows Keep a Changelog principles. Product versions will follow Sem
 - Restore dry-run planner foundation with `restore_provenance` schema, Backup fingerprinting and blocked `user_state_dry_run` preview output.
 - Restore preview UI on `/exports` showing blocked user-state dry-run categories, source fingerprint and blockers.
 - Per-request nonce CSP through `src/proxy.ts`, with production `script-src` no longer using `unsafe-inline` or `unsafe-eval`.
+- Route-aware primary navigation component for the shared app shell.
 - Zod server-environment validation.
 - Vitest, Testing Library and Playwright smoke coverage.
 - GitHub Actions baseline CI and separate Playwright E2E workflow.
@@ -83,6 +84,8 @@ The format follows Keep a Changelog principles. Product versions will follow Sem
 - Production deployment status now reflects the live Vercel + Neon + Google OAuth path and remaining manual owner-login validation.
 - Production Google OAuth environment values were re-applied in Vercel after a Google `invalid_client` response, then redeployed and smoke-tested without exposing secrets.
 - App interaction states now consume approved motion tokens for short reveal, hover, active, focus-within and state feedback rather than rendering as fully static surfaces.
+- App shell and shared page primitives now align more closely with the approved Claude Design direction: signal window chrome, bordered workspace, boxed module sections, differentiated record/progress/import surfaces and stronger technical-brutalist separation across implemented routes.
+- Playwright E2E now forces local no-OAuth mode with a disposable test secret so ignored production OAuth values do not redirect local smoke tests to sign-in.
 - Empty Today and Tracks states now route users to the import product surface instead of asking them to call an API endpoint manually.
 - Central route/API guard moved from legacy `middleware.ts` to `src/proxy.ts` so Next.js 16 recognizes the network boundary.
 - Initial Codex prompt now authorizes phase-by-phase V1 execution instead of stopping after Phase 0.

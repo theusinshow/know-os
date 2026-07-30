@@ -4,7 +4,7 @@ Last updated: 2026-07-30
 
 ## Current phase
 
-`V1 AUTHENTICATED WALKTHROUGH BLOCKED — NEON MIGRATION CONFIRMATION REQUIRED`
+`STEP 13 UI ALIGNMENT PAUSED — LOCAL VALIDATION PASSED`
 
 Phase 0 repository foundation is implemented and verified. The repository now contains a Next.js App Router scaffold with TypeScript strict mode, Tailwind/token generation, minimal accessible shell, Drizzle/PostgreSQL foundation, Zod validation, Vitest/Testing Library/Playwright smoke tests and GitHub Actions CI.
 
@@ -20,7 +20,7 @@ Phase 5 projects and gamification is implemented and verified. The implemented s
 
 Phase 6 portability and hardening is implemented and verified. The V1 local product now includes import preview/hardening, Backup/Progress/Teacher Context exports, non-destructive Backup restore for Pack manifests, accessibility/responsive audit coverage, baseline security headers, security audit documentation and deployment preparation within local-only guardrails.
 
-Production deployment is live at `https://know-os.vercel.app` using the ADR 0015 stack: Vercel, Neon Postgres and Auth.js Google OAuth. Step 2 implementation includes the Auth.js Google foundation, production environment contract, central session guard and Neon/Vercel runbook. Neon migrations have been applied and unauthenticated production smoke checks pass. The sign-in surface now uses the custom `/auth/signin` page following the KNOW/OS Design System, and Google OAuth requests include `prompt=select_account` so account selection is explicit. After a Google `invalid_client` response, Vercel Production OAuth/Auth environment values were re-applied from ignored local values, production was redeployed and the Google page was verified without `invalid_client`. A design-system motion pass now applies approved short motion tokens to app shell, sign-in and recurring content primitives while preserving reduced-motion behavior. Step 3 adds a real `/import` product surface for example/paste/file Track Pack activation with preview-before-apply semantics, deploys it to production and validates the first production learning loop at service level. Step 4 adds and runs guarded real-PostgreSQL validation through a disposable schema, covering checked-in migrations plus import/RUN/SUBMIT/progress behavior without touching production application tables. Step 5 adds production dependency vulnerability scanning, patched transitive runtime overrides and an enforced CSP candidate with Playwright coverage. Step 6 adds a Pack publication catalog and verifier so the accepted example Pack has immutable schema/ID/version/hash metadata before broader distribution. Step 7 adds persisted gamification projections for badge awards, mission progress and mission status-change audit events while keeping XP/review/mistake/mastery rules authoritative. Step 8 accepts ADR 0016 for conflict-safe full user-state restore replay policy. Step 9 implements the restore provenance schema foundation and a blocked `user_state_dry_run` plan in restore preview. Step 10 exposes that dry-run plan in `/exports` with product UI coverage. Step 11 moves the central guard to the Next.js 16 `src/proxy.ts` convention and applies nonce-bearing CSP to runtime responses. Step 12 authenticated production walkthrough confirms most protected pages load, but `/exports` and `/achievements` fail with production Server Components render errors until Neon production migrations are explicitly approved and applied; append-only user-state replay/merge remains blocked until a future explicit apply mode is approved and implemented.
+Production deployment is live at `https://know-os.vercel.app` using the ADR 0015 stack: Vercel, Neon Postgres and Auth.js Google OAuth. Step 2 implementation includes the Auth.js Google foundation, production environment contract, central session guard and Neon/Vercel runbook. Neon migrations have been applied and unauthenticated production smoke checks pass. The sign-in surface now uses the custom `/auth/signin` page following the KNOW/OS Design System, and Google OAuth requests include `prompt=select_account` so account selection is explicit. After a Google `invalid_client` response, Vercel Production OAuth/Auth environment values were re-applied from ignored local values, production was redeployed and the Google page was verified without `invalid_client`. A design-system motion pass now applies approved short motion tokens to app shell, sign-in and recurring content primitives while preserving reduced-motion behavior. Step 3 adds a real `/import` product surface for example/paste/file Track Pack activation with preview-before-apply semantics, deploys it to production and validates the first production learning loop at service level. Step 4 adds and runs guarded real-PostgreSQL validation through a disposable schema, covering checked-in migrations plus import/RUN/SUBMIT/progress behavior without touching production application tables. Step 5 adds production dependency vulnerability scanning, patched transitive runtime overrides and an enforced CSP candidate with Playwright coverage. Step 6 adds a Pack publication catalog and verifier so the accepted example Pack has immutable schema/ID/version/hash metadata before broader distribution. Step 7 adds persisted gamification projections for badge awards, mission progress and mission status-change audit events while keeping XP/review/mistake/mastery rules authoritative. Step 8 accepts ADR 0016 for conflict-safe full user-state restore replay policy. Step 9 implements the restore provenance schema foundation and a blocked `user_state_dry_run` plan in restore preview. Step 10 exposes that dry-run plan in `/exports` with product UI coverage. Step 11 moves the central guard to the Next.js 16 `src/proxy.ts` convention and applies nonce-bearing CSP to runtime responses. Step 12 authenticated production walkthrough confirms most protected pages load, but `/exports` and `/achievements` fail with production Server Components render errors until Neon production migrations are explicitly approved and applied; append-only user-state replay/merge remains blocked until a future explicit apply mode is approved and implemented. Step 13 local UI alignment is implemented and validated against the Claude Design references: the app shell now uses stronger window chrome, route-aware navigation, boxed sections, differentiated surfaces and fixed sidebar/terminal visual issues. The user requested pausing before any push/deployment.
 
 ## Agent operating mode
 
@@ -159,6 +159,15 @@ Codex may progress through approved V1 roadmap phases without routine user confi
 - Likely repair: apply checked-in migrations `0007_icy_vengeance.sql` and `0008_pale_shiver_man.sql` to Neon production with `pnpm db:migrate`.
 - Stop condition: running production Neon migrations is an external database schema write and requires explicit user confirmation.
 
+## Step 13 UI alignment
+
+- Shared app chrome now uses the technical-brutalist window direction from the design references: signal topbar, bordered workspace frame, stronger sidebar and explicit main surface.
+- Primary navigation is route-aware through `src/components/layout/primary-nav.tsx`, so the current route is highlighted instead of keeping `Fundação` active everywhere.
+- Shared page primitives now create clearer hierarchy: foundation headers, boxed module sections, bordered record rows, differentiated progress/import/restore summaries and stronger auth status blocks.
+- Playwright E2E harness now forces local no-OAuth mode with a disposable test secret so `.env.local` production OAuth values do not redirect local UI tests to sign-in.
+- Local screenshots were captured under `test-results/ui-alignment/` for Today desktop, Import desktop, Lesson desktop and Progress mobile.
+- Pause condition: user requested continuing tomorrow before push/deployment.
+
 ## Implemented in Phase 6
 
 - Track Pack import size limit, preview endpoint and content-hash conflict reporting.
@@ -274,6 +283,18 @@ Loaded successfully: `/`, `/tracks`, `/tracks/javascript`, `/lessons/js-fundamen
 Failed in production UI: `/exports` and `/achievements` showed Server Components render errors.
 Production CSP readback for `https://know-os.vercel.app/` — passed, nonce-bearing CSP active with `script-src 'self' 'nonce-*' 'strict-dynamic'` and no production `unsafe-inline`/`unsafe-eval`.
 git status --short --branch before Step 12 status update — clean at `main...origin/main`.
+```
+
+Latest Step 13 UI alignment results:
+
+```text
+pnpm lint — passed.
+pnpm typecheck — passed.
+pnpm test — passed, 32 files and 79 tests, plus 1 skipped real-Postgres file/test.
+pnpm build — passed, generated 150 design tokens and built all implemented routes.
+pnpm exec playwright test tests/e2e/accessibility.spec.ts tests/e2e/import-ui.spec.ts --project=chromium — initially failed because `.env.local` OAuth values forced local sign-in; fixed the Playwright harness and reran successfully, 3 tests passed.
+Playwright screenshot capture — captured `test-results/ui-alignment/today-desktop.png`, `import-desktop.png`, `lesson-desktop.png` and `progress-mobile.png`; visual inspection found and fixed sidebar placeholder overflow and low-contrast terminal empty text.
+pnpm test:e2e — first run failed because a leftover local Next dev server was still running on PID 63392; stopped it and reran successfully, 20 tests across desktop Chromium and mobile Chrome.
 ```
 
 Latest Step 11 CSP nonce hardening results:
@@ -505,7 +526,7 @@ Do not run `pnpm typecheck` concurrently with `pnpm build`; Next mutates generat
 
 ## Next milestone
 
-Await explicit user confirmation to run `pnpm db:migrate` against Neon production, then rerun `/exports` and `/achievements` in the authenticated production walkthrough.
+Review the Step 13 local UI alignment diff/screenshots tomorrow, then create/push the checkpoint if accepted. Separately, await explicit user confirmation before running `pnpm db:migrate` against Neon production and rerunning `/exports` plus `/achievements`.
 
 ## Risk register
 
@@ -518,10 +539,11 @@ Await explicit user confirmation to run `pnpm db:migrate` against Neon productio
 - Playwright uses port `3210`; port `3000` was already serving another local app during validation.
 - No real local PostgreSQL service is available outside `.env.local`; `pnpm test:postgres` validates the configured PostgreSQL service through a disposable schema and destructive production database operations remain out of scope.
 - Production Neon schema appears behind checked-in migrations after Steps 7 and 9; `/exports` and `/achievements` fail until migrations are explicitly approved and applied.
+- Step 13 UI alignment is validated locally but paused before push/deployment at user request.
 - Playwright uses `memory://local` because PGlite works for Vitest/Drizzle integration but cannot be bundled reliably inside the Next dev server.
 - Backup restore applies Pack manifests only in V1. User-state replay/merge is intentionally blocked by ADR 0014 until a conflict-safe append-only restore policy exists.
 - Full dev dependency audit has one residual `eslint -> minimatch@3 -> brace-expansion` advisory path; production dependency audit is clean and the compatible dev pin is documented until the ESLint/minimatch path can move safely.
 
 ## NEXT ACTION
 
-Await explicit user confirmation to run `pnpm db:migrate` against Neon production, then rerun `/exports` and `/achievements` in the authenticated production walkthrough.
+Review the Step 13 local UI alignment diff/screenshots tomorrow, then create/push the checkpoint if accepted. Separately, await explicit user confirmation before running `pnpm db:migrate` against Neon production and rerunning `/exports` plus `/achievements`.

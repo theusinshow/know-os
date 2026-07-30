@@ -10,14 +10,14 @@ Deliver the approved KNOW/OS V1 through verified roadmap phases, without collaps
 
 ## Current phase
 
-Status: `BLOCKED`
+Status: `PAUSED`
 Owner: Codex lead agent
-Phase: `STEP 12 — AUTHENTICATED PRODUCTION WALKTHROUGH`
+Phase: `STEP 13 — UI ALIGNMENT PASS`
 Autonomy: `HIGH WITH GUARDRAILS`
 
 ### Objective
 
-Validate the protected production UI with an authenticated owner session, without applying user-state restore or mutating production data.
+Align all implemented product screens with the approved KNOW/OS Design System and Claude Design visual references, focusing on clear section separation, structural color differentiation, boxed records, shell chrome and reusable UI primitives. Keep the pending Neon production migration blocker separate because it requires explicit approval for an external database schema write.
 
 ### Acceptance criteria
 
@@ -30,6 +30,15 @@ Validate the protected production UI with an authenticated owner session, withou
 - [x] Owner authentication/deployment preparation is documented or implemented only within approved local scope; external deployment remains blocked pending user confirmation.
 - [x] Unit, integration, component and E2E coverage includes import conflict handling, export/restore behavior and audit-relevant smoke paths.
 - [x] Documentation, changelog, `PROJECT_STATUS.md` and this plan reflect Phase 6 behavior.
+
+### Step 13 acceptance criteria
+
+- [x] App shell follows the approved technical-brutalist window/chrome direction with stronger topbar/sidebar/status separation.
+- [x] Primary navigation marks the current route instead of leaving `Fundação` selected on every screen.
+- [x] Shared page shells, module sections, lists, progress summaries, import/restore panels and auth status blocks use visible borders, backgrounds and solid shadows to separate information hierarchy.
+- [x] UI changes reuse generated design tokens and official `public/branding` assets; no Design System source files are modified.
+- [x] Motion remains state-driven, short and compatible with `prefers-reduced-motion`.
+- [x] Lint, typecheck, tests, build and focused Playwright visual/accessibility smoke pass locally.
 
 ### Post-V1 hardening increments
 
@@ -136,6 +145,14 @@ Validate the protected production UI with an authenticated owner session, withou
   - `/exports` and `/achievements` currently fail in authenticated production with Server Components render errors.
   - Likely cause: Neon production schema has not applied checked-in migrations `0007_icy_vengeance.sql` and `0008_pale_shiver_man.sql`.
   - Stop for explicit user confirmation before running `pnpm db:migrate` against Neon production because it is an external database schema write.
+- [x] 13.1 Global UI alignment implementation.
+  - Compare `design-system/uploads` and `design-system/KNOW-OS.dc.html` against current app shell/pages.
+  - Update shared layout/CSS primitives so all routes inherit the same section, panel, list and status hierarchy.
+  - Keep product behavior unchanged and avoid fake unfinished product screens.
+- [x] 13.2 UI alignment validation gate.
+  - Run lint, typecheck, unit tests, build, focused Playwright smoke and local screenshot capture.
+  - Update durable status/changelog and checkpoint/push when the gate passes.
+  - Implemented locally; user requested pause before any push/deployment.
 
 ### Assumptions
 
@@ -763,6 +780,15 @@ Add timestamped commands and exact outcomes during implementation.
 2026-07-30 BRT — git push origin main after CSP nonce hardening: passed, pushed `d8c4ae7`.
 2026-07-30 BRT — authenticated Chrome production walkthrough: `/`, `/tracks`, `/tracks/javascript`, `/lessons/js-fundamentals-001`, `/import`, `/progress` and `/knowledge-map` loaded; `/exports` and `/achievements` failed with production Server Components render errors.
 2026-07-30 BRT — production CSP readback: `https://know-os.vercel.app/` returned nonce-bearing CSP with `script-src 'self' 'nonce-*' 'strict-dynamic'` and no production `unsafe-inline`/`unsafe-eval`.
+2026-07-30 BRT — Step 13 UI alignment orientation: reviewed Claude Design uploads and `design-system/KNOW-OS.dc.html`; reference direction is technical-brutalist app chrome with clear window, sidebar, boxed sections, solid borders, signal yellow action/state and differentiated paper/panel surfaces.
+2026-07-30 BRT — Step 13 UI alignment implementation: added route-aware primary navigation and updated shared shell, foundation panel, module section, record list, progress, import/restore, terminal empty-state and auth-status CSS primitives.
+2026-07-30 BRT — pnpm lint after Step 13 UI alignment — passed.
+2026-07-30 BRT — pnpm typecheck after Step 13 UI alignment — passed.
+2026-07-30 BRT — pnpm test after Step 13 UI alignment — passed, 32 files and 79 tests, plus 1 skipped real-Postgres file/test.
+2026-07-30 BRT — pnpm build after Step 13 UI alignment — passed; generated 150 design tokens and built all implemented routes.
+2026-07-30 BRT — pnpm exec playwright test tests/e2e/accessibility.spec.ts tests/e2e/import-ui.spec.ts --project=chromium — initially failed because `.env.local` OAuth values forced the local harness to `/auth/signin`; fixed `playwright.config.ts` to force local no-OAuth mode with a disposable test secret; rerun passed, 3 tests.
+2026-07-30 BRT — Playwright screenshot capture — captured `test-results/ui-alignment/today-desktop.png`, `import-desktop.png`, `lesson-desktop.png` and `progress-mobile.png`; visual review found and fixed sidebar placeholder overflow and low-contrast terminal empty text.
+2026-07-30 BRT — pnpm test:e2e after Step 13 UI alignment — first run failed because a leftover disposable Next dev server was still running on PID 63392; stopped it and reran successfully, 20 tests across desktop Chromium and mobile Chrome.
 ```
 
 ## Blockers
@@ -770,8 +796,9 @@ Add timestamped commands and exact outcomes during implementation.
 ```text
 No real local PostgreSQL service is available outside `.env.local`; `pnpm test:postgres` validates the configured PostgreSQL service through a disposable schema and production database writes must remain non-destructive and explicitly scoped.
 Authenticated Chrome walkthrough is available, but `/exports` and `/achievements` fail in production with Server Components render errors after Step 11 deployment. The likely repair is applying checked-in migrations `0007_icy_vengeance.sql` and `0008_pale_shiver_man.sql` to Neon production with `pnpm db:migrate`, which requires explicit user confirmation as an external database schema write.
+User requested pausing Step 13 before any push/deployment. Local implementation and validation are complete; changes remain in the working tree until checkpointed/pushed on resume.
 ```
 
 ## NEXT ACTION
 
-Await explicit user confirmation to run `pnpm db:migrate` against Neon production, then rerun the authenticated walkthrough for `/exports` and `/achievements`.
+On resume, review the Step 13 local diff and screenshots, create/push the UI alignment checkpoint if approved, then separately await explicit confirmation before running `pnpm db:migrate` against Neon production and rerunning `/exports` plus `/achievements`.

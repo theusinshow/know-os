@@ -1,27 +1,9 @@
 import Link from "next/link";
-import {
-  BookOpen,
-  Braces,
-  ChartNoAxesColumnIncreasing,
-  Database,
-  Download,
-  Medal,
-  FolderKanban,
-  History,
-  Map,
-  RotateCcw,
-  ShieldCheck,
-  TriangleAlert,
-  Upload
-} from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import type { ReactNode } from "react";
 
+import { PrimaryNav } from "@/components/layout/primary-nav";
 import { StatusBadge } from "@/components/ui/status-badge";
-
-const navigationItems = [
-  { label: "Lições", icon: Map },
-  { label: "Laboratório", icon: Braces }
-];
 
 export function AppShell({ children }: Readonly<{ children: ReactNode }>) {
   return (
@@ -42,61 +24,7 @@ export function AppShell({ children }: Readonly<{ children: ReactNode }>) {
 
       <div className="workspace-frame">
         <nav className="sidebar" aria-label="Navegação principal">
-          <Link className="nav-current" href="/" aria-current="page">
-            <Database aria-hidden="true" />
-            <span>Fundação</span>
-          </Link>
-          <Link className="nav-link" href="/tracks">
-            <BookOpen aria-hidden="true" />
-            <span>Trilhas</span>
-          </Link>
-          <Link className="nav-link" href="/import">
-            <Upload aria-hidden="true" />
-            <span>Importar</span>
-          </Link>
-          <Link className="nav-link" href="/history">
-            <History aria-hidden="true" />
-            <span>Histórico</span>
-          </Link>
-          <Link className="nav-link" href="/review">
-            <RotateCcw aria-hidden="true" />
-            <span>Review</span>
-          </Link>
-          <Link className="nav-link" href="/mistakes">
-            <TriangleAlert aria-hidden="true" />
-            <span>Erros</span>
-          </Link>
-          <Link className="nav-link" href="/projects">
-            <FolderKanban aria-hidden="true" />
-            <span>Projetos</span>
-          </Link>
-          <Link className="nav-link" href="/progress">
-            <ChartNoAxesColumnIncreasing aria-hidden="true" />
-            <span>Progresso</span>
-          </Link>
-          <Link className="nav-link" href="/knowledge-map">
-            <Map aria-hidden="true" />
-            <span>Mapa</span>
-          </Link>
-          <Link className="nav-link" href="/exports">
-            <Download aria-hidden="true" />
-            <span>Exports</span>
-          </Link>
-          <Link className="nav-link" href="/achievements">
-            <Medal aria-hidden="true" />
-            <span>Badges</span>
-          </Link>
-          {navigationItems.map((item) => {
-            const Icon = item.icon;
-
-            return (
-              <span className="nav-placeholder" aria-disabled="true" key={item.label}>
-                <Icon aria-hidden="true" />
-                <span>{item.label}</span>
-                <span className="nav-note">em preparação</span>
-              </span>
-            );
-          })}
+          <PrimaryNav />
         </nav>
 
         <main id="main-content" className="main-surface" tabIndex={-1}>

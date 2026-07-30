@@ -14,7 +14,12 @@ export default defineConfig({
     command: "pnpm exec next dev --webpack --hostname 127.0.0.1 --port 3210",
     env: {
       ...process.env,
+      APP_URL: "",
+      AUTH_GOOGLE_ID: "",
+      AUTH_GOOGLE_SECRET: "",
+      AUTH_SECRET: "test-auth-secret-do-not-use",
       DATABASE_URL: process.env.DATABASE_URL ?? "memory://local",
+      KNOW_OS_ALLOWED_GOOGLE_EMAILS: "",
       KNOW_OS_OWNER_ID: process.env.KNOW_OS_OWNER_ID ?? "local-owner"
     },
     url: "http://127.0.0.1:3210",
