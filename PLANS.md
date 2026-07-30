@@ -10,14 +10,14 @@ Deliver the approved KNOW/OS V1 through verified roadmap phases, without collaps
 
 ## Current phase
 
-Status: `COMPLETE`
+Status: `BLOCKED`
 Owner: Codex lead agent
-Phase: `STEP 11 — CSP NONCE HARDENING`
+Phase: `STEP 12 — AUTHENTICATED PRODUCTION WALKTHROUGH`
 Autonomy: `HIGH WITH GUARDRAILS`
 
 ### Objective
 
-Harden the response CSP with per-request nonces while preserving the current Next.js App Router/Auth.js behavior.
+Validate the protected production UI with an authenticated owner session, without applying user-state restore or mutating production data.
 
 ### Acceptance criteria
 
@@ -125,6 +125,17 @@ Harden the response CSP with per-request nonces while preserving the current Nex
 - [x] 11.3 CSP hardening validation gate.
   - Run focused security tests, lint, typecheck, build, security audit and diff check before checkpoint.
   - Gate passed with focused CSP unit tests, lint, typecheck, build, focused Playwright security-header smoke, production audit and full tests.
+- [x] 12.1 Authenticated read-only walkthrough.
+  - Use an existing owner browser session when available.
+  - Validate protected production pages without clicking RUN, SUBMIT SOLUTION, restore apply or other mutating actions.
+  - Chrome owner session reached the protected home page and validated `/`, `/tracks`, `/tracks/javascript`, `/lessons/js-fundamentals-001`, `/import`, `/progress` and `/knowledge-map`.
+- [x] 12.2 Production CSP readback.
+  - Confirm the live production deployment emits nonce-bearing CSP after the Step 11 push.
+  - `https://know-os.vercel.app/` returned `Content-Security-Policy` with `script-src 'self' 'nonce-*' 'strict-dynamic'` and no production `unsafe-inline`/`unsafe-eval`.
+- [ ] 12.3 Production schema repair gate.
+  - `/exports` and `/achievements` currently fail in authenticated production with Server Components render errors.
+  - Likely cause: Neon production schema has not applied checked-in migrations `0007_icy_vengeance.sql` and `0008_pale_shiver_man.sql`.
+  - Stop for explicit user confirmation before running `pnpm db:migrate` against Neon production because it is an external database schema write.
 
 ### Assumptions
 
@@ -748,15 +759,19 @@ Add timestamped commands and exact outcomes during implementation.
 2026-07-30 BRT — pnpm exec playwright test tests/e2e/security-headers.spec.ts --project=chromium — initially failed while the guard lived in legacy `middleware.ts` because CSP was absent; passed after moving to `src/proxy.ts`, 1 test.
 2026-07-30 BRT — pnpm security:audit after CSP nonce hardening — passed with no known production vulnerabilities.
 2026-07-30 BRT — pnpm test after CSP nonce hardening — passed, 32 files and 79 tests, plus 1 skipped real-Postgres file/test.
+2026-07-30 BRT — git commit -m "Harden runtime CSP with nonces": passed, commit `d8c4ae7`.
+2026-07-30 BRT — git push origin main after CSP nonce hardening: passed, pushed `d8c4ae7`.
+2026-07-30 BRT — authenticated Chrome production walkthrough: `/`, `/tracks`, `/tracks/javascript`, `/lessons/js-fundamentals-001`, `/import`, `/progress` and `/knowledge-map` loaded; `/exports` and `/achievements` failed with production Server Components render errors.
+2026-07-30 BRT — production CSP readback: `https://know-os.vercel.app/` returned nonce-bearing CSP with `script-src 'self' 'nonce-*' 'strict-dynamic'` and no production `unsafe-inline`/`unsafe-eval`.
 ```
 
 ## Blockers
 
 ```text
 No real local PostgreSQL service is available outside `.env.local`; `pnpm test:postgres` validates the configured PostgreSQL service through a disposable schema and production database writes must remain non-destructive and explicitly scoped.
-Interactive Google sign-in with the allowed owner account is user-operated in this environment; production route protection and service-level vertical behavior have been validated.
+Authenticated Chrome walkthrough is available, but `/exports` and `/achievements` fail in production with Server Components render errors after Step 11 deployment. The likely repair is applying checked-in migrations `0007_icy_vengeance.sql` and `0008_pale_shiver_man.sql` to Neon production with `pnpm db:migrate`, which requires explicit user confirmation as an external database schema write.
 ```
 
 ## NEXT ACTION
 
-Step 12 — authenticated owner browser walkthrough/polish: validate the protected production UI with an owner session when available, without applying user-state restore.
+Await explicit user confirmation to run `pnpm db:migrate` against Neon production, then rerun the authenticated walkthrough for `/exports` and `/achievements`.
