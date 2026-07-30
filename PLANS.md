@@ -531,4 +531,4 @@ External push requires explicit user confirmation for the Step 2 commits.
 
 ## NEXT ACTION
 
-Commit this Step 2.7 control-file update locally, then request confirmation before pushing the Step 2 production-readiness commits to GitHub.
+Push the validated Step 2 production-readiness commits to GitHub after explicit user confirmation.
