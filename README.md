@@ -37,6 +37,7 @@ pnpm typecheck
 pnpm test
 pnpm test:postgres
 pnpm test:e2e
+pnpm security:audit
 pnpm build
 pnpm db:generate
 ```
@@ -93,6 +94,12 @@ LOG_LEVEL
 ```
 
 O callback Google OAuth deve terminar em `/api/auth/callback/google`, por exemplo `https://seu-dominio/api/auth/callback/google`. Em Vercel, `AUTH_TRUST_HOST=true` mantém o Auth.js confiando nos headers encaminhados pelo proxy. Não commite valores reais de OAuth, banco ou `AUTH_SECRET`.
+
+## Segurança de publicação
+
+`pnpm security:audit` roda `pnpm audit --prod --audit-level moderate` e bloqueia vulnerabilidades conhecidas em dependências de produção. Overrides compatíveis ficam em `pnpm-workspace.yaml` para `sharp`, `postcss`, `esbuild` e `brace-expansion` transitivos. A auditoria completa de desenvolvimento ainda pode sinalizar o caminho dev-only `eslint -> minimatch@3 -> brace-expansion`; `brace-expansion@1.1.18` é usado para manter compatibilidade sem quebrar o ESLint.
+
+As respostas incluem uma CSP candidata em modo enforcement, além de `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options` e `Permissions-Policy`. A CSP permite os mínimos atuais para Next.js/Auth.js/Google OAuth/Vercel e deve ser revisada antes de remover `unsafe-inline`/`unsafe-eval`.
 
 ## Vertical slice
 

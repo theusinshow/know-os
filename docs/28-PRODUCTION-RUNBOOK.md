@@ -35,6 +35,7 @@ pnpm install --frozen-lockfile
 pnpm lint
 pnpm typecheck
 pnpm test
+pnpm security:audit
 pnpm build
 ```
 

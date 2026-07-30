@@ -12,12 +12,12 @@ Deliver the approved KNOW/OS V1 through verified roadmap phases, without collaps
 
 Status: `COMPLETE`
 Owner: Codex lead agent
-Phase: `STEP 4 — REAL POSTGRESQL VALIDATION`
+Phase: `STEP 5 — SECURITY PUBLICATION HARDENING`
 Autonomy: `HIGH WITH GUARDRAILS`
 
 ### Objective
 
-Validate the migration-backed repository behavior against a real PostgreSQL engine without mutating production application tables, then continue through the remaining publication-hardening roadmap one point at a time.
+Add the concrete security publication checks required before broader content distribution: dependency vulnerability scanning and an enforced CSP candidate that remains compatible with the current Next.js/Auth.js/Vercel surface.
 
 ### Acceptance criteria
 
@@ -43,9 +43,19 @@ Validate the migration-backed repository behavior against a real PostgreSQL engi
   - Run the new validation against the configured PostgreSQL service when a URL is available.
   - Record exact results and keep production application data untouched.
   - `pnpm test:postgres` passed against the configured real PostgreSQL URL from ignored local environment using a disposable schema. Validation covered 7 migrations, 1 imported track, 2 activities, RUN with 0 attempts and SUBMIT with 1 attempt plus progress assertions.
-- [ ] 5.1 Security publication hardening.
+- [x] 5.1 Dependency vulnerability scanning.
   - Add dependency vulnerability scanning command/documentation.
+  - Added `pnpm security:audit` for production/runtime dependencies.
+  - Added pnpm overrides for patched transitive production dependencies: `sharp@0.35.0`, `postcss@8.5.18` and `esbuild@0.25.12`.
+  - Kept the full dev audit residual explicit: `eslint -> minimatch@3 -> brace-expansion`; `brace-expansion@1.1.18` is pinned for compatibility, while forcing `brace-expansion@5` breaks ESLint.
+- [x] 5.2 CSP candidate and header coverage.
   - Define and test a production CSP candidate without breaking current Auth.js/Google/Vercel behavior.
+  - Added an enforced CSP candidate to `next.config.ts` covering default/base/frame/object/form/script/style/img/font/connect/frame/worker/manifest directives.
+  - Extended Playwright security-header coverage for CSP directives and Google OAuth origin allowance.
+- [x] 5.3 Security validation gate.
+  - Run dependency audit, lint, typecheck, unit tests, focused security-header E2E and build.
+  - Record exact results and checkpoint.
+  - Gate passed with production audit clean, lint/typecheck/test/security-header E2E/build passing.
 - [ ] 6.1 Pack publication hardening.
   - Consolidate Pack versioning/distribution rules before public content publication.
   - Add compatibility fixtures/tests for accepted Pack versions.
@@ -610,6 +620,17 @@ Add timestamped commands and exact outcomes during implementation.
 2026-07-30 BRT — pnpm lint after final real PostgreSQL harness — passed.
 2026-07-30 BRT — pnpm test after final real PostgreSQL harness — passed, 29 files and 72 tests, plus 1 skipped real-Postgres file/test.
 2026-07-30 BRT — pnpm build after final real PostgreSQL harness — passed.
+2026-07-30 BRT — pnpm security:audit initial run — failed with 6 vulnerabilities: high `sharp`, high/moderate `postcss`, high `brace-expansion`, moderate `esbuild`.
+2026-07-30 BRT — npm view checks for patched transitive versions — passed for `sharp@0.35.0`, `postcss@8.5.18`, `brace-expansion@1.1.16`, `brace-expansion@1.1.18`, `brace-expansion@5.0.8`, `esbuild@0.25.12`; `esbuild@0.24.3` does not exist despite advisory wording.
+2026-07-30 BRT — pnpm install after production dependency overrides — passed; lockfile updated.
+2026-07-30 BRT — pnpm security:audit after production overrides — passed with no known production vulnerabilities.
+2026-07-30 BRT — full `pnpm audit --audit-level moderate` remains non-passing due dev-only `eslint -> minimatch@3 -> brace-expansion`; forcing `brace-expansion@5` broke ESLint with `expand is not a function`, so the compatible `brace-expansion@1.1.18` pin is retained and documented.
+2026-07-30 BRT — pnpm lint after CSP and overrides — passed.
+2026-07-30 BRT — pnpm test after CSP and overrides — passed, 29 files and 72 tests, plus 1 skipped real-Postgres file/test.
+2026-07-30 BRT — pnpm exec playwright test tests/e2e/security-headers.spec.ts --project=chromium after CSP — passed, 1 test.
+2026-07-30 BRT — pnpm install --frozen-lockfile after CSP and overrides — passed, already up to date.
+2026-07-30 BRT — pnpm typecheck after CSP and overrides — passed.
+2026-07-30 BRT — pnpm build after CSP and overrides — passed.
 ```
 
 ## Blockers
@@ -621,4 +642,4 @@ Interactive Google sign-in with the allowed owner account is user-operated in th
 
 ## NEXT ACTION
 
-Step 5 — security publication hardening: add a dependency vulnerability scanning command/documentation, define a production CSP candidate, and validate that the CSP/security headers do not break current Auth.js/Google/Vercel behavior.
+Step 6 — Pack publication hardening: consolidate Pack versioning/distribution rules before public content publication and add compatibility fixtures/tests for accepted Pack versions.

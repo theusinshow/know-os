@@ -15,7 +15,8 @@
     "test:e2e": "playwright test",
     "build": "pnpm generate:tokens && next build",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "security:audit": "pnpm audit --prod --audit-level moderate"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",
