@@ -1,0 +1,18 @@
+{
+  "schema": "know-os.pack-catalog.v1",
+  "generatedFor": "know-os@0.1.0",
+  "packs": [
+    {
+      "schema": "caderno.track.v1",
+      "packId": "know-os.javascript-fundamentals",
+      "version": 1,
+      "path": "packs/examples/javascript-fundamentals.track.json",
+      "contentHash": "d8af392872b0c41cc3dce30af0a896937986270ade1a1d5b62d924647d7a10c4",
+      "status": "published-example",
+      "compatibility": {
+        "acceptedBy": ["caderno.track.v1"],
+        "minimumKnowOsVersion": "0.1.0"
+      }
+    }
+  ]
+}

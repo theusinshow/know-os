@@ -61,6 +61,7 @@ The format follows Keep a Changelog principles. Product versions will follow Sem
 - Guarded `pnpm test:postgres` validation against a real PostgreSQL engine using a disposable schema and migration-backed import/RUN/SUBMIT/progress smoke.
 - Production dependency vulnerability audit via `pnpm security:audit`, patched pnpm overrides and documented dev-only audit residual for ESLint/minimatch/brace-expansion.
 - Enforced CSP candidate in Next.js response headers with Playwright coverage for core directives and Google OAuth compatibility.
+- Pack publication catalog and `pnpm packs:verify` hash/compatibility gate for accepted distributed Packs.
 - Zod server-environment validation.
 - Vitest, Testing Library and Playwright smoke coverage.
 - GitHub Actions baseline CI and separate Playwright E2E workflow.

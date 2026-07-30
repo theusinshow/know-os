@@ -12,12 +12,12 @@ Deliver the approved KNOW/OS V1 through verified roadmap phases, without collaps
 
 Status: `COMPLETE`
 Owner: Codex lead agent
-Phase: `STEP 5 — SECURITY PUBLICATION HARDENING`
+Phase: `STEP 6 — PACK PUBLICATION HARDENING`
 Autonomy: `HIGH WITH GUARDRAILS`
 
 ### Objective
 
-Add the concrete security publication checks required before broader content distribution: dependency vulnerability scanning and an enforced CSP candidate that remains compatible with the current Next.js/Auth.js/Vercel surface.
+Consolidate Pack versioning and distribution rules before public content publication without changing the accepted `caderno.track.v1` schema contract.
 
 ### Acceptance criteria
 
@@ -56,9 +56,18 @@ Add the concrete security publication checks required before broader content dis
   - Run dependency audit, lint, typecheck, unit tests, focused security-header E2E and build.
   - Record exact results and checkpoint.
   - Gate passed with production audit clean, lint/typecheck/test/security-header E2E/build passing.
-- [ ] 6.1 Pack publication hardening.
+- [x] 6.1 Pack distribution catalog.
   - Consolidate Pack versioning/distribution rules before public content publication.
+  - Added `packs/catalog.json` with the published example Track Pack, canonical content hash and compatibility metadata.
+  - Documented the immutable `schema:packId:version` publication tuple in `docs/11-PACK-SPEC.md` and `packs/README.md`.
+- [x] 6.2 Pack compatibility verification.
   - Add compatibility fixtures/tests for accepted Pack versions.
+  - Added `pnpm packs:verify` and `scripts/verify-pack-catalog.mjs` to validate catalog entries, paths, metadata, canonical hashes and compatibility.
+  - Extended `tests/unit/track-pack-validation.test.ts` to assert the catalog entry matches the accepted `caderno.track.v1` fixture hash.
+- [x] 6.3 Pack publication validation gate.
+  - Run Pack verification, focused unit tests, lint, typecheck and build.
+  - Record exact results and checkpoint.
+  - Gate passed with Pack verification, focused unit tests, lint, typecheck, production audit, full tests and build.
 - [ ] 7.1 Persisted gamification awards.
   - Add append-only or auditable persisted badge award / mission progress tables only if they do not blur mastery versus gamification.
 - [ ] 8.1 User-state restore policy.
@@ -631,6 +640,14 @@ Add timestamped commands and exact outcomes during implementation.
 2026-07-30 BRT — pnpm install --frozen-lockfile after CSP and overrides — passed, already up to date.
 2026-07-30 BRT — pnpm typecheck after CSP and overrides — passed.
 2026-07-30 BRT — pnpm build after CSP and overrides — passed.
+2026-07-30 BRT — node canonical hash check for `packs/examples/javascript-fundamentals.track.json` — passed, hash `d8af392872b0c41cc3dce30af0a896937986270ade1a1d5b62d924647d7a10c4`.
+2026-07-30 BRT — pnpm packs:verify — passed, `pack_catalog_validation:passed:packs=1`.
+2026-07-30 BRT — pnpm exec vitest run tests/unit/track-pack-validation.test.ts — passed, 1 file and 3 tests.
+2026-07-30 BRT — pnpm typecheck after Pack catalog — passed.
+2026-07-30 BRT — pnpm lint after Pack catalog — passed.
+2026-07-30 BRT — pnpm test after Pack catalog — passed, 29 files and 73 tests, plus 1 skipped real-Postgres file/test.
+2026-07-30 BRT — pnpm security:audit after Pack catalog — passed with no known production vulnerabilities.
+2026-07-30 BRT — pnpm build after Pack catalog — passed.
 ```
 
 ## Blockers
@@ -642,4 +659,4 @@ Interactive Google sign-in with the allowed owner account is user-operated in th
 
 ## NEXT ACTION
 
-Step 6 — Pack publication hardening: consolidate Pack versioning/distribution rules before public content publication and add compatibility fixtures/tests for accepted Pack versions.
+Step 7 — persisted gamification awards: add auditable badge award and mission progress persistence without blurring deterministic mastery or making gamification authoritative.

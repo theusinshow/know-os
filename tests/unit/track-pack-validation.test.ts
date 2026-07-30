@@ -1,4 +1,5 @@
 import examplePack from "../../packs/examples/javascript-fundamentals.track.json";
+import packCatalog from "../../packs/catalog.json";
 import { describe, expect, it } from "vitest";
 
 import { validateTrackPack } from "@/features/import/application/track-pack-validation";
@@ -28,5 +29,23 @@ describe("validateTrackPack", () => {
       ok: false,
       issues: [expect.objectContaining({ code: "missing_concept" })]
     });
+  });
+
+  it("keeps the published example catalog entry compatible with the accepted Track Pack schema", () => {
+    const [entry] = packCatalog.packs;
+    const result = validateTrackPack(examplePack);
+
+    expect(entry).toMatchObject({
+      schema: "caderno.track.v1",
+      packId: examplePack.packId,
+      version: examplePack.version
+    });
+
+    expect(entry?.compatibility.acceptedBy).toContain("caderno.track.v1");
+    expect(result).toMatchObject({ ok: true });
+
+    if (result.ok) {
+      expect(entry?.contentHash).toBe(result.contentHash);
+    }
   });
 });

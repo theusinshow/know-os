@@ -49,6 +49,19 @@ Stable IDs are permanent within a publisher namespace. Display titles may change
 
 Each imported entity has a content version. Importing the same ID and version is idempotent. A newer version produces a diff. User progress and attempts remain separate and are never overwritten by content updates.
 
+## Publication catalog
+
+Publicly distributed Packs must be listed in `packs/catalog.json` before publication. Each catalog entry records:
+
+- Pack `schema`;
+- stable `packId`;
+- integer content `version`;
+- repository path;
+- canonical content hash;
+- compatibility metadata.
+
+The tuple `schema:packId:version` is immutable. If any Pack content changes, publish a new integer `version`; do not reuse the same version with a different content hash. Run `pnpm packs:verify` before publication to validate the catalog, hash and compatibility metadata.
+
 ## Container
 
 A future `.caderno` file may be a ZIP-compatible container:
