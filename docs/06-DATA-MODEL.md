@@ -33,6 +33,7 @@ Every user-owned record includes `owner_id`, even while V1 uses a single seeded 
 - `project_contexts`
 - `project_concepts`
 - `project_activities`
+- future `restore_provenance` ledger before user-state replay
 
 ### Gamification
 

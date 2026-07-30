@@ -63,6 +63,7 @@ The format follows Keep a Changelog principles. Product versions will follow Sem
 - Enforced CSP candidate in Next.js response headers with Playwright coverage for core directives and Google OAuth compatibility.
 - Pack publication catalog and `pnpm packs:verify` hash/compatibility gate for accepted distributed Packs.
 - Persisted gamification projections with `badge_awards`, `mission_progress`, mission status-change audit events, achievement timestamps and export coverage.
+- ADR 0016 defining the dry-run/apply policy required before full append-only user-state restore.
 - Zod server-environment validation.
 - Vitest, Testing Library and Playwright smoke coverage.
 - GitHub Actions baseline CI and separate Playwright E2E workflow.

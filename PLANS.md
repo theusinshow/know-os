@@ -12,12 +12,12 @@ Deliver the approved KNOW/OS V1 through verified roadmap phases, without collaps
 
 Status: `COMPLETE`
 Owner: Codex lead agent
-Phase: `STEP 7 — PERSISTED GAMIFICATION AWARDS`
+Phase: `STEP 8 — USER-STATE RESTORE POLICY`
 Autonomy: `HIGH WITH GUARDRAILS`
 
 ### Objective
 
-Persist auditable badge awards and mission progress projections without making gamification authoritative for mastery, progress or learning decisions.
+Design the conflict-safe append-only replay/merge policy before implementing restore of attempts, XP, history, mistakes, reviews or gamification projections.
 
 ### Acceptance criteria
 
@@ -83,8 +83,17 @@ Persist auditable badge awards and mission progress projections without making g
 - [x] 7.4 Gamification persistence validation gate.
   - Run focused unit/integration tests, migration generation, lint, typecheck, full tests, build and diff check before checkpoint.
   - Gate passed with migration generation, focused tests, lint, typecheck, full tests, production audit, build and diff check.
-- [ ] 8.1 User-state restore policy.
+- [x] 8.1 User-state restore policy ADR.
   - Design the conflict-safe append-only replay/merge policy before implementing restore of attempts, XP, history, mistakes or review state.
+  - Define identity mapping, idempotency keys, conflict classes, blocked cases and acceptable append-only merge behavior.
+  - Added ADR 0016 for `user_state_dry_run`, future `user_state_apply`, restore provenance ledger, append-only categories, projection handling and blocking conflicts.
+- [x] 8.2 Restore contract documentation.
+  - Update import/export/restore docs with explicit V1 restore modes: Pack-only apply, dry-run user-state replay plan and future apply gate.
+  - Keep automatic replay disabled until compatibility tests and UI review exist.
+  - Updated import/export docs, README, data model notes and changelog.
+- [x] 8.3 Restore policy validation gate.
+  - Run documentation-relevant type/test checks and diff check.
+  - Gate passed with lint, typecheck and diff check.
 
 ### Assumptions
 
@@ -672,6 +681,13 @@ Add timestamped commands and exact outcomes during implementation.
 2026-07-30 BRT — pnpm build after gamification persistence — passed.
 2026-07-30 BRT — git diff --check after gamification persistence — passed.
 2026-07-30 BRT — pnpm typecheck after restoring `next-env.d.ts` dev route reference — passed.
+2026-07-30 BRT — git commit -m "Persist gamification projections" — passed, commit `2263a6f`.
+2026-07-30 BRT — git push origin main after gamification persistence — passed, pushed `2263a6f`.
+2026-07-30 BRT — Step 8 restore policy orientation read from `docs/13-IMPORT-EXPORT.md`, `docs/22-API-CONVENTIONS.md`, `docs/23-ERROR-HANDLING.md` and ADR 0014.
+2026-07-30 BRT — Added ADR 0016 for conflict-safe full user-state restore replay policy.
+2026-07-30 BRT — pnpm lint after Step 8 restore policy docs — passed.
+2026-07-30 BRT — pnpm typecheck after Step 8 restore policy docs — passed.
+2026-07-30 BRT — git diff --check after Step 8 restore policy docs — passed.
 ```
 
 ## Blockers
@@ -683,4 +699,4 @@ Interactive Google sign-in with the allowed owner account is user-operated in th
 
 ## NEXT ACTION
 
-Step 8 — user-state restore policy: design the conflict-safe append-only replay/merge policy before implementing restore of attempts, XP, history, mistakes, reviews or gamification projections.
+Step 9 — restore dry-run planner foundation: implement the restore provenance schema and dry-run merge planner from ADR 0016 before any user-state apply mode.

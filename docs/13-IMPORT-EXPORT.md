@@ -37,6 +37,29 @@ Complete user-owned state plus necessary content references, manifest, schema ve
 
 Portable user progress and evidence without including unnecessary private notes unless selected.
 
+## Restore modes
+
+### `pack_manifest_apply`
+
+Current V1 mode. Restores Pack manifests from Backup exports through the normal Pack importer and never overwrites local user state.
+
+### `user_state_dry_run`
+
+Future required mode before full user-state restore. It validates append-only records, resolves content identity, checks restore provenance/idempotency and produces a category-by-category merge plan.
+
+### `user_state_apply`
+
+Future apply mode. It remains disabled until ADR 0016 requirements are implemented:
+
+- restore provenance ledger;
+- idempotency by source backup, source record and payload hash;
+- content hash compatibility checks;
+- explicit blocking conflict report;
+- append-only import of historical records as new local records;
+- deterministic rebuild/reconciliation of projections.
+
+Attempts, XP, history, mistakes, reviews and gamification projections must not be replayed automatically by the V1 restore endpoint.
+
 ## Privacy
 
 Exports are explicit user actions. The UI must show included categories and warn about private notes or source code.
