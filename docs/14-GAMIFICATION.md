@@ -38,6 +38,13 @@ Implemented V1 badges, ranks and missions are deterministic read models. They ar
 - missions point to continuation, due review and active mistake work;
 - project application appears as a Today recommendation after review, mistakes and catalog continuation.
 
+Persisted gamification projections:
+
+- `badge_awards` records each earned badge once per owner with the criteria snapshot and `gamification.v1` source.
+- `mission_progress` stores the current mission status, completion timestamp and criteria snapshot per owner.
+- `mission_progress_events` appends a status-change record when a mission becomes available or complete.
+- These records are exportable user-state projections. They do not certify mastery and do not feed the recommendation policy.
+
 ## Anti-patterns
 
 - leaderboards in V1;

@@ -41,6 +41,7 @@ Every user-owned record includes `owner_id`, even while V1 uses a single seeded 
 - `badge_awards`
 - `missions`
 - `mission_progress`
+- `mission_progress_events`
 
 ## JSONB use
 
@@ -58,7 +59,9 @@ Corrections are represented through new records or explicit revocation/compensat
 
 ## Implemented V1 notes
 
-Current migrations implement imported content tables, owner-scoped progress/attempt/evidence/review/mistake state, optional project context joins to imported concepts and activities, and append-only XP transactions. Badge, rank and mission state is currently derived deterministically from existing evidence/read models rather than persisted in separate award/progress tables.
+Current migrations implement imported content tables, owner-scoped progress/attempt/evidence/review/mistake state, optional project context joins to imported concepts and activities, append-only XP transactions, append-only badge awards, mission progress projections and mission progress status-change events.
+
+Rank, badge eligibility and mission status remain derived from deterministic rules over XP, reviews, mistakes and mastery evidence. The persisted gamification tables are read/export projections and audit records; they must not drive mastery or learning recommendations.
 
 ## Time
 

@@ -4,7 +4,7 @@ Last updated: 2026-07-30
 
 ## Current phase
 
-`V1 PACK PUBLICATION HARDENED — GAMIFICATION PERSISTENCE NEXT`
+`V1 GAMIFICATION PERSISTENCE IMPLEMENTED — USER-STATE RESTORE POLICY NEXT`
 
 Phase 0 repository foundation is implemented and verified. The repository now contains a Next.js App Router scaffold with TypeScript strict mode, Tailwind/token generation, minimal accessible shell, Drizzle/PostgreSQL foundation, Zod validation, Vitest/Testing Library/Playwright smoke tests and GitHub Actions CI.
 
@@ -20,7 +20,7 @@ Phase 5 projects and gamification is implemented and verified. The implemented s
 
 Phase 6 portability and hardening is implemented and verified. The V1 local product now includes import preview/hardening, Backup/Progress/Teacher Context exports, non-destructive Backup restore for Pack manifests, accessibility/responsive audit coverage, baseline security headers, security audit documentation and deployment preparation within local-only guardrails.
 
-Production deployment is live at `https://know-os.vercel.app` using the ADR 0015 stack: Vercel, Neon Postgres and Auth.js Google OAuth. Step 2 implementation includes the Auth.js Google foundation, production environment contract, central session guard and Neon/Vercel runbook. Neon migrations have been applied and unauthenticated production smoke checks pass. The sign-in surface now uses the custom `/auth/signin` page following the KNOW/OS Design System, and Google OAuth requests include `prompt=select_account` so account selection is explicit. After a Google `invalid_client` response, Vercel Production OAuth/Auth environment values were re-applied from ignored local values, production was redeployed and the Google page was verified without `invalid_client`. A design-system motion pass now applies approved short motion tokens to app shell, sign-in and recurring content primitives while preserving reduced-motion behavior. Step 3 adds a real `/import` product surface for example/paste/file Track Pack activation with preview-before-apply semantics, deploys it to production and validates the first production learning loop at service level. Step 4 adds and runs guarded real-PostgreSQL validation through a disposable schema, covering checked-in migrations plus import/RUN/SUBMIT/progress behavior without touching production application tables. Step 5 adds production dependency vulnerability scanning, patched transitive runtime overrides and an enforced CSP candidate with Playwright coverage. Step 6 adds a Pack publication catalog and verifier so the accepted example Pack has immutable schema/ID/version/hash metadata before broader distribution. ADR 0014 keeps append-only user-state replay/merge out of V1 restore.
+Production deployment is live at `https://know-os.vercel.app` using the ADR 0015 stack: Vercel, Neon Postgres and Auth.js Google OAuth. Step 2 implementation includes the Auth.js Google foundation, production environment contract, central session guard and Neon/Vercel runbook. Neon migrations have been applied and unauthenticated production smoke checks pass. The sign-in surface now uses the custom `/auth/signin` page following the KNOW/OS Design System, and Google OAuth requests include `prompt=select_account` so account selection is explicit. After a Google `invalid_client` response, Vercel Production OAuth/Auth environment values were re-applied from ignored local values, production was redeployed and the Google page was verified without `invalid_client`. A design-system motion pass now applies approved short motion tokens to app shell, sign-in and recurring content primitives while preserving reduced-motion behavior. Step 3 adds a real `/import` product surface for example/paste/file Track Pack activation with preview-before-apply semantics, deploys it to production and validates the first production learning loop at service level. Step 4 adds and runs guarded real-PostgreSQL validation through a disposable schema, covering checked-in migrations plus import/RUN/SUBMIT/progress behavior without touching production application tables. Step 5 adds production dependency vulnerability scanning, patched transitive runtime overrides and an enforced CSP candidate with Playwright coverage. Step 6 adds a Pack publication catalog and verifier so the accepted example Pack has immutable schema/ID/version/hash metadata before broader distribution. Step 7 adds persisted gamification projections for badge awards, mission progress and mission status-change audit events while keeping XP/review/mistake/mastery rules authoritative. ADR 0014 keeps append-only user-state replay/merge out of V1 restore.
 
 ## Agent operating mode
 
@@ -114,6 +114,14 @@ Codex may progress through approved V1 roadmap phases without routine user confi
 - `/knowledge-map` page with a complete list-first fallback for imported concept relationships.
 - Today recommendations include project application suggestions after review, mistake and catalog continuation priorities.
 
+## Implemented in Step 7
+
+- `badge_awards` table records earned badges once per owner with criteria snapshot and deterministic source.
+- `mission_progress` table stores current mission status, completion timestamp and criteria snapshot.
+- `mission_progress_events` appends mission status-change audit records.
+- `/achievements` surfaces persisted badge/progress timestamps when available.
+- Export snapshots include gamification projection data; restore V1 still skips gamification replay with the other user-state categories.
+
 ## Implemented in Phase 6
 
 - Track Pack import size limit, preview endpoint and content-hash conflict reporting.
@@ -128,7 +136,7 @@ Codex may progress through approved V1 roadmap phases without routine user confi
 
 ## Not implemented
 
-Authenticated owner browser walkthrough/polish after service-level production validation, external sync, full user-state replay/merge restore, persisted badge award tables, persisted mission progress tables, stricter nonce/hash CSP and multi-Pack distribution/release workflow.
+Authenticated owner browser walkthrough/polish after service-level production validation, external sync, full user-state replay/merge restore, stricter nonce/hash CSP and multi-Pack distribution/release workflow.
 
 ## Verification
 
@@ -197,6 +205,20 @@ pnpm lint — passed.
 pnpm test — passed, 29 files and 73 tests, plus 1 skipped real-Postgres file/test.
 pnpm security:audit — passed with no known production vulnerabilities.
 pnpm build — passed.
+```
+
+Latest Step 7 gamification persistence results:
+
+```text
+pnpm db:generate — passed, generated `src/db/migrations/0007_icy_vengeance.sql`.
+pnpm exec vitest run tests/integration/gamification-repository.test.ts tests/unit/gamification-rules.test.ts tests/unit/export-contracts.test.ts tests/unit/restore-contracts.test.ts — passed, 4 files and 8 tests.
+pnpm lint — passed.
+pnpm typecheck — passed.
+pnpm test — passed, 30 files and 74 tests, plus 1 skipped real-Postgres file/test.
+pnpm security:audit — passed with no known production vulnerabilities.
+pnpm build — passed.
+git diff --check — passed.
+pnpm typecheck after restoring `next-env.d.ts` dev route reference — passed.
 ```
 
 Latest Step 2.9 motion pass results:
@@ -389,7 +411,7 @@ Do not run `pnpm typecheck` concurrently with `pnpm build`; Next mutates generat
 
 ## Next milestone
 
-Step 7 — persisted gamification awards: add auditable badge award and mission progress persistence without blurring deterministic mastery or making gamification authoritative.
+Step 8 — user-state restore policy: design the conflict-safe append-only replay/merge policy before implementing restore of attempts, XP, history, mistakes, reviews or gamification projections.
 
 ## Risk register
 
@@ -407,4 +429,4 @@ Step 7 — persisted gamification awards: add auditable badge award and mission 
 
 ## NEXT ACTION
 
-Step 7 — persisted gamification awards: add auditable badge award and mission progress persistence without blurring deterministic mastery or making gamification authoritative.
+Step 8 — user-state restore policy: design the conflict-safe append-only replay/merge policy before implementing restore of attempts, XP, history, mistakes, reviews or gamification projections.

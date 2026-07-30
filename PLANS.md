@@ -12,12 +12,12 @@ Deliver the approved KNOW/OS V1 through verified roadmap phases, without collaps
 
 Status: `COMPLETE`
 Owner: Codex lead agent
-Phase: `STEP 6 — PACK PUBLICATION HARDENING`
+Phase: `STEP 7 — PERSISTED GAMIFICATION AWARDS`
 Autonomy: `HIGH WITH GUARDRAILS`
 
 ### Objective
 
-Consolidate Pack versioning and distribution rules before public content publication without changing the accepted `caderno.track.v1` schema contract.
+Persist auditable badge awards and mission progress projections without making gamification authoritative for mastery, progress or learning decisions.
 
 ### Acceptance criteria
 
@@ -68,8 +68,21 @@ Consolidate Pack versioning and distribution rules before public content publica
   - Run Pack verification, focused unit tests, lint, typecheck and build.
   - Record exact results and checkpoint.
   - Gate passed with Pack verification, focused unit tests, lint, typecheck, production audit, full tests and build.
-- [ ] 7.1 Persisted gamification awards.
-  - Add append-only or auditable persisted badge award / mission progress tables only if they do not blur mastery versus gamification.
+- [x] 7.1 Persisted gamification schema.
+  - Add `badge_awards`, `mission_progress` and append-only mission progress audit records with owner scope and generated migration.
+  - Added `badge_awards`, `mission_progress`, `mission_progress_events` and generated `src/db/migrations/0007_icy_vengeance.sql`.
+- [x] 7.2 Gamification projection repository.
+  - Materialize earned badge awards once, upsert current mission progress and append mission status-change events from deterministic rule output.
+  - Keep XP, review, mistakes and mastery as the inputs; do not let persisted gamification change domain decisions.
+  - Added PostgreSQL and memory repositories for deterministic gamification projection sync.
+- [x] 7.3 Product and export readback.
+  - Surface persisted award/progress timestamps on `/achievements`.
+  - Include gamification projection data in export snapshots without enabling automatic user-state replay.
+  - `/achievements` displays persisted badge/progress timestamps when available.
+  - Backup and Progress exports include gamification projection data; restore V1 still skips gamification replay with other user-state categories.
+- [x] 7.4 Gamification persistence validation gate.
+  - Run focused unit/integration tests, migration generation, lint, typecheck, full tests, build and diff check before checkpoint.
+  - Gate passed with migration generation, focused tests, lint, typecheck, full tests, production audit, build and diff check.
 - [ ] 8.1 User-state restore policy.
   - Design the conflict-safe append-only replay/merge policy before implementing restore of attempts, XP, history, mistakes or review state.
 
@@ -648,6 +661,17 @@ Add timestamped commands and exact outcomes during implementation.
 2026-07-30 BRT — pnpm test after Pack catalog — passed, 29 files and 73 tests, plus 1 skipped real-Postgres file/test.
 2026-07-30 BRT — pnpm security:audit after Pack catalog — passed with no known production vulnerabilities.
 2026-07-30 BRT — pnpm build after Pack catalog — passed.
+2026-07-30 BRT — git commit -m "Add Pack publication catalog" — passed, commit `d0eb22e`.
+2026-07-30 BRT — git push origin main after Pack catalog — passed, pushed `d0eb22e`.
+2026-07-30 BRT — pnpm db:generate after gamification persistence schema — passed, generated `src/db/migrations/0007_icy_vengeance.sql`.
+2026-07-30 BRT — pnpm exec vitest run tests/integration/gamification-repository.test.ts tests/unit/gamification-rules.test.ts tests/unit/export-contracts.test.ts tests/unit/restore-contracts.test.ts — passed, 4 files and 8 tests.
+2026-07-30 BRT — pnpm lint after gamification persistence — passed.
+2026-07-30 BRT — pnpm typecheck after gamification persistence — passed.
+2026-07-30 BRT — pnpm test after gamification persistence — passed, 30 files and 74 tests, plus 1 skipped real-Postgres file/test.
+2026-07-30 BRT — pnpm security:audit after gamification persistence — passed with no known production vulnerabilities.
+2026-07-30 BRT — pnpm build after gamification persistence — passed.
+2026-07-30 BRT — git diff --check after gamification persistence — passed.
+2026-07-30 BRT — pnpm typecheck after restoring `next-env.d.ts` dev route reference — passed.
 ```
 
 ## Blockers
@@ -659,4 +683,4 @@ Interactive Google sign-in with the allowed owner account is user-operated in th
 
 ## NEXT ACTION
 
-Step 7 — persisted gamification awards: add auditable badge award and mission progress persistence without blurring deterministic mastery or making gamification authoritative.
+Step 8 — user-state restore policy: design the conflict-safe append-only replay/merge policy before implementing restore of attempts, XP, history, mistakes, reviews or gamification projections.

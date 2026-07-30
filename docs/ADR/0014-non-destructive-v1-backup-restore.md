@@ -5,9 +5,9 @@ Date: 2026-07-30
 
 ## Context
 
-V1 Backup exports include imported Pack manifests and owner-scoped learning state categories such as attempts, concept evidence, review queue, mistakes, project context, XP and history. The learning-history rules require attempts, study events, concept evidence and XP transactions to remain append-only.
+V1 Backup exports include imported Pack manifests and owner-scoped learning state categories such as attempts, concept evidence, review queue, mistakes, project context, XP, gamification projections and history. The learning-history rules require attempts, study events, concept evidence and XP transactions to remain append-only.
 
-Automatically replaying exported user state into an existing local database would need conflict handling for existing attempts, source activity references, timestamps, derived projections, XP duplication and event identity. Overwriting local rows would violate the non-destructive restore expectation and can erase learning history.
+Automatically replaying exported user state into an existing local database would need conflict handling for existing attempts, source activity references, timestamps, derived projections, XP duplication, gamification projection identity and event identity. Overwriting local rows would violate the non-destructive restore expectation and can erase learning history.
 
 ## Decision
 

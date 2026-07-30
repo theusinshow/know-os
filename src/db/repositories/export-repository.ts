@@ -3,6 +3,7 @@ import type { PgDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core";
 
 import { getDatabase } from "@/db/connection";
 import { CatalogRepository, type KnowledgeMapConcept, type TrackListItem } from "@/db/repositories/catalog-repository";
+import { GamificationRepository, type GamificationPersistenceState } from "@/db/repositories/gamification-repository";
 import { HistoryRepository, type HistoryEvent } from "@/db/repositories/history-repository";
 import { MistakeRepository, type MistakeRecord } from "@/db/repositories/mistake-repository";
 import { ProjectRepository, type ProjectSummary } from "@/db/repositories/project-repository";
@@ -46,6 +47,7 @@ export type ExportSnapshot = Readonly<{
   mistakes: MistakeRecord[];
   projects: ProjectSummary[];
   xpSummary: XpSummary;
+  gamification: GamificationPersistenceState;
   events: HistoryEvent[];
 }>;
 
@@ -65,6 +67,7 @@ export class ExportRepository {
       mistakes,
       projects,
       xpSummary,
+      gamification,
       events
     ] = await Promise.all([
       this.listPackManifests(),
@@ -76,6 +79,7 @@ export class ExportRepository {
       new MistakeRepository(this.db).listMistakes(ownerId),
       new ProjectRepository(this.db).listProjects(ownerId),
       new XpRepository(this.db).getSummary(ownerId),
+      new GamificationRepository(this.db).getState(ownerId),
       new HistoryRepository(this.db).listEvents(ownerId)
     ]);
 
@@ -89,6 +93,7 @@ export class ExportRepository {
       mistakes,
       projects,
       xpSummary,
+      gamification,
       events
     };
   }

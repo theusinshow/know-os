@@ -79,7 +79,7 @@ describe("previewRestore", () => {
       status: "applied",
       restoredPacks: 1,
       alreadyImportedPacks: 0,
-      skippedUserStateCategories: expect.arrayContaining(["attempts", "mastery_evidence", "history"])
+      skippedUserStateCategories: expect.arrayContaining(["attempts", "mastery_evidence", "gamification", "history"])
     });
     expect(repository.applied).toBe(1);
   });

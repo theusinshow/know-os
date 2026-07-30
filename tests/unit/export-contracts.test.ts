@@ -66,6 +66,32 @@ function createSnapshot(): ExportSnapshot {
         }
       ]
     },
+    gamification: {
+      badgeAwards: [
+        {
+          badgeId: "first-submit",
+          label: "First Submit",
+          criteriaSnapshot: "Registrar a primeira tentativa aprovada com SUBMIT SOLUTION.",
+          sourceType: "gamification_rule",
+          sourceId: "gamification.v1:first-submit",
+          createdAt: now
+        }
+      ],
+      missionProgress: [
+        {
+          missionId: "continue-learning",
+          label: "Continuar aprendizagem",
+          criteriaSnapshot: "Concluir a próxima atividade recomendada.",
+          status: "complete",
+          href: "/tracks",
+          completedAt: now,
+          sourceType: "gamification_rule",
+          sourceId: "gamification.v1:continue-learning",
+          updatedAt: now
+        }
+      ],
+      missionEvents: []
+    },
     events: []
   };
 }
@@ -76,6 +102,7 @@ describe("export contracts", () => {
 
     expect(preview.approximateRecordCount).toBeGreaterThan(0);
     expect(preview.categories.map((category) => category.id)).toContain("recent_attempts");
+    expect(preview.categories.map((category) => category.id)).toContain("gamification");
     expect(preview.warnings).toEqual(
       expect.arrayContaining([
         "Revise antes de compartilhar: este export pode incluir dados privados de estudo.",

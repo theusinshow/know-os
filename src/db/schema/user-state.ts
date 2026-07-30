@@ -198,6 +198,67 @@ export const xpTransactions = pgTable(
   (table) => [index("xp_transactions_owner_created_idx").on(table.ownerId, table.createdAt)]
 );
 
+export const badgeAwards = pgTable(
+  "badge_awards",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    ownerId: text("owner_id")
+      .notNull()
+      .references(() => owners.id),
+    badgeId: text("badge_id").notNull(),
+    label: text("label").notNull(),
+    criteriaSnapshot: text("criteria_snapshot").notNull(),
+    sourceType: text("source_type").notNull(),
+    sourceId: text("source_id").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+  },
+  (table) => [
+    uniqueIndex("badge_awards_owner_badge_idx").on(table.ownerId, table.badgeId),
+    index("badge_awards_owner_created_idx").on(table.ownerId, table.createdAt)
+  ]
+);
+
+export const missionProgress = pgTable(
+  "mission_progress",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    ownerId: text("owner_id")
+      .notNull()
+      .references(() => owners.id),
+    missionId: text("mission_id").notNull(),
+    label: text("label").notNull(),
+    criteriaSnapshot: text("criteria_snapshot").notNull(),
+    status: text("status").notNull(),
+    href: text("href").notNull(),
+    completedAt: timestamp("completed_at", { withTimezone: true }),
+    sourceType: text("source_type").notNull(),
+    sourceId: text("source_id").notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow()
+  },
+  (table) => [
+    uniqueIndex("mission_progress_owner_mission_idx").on(table.ownerId, table.missionId),
+    index("mission_progress_owner_status_idx").on(table.ownerId, table.status)
+  ]
+);
+
+export const missionProgressEvents = pgTable(
+  "mission_progress_events",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    ownerId: text("owner_id")
+      .notNull()
+      .references(() => owners.id),
+    missionId: text("mission_id").notNull(),
+    previousStatus: text("previous_status"),
+    nextStatus: text("next_status").notNull(),
+    sourceType: text("source_type").notNull(),
+    sourceId: text("source_id").notNull(),
+    payload: jsonb("payload").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+  },
+  (table) => [index("mission_progress_events_owner_created_idx").on(table.ownerId, table.createdAt)]
+);
+
 export const attemptTestResults = pgTable("attempt_test_results", {
   id: uuid("id").primaryKey().defaultRandom(),
   attemptId: uuid("attempt_id")

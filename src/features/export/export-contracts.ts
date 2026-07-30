@@ -96,6 +96,12 @@ function getCategories(kind: ExportKind, snapshot: ExportSnapshot): ExportCatego
       { id: "review_queue", label: "Fila de review", count: snapshot.dueReviews.length, private: true },
       { id: "mistakes", label: "Erros", count: snapshot.mistakes.length, private: true },
       { id: "xp", label: "XP", count: snapshot.xpSummary.transactions.length, private: false },
+      {
+        id: "gamification",
+        label: "Gamificação",
+        count: snapshot.gamification.badgeAwards.length + snapshot.gamification.missionProgress.length,
+        private: false
+      },
       { id: "projects", label: "Projetos", count: snapshot.projects.length, private: true }
     ];
   }
@@ -110,6 +116,12 @@ function getCategories(kind: ExportKind, snapshot: ExportSnapshot): ExportCatego
     { id: "mistakes", label: "Erros", count: snapshot.mistakes.length, private: true },
     { id: "projects", label: "Projetos", count: snapshot.projects.length, private: true },
     { id: "xp", label: "XP", count: snapshot.xpSummary.transactions.length, private: false },
+    {
+      id: "gamification",
+      label: "Gamificação",
+      count: snapshot.gamification.badgeAwards.length + snapshot.gamification.missionProgress.length,
+      private: false
+    },
     { id: "history", label: "Histórico", count: snapshot.events.length, private: true }
   ];
 }
@@ -133,6 +145,7 @@ function getPayload(kind: ExportKind, snapshot: ExportSnapshot, selectedLessonSt
       reviewQueue: snapshot.dueReviews,
       mistakes: snapshot.mistakes,
       xpSummary: snapshot.xpSummary,
+      gamification: snapshot.gamification,
       projects: snapshot.projects
     };
   }

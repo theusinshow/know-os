@@ -32,7 +32,7 @@ export default async function AchievementsPage() {
                 <div>
                   <strong>{badge.label}</strong>
                   <span>{badge.criteria}</span>
-                  <small>{badge.earned ? "earned" : "locked"}</small>
+                  <small>{badge.earned ? `earned${formatTimestamp(badge.awardedAt)}` : "locked"}</small>
                 </div>
               </li>
             ))}
@@ -47,7 +47,10 @@ export default async function AchievementsPage() {
                 <div>
                   <strong>{mission.label}</strong>
                   <span>{mission.criteria}</span>
-                  <small>{mission.status}</small>
+                  <small>
+                    {mission.status}
+                    {formatTimestamp(mission.completedAt ?? mission.persistedAt)}
+                  </small>
                 </div>
               </li>
             ))}
@@ -56,4 +59,12 @@ export default async function AchievementsPage() {
       </section>
     </AppShell>
   );
+}
+
+function formatTimestamp(value: Date | null) {
+  if (!value) {
+    return "";
+  }
+
+  return ` · ${value.toISOString().slice(0, 10)}`;
 }

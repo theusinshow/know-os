@@ -27,6 +27,13 @@ const backupPayloadSchema = z.object({
     totalXp: z.number(),
     transactions: z.array(z.unknown())
   }),
+  gamification: z
+    .object({
+      badgeAwards: z.array(z.unknown()),
+      missionProgress: z.array(z.unknown()),
+      missionEvents: z.array(z.unknown())
+    })
+    .optional(),
   events: z.array(z.unknown())
 });
 
@@ -101,6 +108,14 @@ export function previewRestore(input: unknown): RestorePreviewResult {
     { id: "mistakes", label: "Erros", count: backup.data.mistakes.length, private: true },
     { id: "projects", label: "Projetos", count: backup.data.projects.length, private: true },
     { id: "xp", label: "XP", count: backup.data.xpSummary.transactions.length, private: false },
+    {
+      id: "gamification",
+      label: "Gamificação",
+      count:
+        (backup.data.gamification?.badgeAwards.length ?? 0) +
+        (backup.data.gamification?.missionProgress.length ?? 0),
+      private: false
+    },
     { id: "history", label: "Histórico", count: backup.data.events.length, private: true }
   ];
 

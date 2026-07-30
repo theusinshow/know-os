@@ -10,12 +10,14 @@ import type { LessonProgressSummary, TrackProgressSummary } from "@/db/repositor
 import type { CompletedReview, DueReview } from "@/db/repositories/review-repository";
 import type { MistakeRecord } from "@/db/repositories/mistake-repository";
 import type { CreatedProject, ProjectSummary } from "@/db/repositories/project-repository";
+import type { GamificationPersistenceState } from "@/db/repositories/gamification-repository";
 import type { XpSummary } from "@/db/repositories/xp-repository";
 import type {
   AppliedTrackImport,
   ExistingPackImport,
   TrackImportRepository
 } from "@/features/import/application/track-import-service";
+import type { GamificationSummary } from "@/features/gamification/gamification-rules";
 import type { TrackPack } from "@/features/import/application/track-pack-schema";
 import { categorizeSubmissionMistake } from "@/features/mistakes/mistake-categorization";
 import {
@@ -144,6 +146,40 @@ type MemoryXpTransaction = {
   createdAt: Date;
 };
 
+type MemoryBadgeAward = {
+  ownerId: string;
+  badgeId: string;
+  label: string;
+  criteriaSnapshot: string;
+  sourceType: string;
+  sourceId: string;
+  createdAt: Date;
+};
+
+type MemoryMissionProgress = {
+  ownerId: string;
+  missionId: string;
+  label: string;
+  criteriaSnapshot: string;
+  status: "available" | "complete";
+  href: string;
+  completedAt: Date | null;
+  sourceType: string;
+  sourceId: string;
+  updatedAt: Date;
+};
+
+type MemoryMissionProgressEvent = {
+  ownerId: string;
+  missionId: string;
+  previousStatus: "available" | "complete" | null;
+  nextStatus: "available" | "complete";
+  sourceType: string;
+  sourceId: string;
+  payload: unknown;
+  createdAt: Date;
+};
+
 type MemoryPackImport = ExistingPackImport & {
   manifest?: TrackPack;
 };
@@ -162,6 +198,9 @@ type MemoryStore = {
   mistakes: MemoryMistake[];
   projects: MemoryProject[];
   xpTransactions: MemoryXpTransaction[];
+  badgeAwards: MemoryBadgeAward[];
+  missionProgress: MemoryMissionProgress[];
+  missionProgressEvents: MemoryMissionProgressEvent[];
   events: HistoryEvent[];
   lessonProgressCount: number;
   trackProgressCount: number;
@@ -186,6 +225,9 @@ export function getMemoryStore() {
     mistakes: [],
     projects: [],
     xpTransactions: [],
+    badgeAwards: [],
+    missionProgress: [],
+    missionProgressEvents: [],
     events: [],
     lessonProgressCount: 0,
     trackProgressCount: 0
@@ -885,6 +927,140 @@ export class MemoryXpRepository {
   }
 }
 
+export class MemoryGamificationRepository {
+  constructor(private readonly store = getMemoryStore()) {}
+
+  async syncSummary(ownerId: string, summary: GamificationSummary): Promise<GamificationPersistenceState> {
+    for (const badge of summary.badges.filter((entry) => entry.earned)) {
+      const existing = this.store.badgeAwards.find(
+        (award) => award.ownerId === ownerId && award.badgeId === badge.id
+      );
+
+      if (!existing) {
+        this.store.badgeAwards.push({
+          ownerId,
+          badgeId: badge.id,
+          label: badge.label,
+          criteriaSnapshot: badge.criteria,
+          sourceType: "gamification_rule",
+          sourceId: `gamification.v1:${badge.id}`,
+          createdAt: new Date()
+        });
+      }
+    }
+
+    for (const mission of summary.missions) {
+      const sourceId = `gamification.v1:${mission.id}`;
+      const existing = this.store.missionProgress.find(
+        (progress) => progress.ownerId === ownerId && progress.missionId === mission.id
+      );
+
+      if (!existing) {
+        const now = new Date();
+
+        this.store.missionProgress.push({
+          ownerId,
+          missionId: mission.id,
+          label: mission.label,
+          criteriaSnapshot: mission.criteria,
+          status: mission.status,
+          href: mission.href,
+          completedAt: mission.status === "complete" ? now : null,
+          sourceType: "gamification_rule",
+          sourceId,
+          updatedAt: now
+        });
+        this.store.missionProgressEvents.push({
+          ownerId,
+          missionId: mission.id,
+          previousStatus: null,
+          nextStatus: mission.status,
+          sourceType: "gamification_rule",
+          sourceId,
+          payload: {
+            label: mission.label,
+            criteria: mission.criteria,
+            href: mission.href
+          },
+          createdAt: now
+        });
+        continue;
+      }
+
+      if (existing.status !== mission.status) {
+        this.store.missionProgressEvents.push({
+          ownerId,
+          missionId: mission.id,
+          previousStatus: existing.status,
+          nextStatus: mission.status,
+          sourceType: "gamification_rule",
+          sourceId,
+          payload: {
+            label: mission.label,
+            criteria: mission.criteria,
+            href: mission.href
+          },
+          createdAt: new Date()
+        });
+      }
+
+      existing.label = mission.label;
+      existing.criteriaSnapshot = mission.criteria;
+      existing.status = mission.status;
+      existing.href = mission.href;
+      existing.completedAt =
+        mission.status === "complete" ? (existing.completedAt ?? new Date()) : existing.completedAt;
+      existing.sourceType = "gamification_rule";
+      existing.sourceId = sourceId;
+      existing.updatedAt = new Date();
+    }
+
+    return this.getState(ownerId);
+  }
+
+  async getState(ownerId: string): Promise<GamificationPersistenceState> {
+    return {
+      badgeAwards: this.store.badgeAwards
+        .filter((award) => award.ownerId === ownerId)
+        .sort((left, right) => left.createdAt.getTime() - right.createdAt.getTime())
+        .map((award) => ({
+          badgeId: award.badgeId,
+          label: award.label,
+          criteriaSnapshot: award.criteriaSnapshot,
+          sourceType: award.sourceType,
+          sourceId: award.sourceId,
+          createdAt: award.createdAt
+        })),
+      missionProgress: this.store.missionProgress
+        .filter((progress) => progress.ownerId === ownerId)
+        .sort((left, right) => left.missionId.localeCompare(right.missionId))
+        .map((progress) => ({
+          missionId: progress.missionId,
+          label: progress.label,
+          criteriaSnapshot: progress.criteriaSnapshot,
+          status: progress.status,
+          href: progress.href,
+          completedAt: progress.completedAt,
+          sourceType: progress.sourceType,
+          sourceId: progress.sourceId,
+          updatedAt: progress.updatedAt
+        })),
+      missionEvents: this.store.missionProgressEvents
+        .filter((event) => event.ownerId === ownerId)
+        .sort((left, right) => right.createdAt.getTime() - left.createdAt.getTime())
+        .map((event) => ({
+          missionId: event.missionId,
+          previousStatus: event.previousStatus,
+          nextStatus: event.nextStatus,
+          sourceType: event.sourceType,
+          sourceId: event.sourceId,
+          payload: event.payload,
+          createdAt: event.createdAt
+        }))
+    };
+  }
+}
+
 export class MemoryExportRepository {
   constructor(private readonly store = getMemoryStore()) {}
 
@@ -901,6 +1077,7 @@ export class MemoryExportRepository {
       mistakes: await new MemoryMistakeRepository(this.store).listMistakes(ownerId),
       projects: await new MemoryProjectRepository(this.store).listProjects(ownerId),
       xpSummary: await new MemoryXpRepository(this.store).getSummary(ownerId),
+      gamification: await new MemoryGamificationRepository(this.store).getState(ownerId),
       events: await new MemoryHistoryRepository(this.store).listEvents()
     };
   }

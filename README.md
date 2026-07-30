@@ -6,10 +6,10 @@ KNOW/OS é um sistema pessoal para estruturar aprendizado, prática, revisão e 
 
 ## Estado do projeto
 
-- Fase atual: **V1 publicado em produção com Neon Postgres, Vercel e Auth.js Google OAuth; Pack exemplo ativado e validado em produção**.
+- Fase atual: **V1 publicado em produção com Neon Postgres, Vercel e Auth.js Google OAuth; Pack exemplo ativado e gamificação persistida como projeção auditável**.
 - Design System oficial: `design-system/`, versão 2.2.
 - Implementação: Next.js App Router com TypeScript strict, Tailwind, token pipeline, shell acessível, fundação Drizzle/PostgreSQL, Zod, Vitest, Testing Library, Playwright e CI.
-- V1 local implementado e verificado: importar conteúdo por `/import`, navegar por trilhas/lições/conceitos, executar JavaScript com RUN, registrar tentativa com SUBMIT SOLUTION, reabrir feedback persistido, ver progresso, histórico, contrato de runtime, stdout/stderr/testes, diff da tentativa, atividade inicial de debug, mastery determinístico, agenda de review, erros categorizados, projetos opcionais, XP/ranks/badges/missões, mapa de conhecimento acessível, recomendações locais, preview de import/export/restore, exports Backup/Progress/Teacher Context, auditoria de acessibilidade e preparação de segurança/deploy local.
+- V1 local implementado e verificado: importar conteúdo por `/import`, navegar por trilhas/lições/conceitos, executar JavaScript com RUN, registrar tentativa com SUBMIT SOLUTION, reabrir feedback persistido, ver progresso, histórico, contrato de runtime, stdout/stderr/testes, diff da tentativa, atividade inicial de debug, mastery determinístico, agenda de review, erros categorizados, projetos opcionais, XP/ranks/badges/missões com projeção persistida, mapa de conhecimento acessível, recomendações locais, preview de import/export/restore, exports Backup/Progress/Teacher Context, auditoria de acessibilidade e preparação de segurança/deploy local.
 - Modo de execução do Codex: **autonomia elevada com limites de repositório**.
 
 ## Desenvolvimento local
@@ -118,7 +118,7 @@ Com um banco migrado ou com o harness Playwright:
 11. `/mistakes` mostra erros categorizados e preserva erros resolvidos.
 12. `/projects` mostra contextos opcionais que vinculam conceitos e atividades importadas sem substituir o fluxo principal.
 13. `/progress` mostra XP append-only e transações auditáveis.
-14. `/achievements` mostra rank, badges e missões derivadas por regras transparentes.
+14. `/achievements` mostra rank, badges e missões derivadas por regras transparentes, com timestamps persistidos de award/progresso quando disponíveis.
 15. `/knowledge-map` lista conceitos importados com relações de lições/trilhas sem depender de canvas.
 16. `/` recomenda a próxima ação por regras determinísticas: review, erro ativo, continuidade e aplicação em projeto.
 17. `/history` mostra eventos como `activity_submitted` e `review_completed`.

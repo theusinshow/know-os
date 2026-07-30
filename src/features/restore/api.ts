@@ -63,6 +63,7 @@ export async function applyBackupRestore(
       "mistakes",
       "projects",
       "xp",
+      "gamification",
       "history"
     ],
     warning:

@@ -1,6 +1,7 @@
 import { ensureDatabaseReady, getDatabaseUrl } from "@/db/connection";
 import { ExportRepository } from "@/db/repositories/export-repository";
 import { MemoryExportRepository } from "@/db/repositories/memory-store";
+import { getGamificationSummary } from "@/features/gamification/api";
 import { getServerEnv } from "@/lib/env";
 
 import {
@@ -44,6 +45,7 @@ export async function getExportPayload({
 
 async function getExportSnapshot() {
   const ownerId = getServerEnv().KNOW_OS_OWNER_ID;
+  await getGamificationSummary();
 
   if (getDatabaseUrl() === "memory://local") {
     return new MemoryExportRepository().getSnapshot(ownerId);
