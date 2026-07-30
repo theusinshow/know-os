@@ -19,6 +19,7 @@ export function getAuthGuardDecision(email: string | null | undefined, env: Serv
 export function isPublicRuntimePath(pathname: string) {
   return (
     pathname.startsWith("/api/auth") ||
+    pathname === "/auth/signin" ||
     pathname === "/api/health/db" ||
     pathname.startsWith("/branding/") ||
     pathname === "/favicon.ico"

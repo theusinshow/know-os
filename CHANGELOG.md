@@ -54,6 +54,7 @@ The format follows Keep a Changelog principles. Product versions will follow Sem
 - Step 2.6 Neon/Vercel production runbook and `pnpm db:migrate` command for applying Drizzle migrations.
 - Step 2.7 final local validation gate for production readiness.
 - Production Auth.js `AUTH_TRUST_HOST` environment contract for Vercel proxy deployment.
+- Custom Auth.js sign-in page at `/auth/signin` using the KNOW/OS Design System and Google account selection via `prompt=select_account`.
 - Zod server-environment validation.
 - Vitest, Testing Library and Playwright smoke coverage.
 - GitHub Actions baseline CI and separate Playwright E2E workflow.

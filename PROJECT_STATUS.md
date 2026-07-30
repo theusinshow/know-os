@@ -4,7 +4,7 @@ Last updated: 2026-07-30
 
 ## Current phase
 
-`V1 PRODUCTION DEPLOYED — MANUAL OWNER LOGIN VALIDATION PENDING`
+`V1 PRODUCTION DEPLOYED — CUSTOM LOGIN FIX IN PROGRESS`
 
 Phase 0 repository foundation is implemented and verified. The repository now contains a Next.js App Router scaffold with TypeScript strict mode, Tailwind/token generation, minimal accessible shell, Drizzle/PostgreSQL foundation, Zod validation, Vitest/Testing Library/Playwright smoke tests and GitHub Actions CI.
 
@@ -20,7 +20,7 @@ Phase 5 projects and gamification is implemented and verified. The implemented s
 
 Phase 6 portability and hardening is implemented and verified. The V1 local product now includes import preview/hardening, Backup/Progress/Teacher Context exports, non-destructive Backup restore for Pack manifests, accessibility/responsive audit coverage, baseline security headers, security audit documentation and deployment preparation within local-only guardrails.
 
-Production deployment is live at `https://know-os.vercel.app` using the ADR 0015 stack: Vercel, Neon Postgres and Auth.js Google OAuth. Step 2 implementation includes the Auth.js Google foundation, production environment contract, central session guard and Neon/Vercel runbook. Neon migrations have been applied and unauthenticated production smoke checks pass. ADR 0014 keeps append-only user-state replay/merge out of V1 restore.
+Production deployment is live at `https://know-os.vercel.app` using the ADR 0015 stack: Vercel, Neon Postgres and Auth.js Google OAuth. Step 2 implementation includes the Auth.js Google foundation, production environment contract, central session guard and Neon/Vercel runbook. Neon migrations have been applied and unauthenticated production smoke checks pass. A custom `/auth/signin` page is being added so the sign-in surface follows the KNOW/OS Design System and Google account selection is explicit. ADR 0014 keeps append-only user-state replay/merge out of V1 restore.
 
 ## Agent operating mode
 
@@ -286,13 +286,21 @@ production smoke `/api/health/db` — passed, 200 OK.
 production smoke `/` — passed, 307 redirect to `/api/auth/signin`.
 production smoke `/api/export/preview` — passed, 401 unauthenticated.
 production smoke `/api/auth/signin` — initially 400 until `AUTH_TRUST_HOST=true` was added; redeploy passed and endpoint returned 200 OK.
+pnpm typecheck after custom sign-in and Google account-selection config — passed.
+pnpm exec vitest run tests/unit/google-oauth.test.ts tests/unit/session-guard.test.ts — passed, 2 files and 5 tests.
+pnpm exec playwright test tests/e2e/auth.spec.ts — passed, 2 tests across desktop Chromium and mobile Chrome.
+pnpm lint for custom sign-in gate — passed.
+pnpm typecheck for custom sign-in gate — passed.
+pnpm test for custom sign-in gate — passed, 29 files and 72 tests.
+pnpm build for custom sign-in gate — passed, `/auth/signin` built as a dynamic route.
+pnpm test:e2e for custom sign-in gate — passed, 14 Playwright tests across desktop Chromium and mobile Chrome.
 ```
 
 Do not run `pnpm typecheck` concurrently with `pnpm build`; Next mutates generated `.next` types during build.
 
 ## Next milestone
 
-Complete manual browser validation: sign in at `https://know-os.vercel.app` with the allowed Google account, import the example Track Pack, run `RUN`, submit with `SUBMIT SOLUTION`, then verify history/export behavior.
+Commit and push the custom sign-in fix, redeploy production and smoke-test `/auth/signin` plus Google account-selection redirect.
 
 ## Risk register
 
@@ -309,4 +317,4 @@ Complete manual browser validation: sign in at `https://know-os.vercel.app` with
 
 ## NEXT ACTION
 
-Complete manual browser validation: sign in at `https://know-os.vercel.app` with the allowed Google account, import the example Track Pack, run `RUN`, submit with `SUBMIT SOLUTION`, then verify history/export behavior.
+Commit and push the custom sign-in fix, redeploy production and smoke-test `/auth/signin` plus Google account-selection redirect.

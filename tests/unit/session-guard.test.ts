@@ -26,6 +26,7 @@ describe("session guard", () => {
 
   it("keeps auth, health and branding paths public", () => {
     expect(isPublicRuntimePath("/api/auth/signin")).toBe(true);
+    expect(isPublicRuntimePath("/auth/signin")).toBe(true);
     expect(isPublicRuntimePath("/api/health/db")).toBe(true);
     expect(isPublicRuntimePath("/branding/know-os-lockup.svg")).toBe(true);
     expect(isPublicRuntimePath("/api/export")).toBe(false);

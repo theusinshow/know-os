@@ -528,15 +528,24 @@ Add timestamped commands and exact outcomes during implementation.
 2026-07-30 BRT — vercel --prod --yes: passed; production deployment ready and aliased to `https://know-os.vercel.app`.
 2026-07-30 BRT — production smoke: `/api/health/db` returned 200, `/` returned 307 to Auth.js sign-in, `/api/export/preview` returned 401 unauthenticated.
 2026-07-30 BRT — AUTH_TRUST_HOST production env: added after `/api/auth/signin` returned 400 behind Vercel proxy; redeploy passed and `/api/auth/signin` returned 200.
+2026-07-30 BRT — custom sign-in fix: added `/auth/signin` using KNOW/OS Design System styling, Auth.js `pages.signIn`, middleware redirect to `/auth/signin`, and Google OAuth `prompt=select_account`.
+2026-07-30 BRT — pnpm typecheck: passed after custom sign-in and Google account-selection config.
+2026-07-30 BRT — pnpm exec vitest run tests/unit/google-oauth.test.ts tests/unit/session-guard.test.ts: passed, 2 files and 5 tests.
+2026-07-30 BRT — pnpm exec playwright test tests/e2e/auth.spec.ts: passed, 2 tests across desktop Chromium and mobile Chrome.
+2026-07-30 BRT — pnpm lint: passed for custom sign-in gate.
+2026-07-30 BRT — pnpm typecheck: passed for custom sign-in gate.
+2026-07-30 BRT — pnpm test: passed for custom sign-in gate, 29 files and 72 tests.
+2026-07-30 BRT — pnpm build: passed for custom sign-in gate; `/auth/signin` built as a dynamic route.
+2026-07-30 BRT — pnpm test:e2e: passed for custom sign-in gate, 14 Playwright tests across desktop Chromium and mobile Chrome.
 ```
 
 ## Blockers
 
 ```text
 No real local PostgreSQL service is available outside `.env.local`; production database is Neon and must not be written to destructively without explicit confirmation.
-Interactive Google sign-in with the allowed owner account still requires browser/manual validation.
+Interactive Google sign-in with the allowed owner account still requires browser/manual validation after the custom sign-in deploy.
 ```
 
 ## NEXT ACTION
 
-Complete manual browser validation: sign in at `https://know-os.vercel.app` with the allowed Google account, import the example Track Pack, run `RUN`, submit with `SUBMIT SOLUTION`, then verify history/export behavior.
+Commit and push the custom sign-in fix, redeploy production and smoke-test `/auth/signin` plus Google account-selection redirect.

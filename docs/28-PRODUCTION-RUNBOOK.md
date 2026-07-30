@@ -78,6 +78,8 @@ AUTH_GOOGLE_SECRET
 
 Do not commit OAuth credentials.
 
+The application uses a custom sign-in page at `/auth/signin`. Google OAuth is configured with `prompt=select_account` so the user can choose the Google account instead of silently reusing the active browser account.
+
 ## Step 4 — Auth.js secret and owner mapping
 
 User action required:
@@ -150,11 +152,12 @@ After the user explicitly authorizes deployment:
 
 1. Deploy from Vercel.
 2. Open `GET /api/health/db`.
-3. Confirm unauthenticated protected pages redirect to Google sign-in.
-4. Sign in with the allowed Google account.
-5. Import the example Track Pack.
-6. Run the JavaScript vertical slice.
-7. Confirm export preview does not expose data to unauthenticated requests.
+3. Confirm unauthenticated protected pages redirect to `/auth/signin`.
+4. Click `Continuar com Google` and confirm Google shows account selection.
+5. Sign in with the allowed Google account.
+6. Import the example Track Pack.
+7. Run the JavaScript vertical slice.
+8. Confirm export preview does not expose data to unauthenticated requests.
 
 ## Stop conditions
 

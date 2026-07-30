@@ -67,6 +67,7 @@ ADR 0015 define a stack de preparação para produção:
 - Neon Postgres para `DATABASE_URL`.
 - Auth.js com Google OAuth.
 - Allowlist inicial por e-mail em `KNOW_OS_ALLOWED_GOOGLE_EMAILS`.
+- Tela própria em `/auth/signin`, seguindo o Design System, com Google OAuth configurado para seleção explícita de conta.
 
 Variáveis esperadas para produção:
 
