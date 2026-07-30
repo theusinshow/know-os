@@ -66,6 +66,11 @@ Prepare the completed local V1 for a production path one explicit step at a time
   - Custom sign-in page was already live; production Google OAuth returned `invalid_client`.
   - Re-applied Vercel Production `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, `AUTH_SECRET`, `APP_URL` and `AUTH_TRUST_HOST` from ignored local environment values without printing secrets.
   - Redeployed production and verified Google opens with `prompt=select_account` and without `invalid_client`.
+- [x] 2.9 Design-system motion pass.
+  - Apply the approved Design System motion tokens to app shell, sign-in and recurring content primitives.
+  - Add state feedback for hover, focus, active, reveals and status changes without continuous decorative animation.
+  - Preserve `prefers-reduced-motion`, focus visibility and the technical-brutalist visual direction.
+  - Validated lint, typecheck, build, focused Playwright motion/accessibility/auth smoke and local screenshot capture before push/deployment.
 
 ### Planned increments
 

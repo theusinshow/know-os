@@ -32,6 +32,30 @@ a {
   color: inherit;
 }
 
+@keyframes kos-surface-enter {
+  from {
+    opacity: 0.86;
+    transform: translateY(var(--kos-motion-travel-max));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes kos-state-enter {
+  from {
+    opacity: 0.9;
+    transform: translateY(var(--kos-motion-travel-min));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 :focus-visible {
   outline: var(--kos-focus-width) var(--kos-focus-style) var(--kos-focus-color);
   outline-offset: var(--kos-focus-offset);
@@ -87,6 +111,17 @@ a {
   min-height: var(--kos-touch-minimum);
   display: inline-flex;
   align-items: center;
+  transition:
+    transform var(--kos-motion-fast) var(--kos-motion-easing),
+    background-color var(--kos-motion-fast) var(--kos-motion-linear);
+}
+
+.brand-link:hover {
+  transform: translateX(var(--kos-motion-travel-min));
+}
+
+.brand-link:active {
+  transform: translate(var(--kos-motion-travel-min), var(--kos-motion-travel-min));
 }
 
 .brand-link img {
@@ -108,6 +143,17 @@ a {
   box-shadow: var(--kos-shadow-pressed);
   color: var(--kos-color-ink);
   padding: var(--kos-spacing-4) var(--kos-spacing-6);
+  animation: kos-state-enter var(--kos-motion-base) var(--kos-motion-easing);
+  transition:
+    box-shadow var(--kos-motion-fast) var(--kos-motion-easing),
+    transform var(--kos-motion-fast) var(--kos-motion-easing),
+    background-color var(--kos-motion-fast) var(--kos-motion-linear);
+}
+
+.status-badge:hover {
+  background: color-mix(in srgb, var(--kos-color-paper) 72%, var(--kos-color-signal));
+  box-shadow: var(--kos-shadow-raised);
+  transform: translateY(calc(-1 * var(--kos-motion-travel-min)));
 }
 
 .status-badge svg {
@@ -167,6 +213,11 @@ a {
   color: var(--kos-color-ink);
   padding: var(--kos-spacing-4) var(--kos-spacing-6);
   text-decoration: none;
+  transition:
+    background-color var(--kos-motion-fast) var(--kos-motion-linear),
+    box-shadow var(--kos-motion-fast) var(--kos-motion-easing),
+    color var(--kos-motion-fast) var(--kos-motion-linear),
+    transform var(--kos-motion-fast) var(--kos-motion-easing);
 }
 
 .nav-current {
@@ -178,6 +229,18 @@ a {
 .nav-link {
   background: var(--kos-color-panel);
   font-weight: var(--kos-typography-body-weights-semibold);
+}
+
+.nav-current:hover,
+.nav-link:hover {
+  box-shadow: var(--kos-shadow-pressed);
+  transform: translateX(var(--kos-motion-travel-min));
+}
+
+.nav-current:active,
+.nav-link:active {
+  box-shadow: none;
+  transform: translate(var(--kos-motion-travel-min), var(--kos-motion-travel-min));
 }
 
 .nav-placeholder {
@@ -205,12 +268,24 @@ a {
   padding: var(--kos-spacing-10);
 }
 
+.main-surface > * {
+  animation: kos-surface-enter var(--kos-motion-slow) var(--kos-motion-easing);
+}
+
 .foundation-panel {
   max-width: 920px;
   border: var(--kos-border-rule) solid var(--kos-color-ink);
   background: var(--kos-color-panel);
   box-shadow: var(--kos-shadow-window);
   padding: var(--kos-spacing-12);
+  transition:
+    box-shadow var(--kos-motion-base) var(--kos-motion-easing),
+    transform var(--kos-motion-base) var(--kos-motion-easing);
+}
+
+.foundation-panel:hover {
+  box-shadow: var(--kos-shadow-window);
+  transform: translateY(calc(-1 * var(--kos-motion-travel-min)));
 }
 
 .eyebrow {
@@ -285,15 +360,49 @@ a {
   gap: var(--kos-spacing-2);
 }
 
+.record-list > li,
+.concept-list > li,
+.module-stack > *,
+.lesson-blocks > *,
+.auth-status > div {
+  animation: kos-state-enter var(--kos-motion-base) var(--kos-motion-easing);
+}
+
 .concept-list li {
   border: var(--kos-border-hair) solid var(--kos-color-ink);
   background: var(--kos-color-paper);
   box-shadow: var(--kos-shadow-pressed);
   padding: var(--kos-spacing-8);
+  transition:
+    background-color var(--kos-motion-fast) var(--kos-motion-linear),
+    box-shadow var(--kos-motion-fast) var(--kos-motion-easing),
+    transform var(--kos-motion-fast) var(--kos-motion-easing);
 }
 
 .concept-list a {
   text-decoration: none;
+}
+
+.concept-list li:has(a:hover),
+.concept-list li:focus-within {
+  background: color-mix(in srgb, var(--kos-color-paper) 84%, var(--kos-color-signal));
+  box-shadow: var(--kos-shadow-raised);
+  transform: translateY(calc(-1 * var(--kos-motion-travel-min)));
+}
+
+.record-list li > a {
+  border: var(--kos-border-hair) solid transparent;
+  transition:
+    background-color var(--kos-motion-fast) var(--kos-motion-linear),
+    border-color var(--kos-motion-fast) var(--kos-motion-linear),
+    transform var(--kos-motion-fast) var(--kos-motion-easing);
+}
+
+.record-list li > a:hover,
+.record-list li > a:focus-visible {
+  background: color-mix(in srgb, var(--kos-color-panel) 70%, transparent);
+  border-color: var(--kos-color-ink);
+  transform: translateX(var(--kos-motion-travel-min));
 }
 
 .record-list li > a,
@@ -360,6 +469,7 @@ a {
   border: var(--kos-border-hair) solid var(--kos-color-ink);
   background: var(--kos-color-paper);
   padding: var(--kos-spacing-8);
+  animation: kos-state-enter var(--kos-motion-base) var(--kos-motion-easing);
 }
 
 .mastery-panel {
@@ -370,6 +480,15 @@ a {
   background: var(--kos-color-paper);
   box-shadow: var(--kos-shadow-pressed);
   padding: var(--kos-spacing-8);
+  animation: kos-state-enter var(--kos-motion-base) var(--kos-motion-easing);
+  transition:
+    box-shadow var(--kos-motion-fast) var(--kos-motion-easing),
+    transform var(--kos-motion-fast) var(--kos-motion-easing);
+}
+
+.mastery-panel:hover {
+  box-shadow: var(--kos-shadow-raised);
+  transform: translateY(calc(-1 * var(--kos-motion-travel-min)));
 }
 
 .technical-label {
@@ -439,6 +558,11 @@ a {
   background: var(--kos-color-paper);
   box-shadow: var(--kos-shadow-pressed);
   padding: var(--kos-spacing-8);
+  animation: kos-state-enter var(--kos-motion-base) var(--kos-motion-easing);
+  transition:
+    background-color var(--kos-motion-fast) var(--kos-motion-linear),
+    box-shadow var(--kos-motion-fast) var(--kos-motion-easing),
+    transform var(--kos-motion-fast) var(--kos-motion-easing);
 }
 
 .today-action {
@@ -452,6 +576,21 @@ a {
   box-shadow: var(--kos-shadow-hard);
   padding: var(--kos-spacing-8);
   text-decoration: none;
+  transition:
+    box-shadow var(--kos-motion-fast) var(--kos-motion-easing),
+    transform var(--kos-motion-fast) var(--kos-motion-easing);
+}
+
+.today-action:hover,
+.today-action:focus-visible,
+.lesson-callout:hover {
+  box-shadow: var(--kos-shadow-window);
+  transform: translateY(calc(-1 * var(--kos-motion-travel-min)));
+}
+
+.today-action:active {
+  box-shadow: var(--kos-shadow-pressed);
+  transform: translate(var(--kos-motion-travel-min), var(--kos-motion-travel-min));
 }
 
 .today-action strong {
@@ -495,6 +634,15 @@ a {
   background: var(--kos-color-paper);
   box-shadow: var(--kos-shadow-raised);
   padding: var(--kos-spacing-8);
+  animation: kos-state-enter var(--kos-motion-base) var(--kos-motion-easing);
+  transition:
+    box-shadow var(--kos-motion-fast) var(--kos-motion-easing),
+    transform var(--kos-motion-fast) var(--kos-motion-easing);
+}
+
+.activity-panel:focus-within {
+  box-shadow: var(--kos-shadow-window);
+  transform: translateY(calc(-1 * var(--kos-motion-travel-min)));
 }
 
 .activity-panel h3 {
@@ -524,6 +672,9 @@ a {
   padding: var(--kos-spacing-8);
   tab-size: 2;
   width: 100%;
+  transition:
+    border-color var(--kos-motion-fast) var(--kos-motion-linear),
+    box-shadow var(--kos-motion-fast) var(--kos-motion-easing);
 }
 
 .code-editor:focus-visible,
@@ -553,6 +704,11 @@ a {
   letter-spacing: var(--kos-typography-technical-tracking);
   padding: var(--kos-spacing-5) var(--kos-spacing-8);
   text-transform: uppercase;
+  transition:
+    background-color var(--kos-motion-fast) var(--kos-motion-linear),
+    box-shadow var(--kos-motion-fast) var(--kos-motion-easing),
+    color var(--kos-motion-fast) var(--kos-motion-linear),
+    transform var(--kos-motion-fast) var(--kos-motion-easing);
 }
 
 .primary-action {
@@ -579,6 +735,18 @@ a {
   opacity: var(--kos-state-disabled-opacity);
 }
 
+.primary-action:not(:disabled):hover,
+.secondary-action:not(:disabled):hover {
+  box-shadow: var(--kos-shadow-hard);
+  transform: translateY(calc(-1 * var(--kos-motion-travel-min)));
+}
+
+.primary-action:not(:disabled):active,
+.secondary-action:not(:disabled):active {
+  box-shadow: none;
+  transform: translate(var(--kos-motion-travel-min), var(--kos-motion-travel-min));
+}
+
 .activity-status {
   border: var(--kos-border-hair) solid var(--kos-color-ink);
   background: var(--kos-color-panel);
@@ -587,6 +755,7 @@ a {
   letter-spacing: var(--kos-typography-technical-tracking);
   padding: var(--kos-spacing-4) var(--kos-spacing-6);
   text-transform: uppercase;
+  animation: kos-state-enter var(--kos-motion-base) var(--kos-motion-easing);
 }
 
 .attempt-feedback {
@@ -595,6 +764,7 @@ a {
   border: var(--kos-border-hair) solid var(--kos-color-machine-rule);
   background: var(--kos-color-panel);
   padding: var(--kos-spacing-5) var(--kos-spacing-6);
+  animation: kos-state-enter var(--kos-motion-base) var(--kos-motion-easing);
 }
 
 .attempt-feedback strong,
@@ -618,6 +788,7 @@ a {
   border: var(--kos-border-rule) solid var(--kos-color-ink);
   background: var(--kos-color-panel);
   padding: var(--kos-spacing-6);
+  animation: kos-state-enter var(--kos-motion-base) var(--kos-motion-easing);
 }
 
 .progress-summary dl {
@@ -654,6 +825,10 @@ a {
   border: var(--kos-border-rule) solid var(--kos-color-machine-rule);
   background: var(--kos-terminal-background);
   color: var(--kos-terminal-foreground);
+  animation: kos-state-enter var(--kos-motion-base) var(--kos-motion-easing);
+  transition:
+    border-color var(--kos-motion-fast) var(--kos-motion-linear),
+    box-shadow var(--kos-motion-fast) var(--kos-motion-easing);
 }
 
 .terminal-title {
@@ -691,6 +866,7 @@ a {
   border: var(--kos-border-hair) solid var(--kos-color-machine-rule);
   background: color-mix(in srgb, var(--kos-terminal-background) 88%, var(--kos-color-panel));
   padding: var(--kos-spacing-4);
+  animation: kos-state-enter var(--kos-motion-base) var(--kos-motion-easing);
 }
 
 .execution-meta dt,
@@ -763,14 +939,20 @@ a {
   border: var(--kos-border-hair) solid var(--kos-color-ink);
   background: var(--kos-color-panel);
   padding: var(--kos-spacing-5);
+  animation: kos-state-enter var(--kos-motion-base) var(--kos-motion-easing);
+  transition:
+    box-shadow var(--kos-motion-fast) var(--kos-motion-easing),
+    transform var(--kos-motion-fast) var(--kos-motion-easing);
 }
 
 .test-results li[data-state="passed"] {
   box-shadow: inset 0 0 0 var(--kos-border-rule) var(--kos-color-success);
+  transform: translateX(var(--kos-motion-travel-min));
 }
 
 .test-results li[data-state="failed"] {
   box-shadow: inset 0 0 0 var(--kos-border-rule) var(--kos-color-error);
+  transform: translateX(var(--kos-motion-travel-min));
 }
 
 .test-results strong,
@@ -800,6 +982,7 @@ a {
   font-size: var(--kos-typography-code-size);
   line-height: var(--kos-typography-code-leading);
   padding: var(--kos-spacing-2) var(--kos-spacing-4);
+  animation: kos-state-enter var(--kos-motion-base) var(--kos-motion-easing);
 }
 
 .attempt-diff li[data-state="added"] {
@@ -830,6 +1013,15 @@ a {
   background: var(--kos-color-panel);
   box-shadow: var(--kos-shadow-window);
   padding: var(--kos-spacing-12);
+  animation: kos-surface-enter var(--kos-motion-slow) var(--kos-motion-easing);
+  transition:
+    box-shadow var(--kos-motion-base) var(--kos-motion-easing),
+    transform var(--kos-motion-base) var(--kos-motion-easing);
+}
+
+.auth-panel:focus-within {
+  box-shadow: var(--kos-shadow-window);
+  transform: translateY(calc(-1 * var(--kos-motion-travel-min)));
 }
 
 .auth-panel-header {
@@ -878,6 +1070,7 @@ a {
   background: var(--kos-color-paper);
   box-shadow: inset 0 0 0 var(--kos-border-rule) var(--kos-color-error);
   padding: var(--kos-spacing-6);
+  animation: kos-state-enter var(--kos-motion-base) var(--kos-motion-easing);
 }
 
 .auth-error strong {
@@ -1006,5 +1199,47 @@ a {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+
+  .main-surface > *,
+  .status-badge,
+  .record-list > li,
+  .concept-list > li,
+  .module-stack > *,
+  .lesson-blocks > *,
+  .auth-status > div,
+  .lesson-text,
+  .mastery-panel,
+  .lesson-callout,
+  .activity-panel,
+  .activity-status,
+  .attempt-feedback,
+  .progress-summary,
+  .terminal-panel,
+  .execution-meta div,
+  .terminal-stream,
+  .test-results li,
+  .attempt-diff li,
+  .auth-panel,
+  .auth-error {
+    animation-name: none !important;
+  }
+
+  .brand-link,
+  .status-badge,
+  .nav-current,
+  .nav-link,
+  .foundation-panel,
+  .concept-list li,
+  .record-list li > a,
+  .mastery-panel,
+  .lesson-callout,
+  .today-action,
+  .activity-panel,
+  .primary-action,
+  .secondary-action,
+  .test-results li,
+  .auth-panel {
+    transform: none !important;
   }
 }
