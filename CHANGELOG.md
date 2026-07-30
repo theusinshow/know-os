@@ -65,6 +65,7 @@ The format follows Keep a Changelog principles. Product versions will follow Sem
 - Persisted gamification projections with `badge_awards`, `mission_progress`, mission status-change audit events, achievement timestamps and export coverage.
 - ADR 0016 defining the dry-run/apply policy required before full append-only user-state restore.
 - Restore dry-run planner foundation with `restore_provenance` schema, Backup fingerprinting and blocked `user_state_dry_run` preview output.
+- Restore preview UI on `/exports` showing blocked user-state dry-run categories, source fingerprint and blockers.
 - Zod server-environment validation.
 - Vitest, Testing Library and Playwright smoke coverage.
 - GitHub Actions baseline CI and separate Playwright E2E workflow.

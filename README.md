@@ -122,7 +122,7 @@ Com um banco migrado ou com o harness Playwright:
 15. `/knowledge-map` lista conceitos importados com relações de lições/trilhas sem depender de canvas.
 16. `/` recomenda a próxima ação por regras determinísticas: review, erro ativo, continuidade e aplicação em projeto.
 17. `/history` mostra eventos como `activity_submitted` e `review_completed`.
-18. `/exports` mostra previews de Backup, Progress e Teacher Context com categorias e avisos de privacidade.
+18. `/exports` mostra previews de Backup, Progress e Teacher Context com categorias, avisos de privacidade e restore preview bloqueado para estado do usuário.
 
 ## Portabilidade e segurança V1
 
@@ -130,7 +130,7 @@ Com um banco migrado ou com o harness Playwright:
 - `POST /api/import/track` aplica limite de tamanho, validação e conflito por hash de conteúdo.
 - `GET /api/import/track/example` entrega o Pack exemplo versionado para ativação inicial pela UI protegida.
 - `GET /api/export/preview` e `GET /api/export` produzem contratos JSON `know-os.export.v1`.
-- `POST /api/restore/preview` valida Backups, lista categorias e inclui o plano `user_state_dry_run` bloqueado para replay seguro futuro.
+- `POST /api/restore/preview` valida Backups, lista categorias e inclui o plano `user_state_dry_run` bloqueado para replay seguro futuro. A página `/exports` expõe esse dry-run sem botão de apply para estado do usuário.
 - `POST /api/restore` aplica manifests de Pack de forma não destrutiva. O Backup preserva categorias de estado do usuário, mas ADR 0014 deixa replay/merge de estado append-only fora do restore V1; ADR 0016 define a política exigida antes de um futuro restore completo.
 - Respostas incluem headers básicos: `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options` e `Permissions-Policy`.
 - Deployment público usa a decisão de ADR 0015: Google OAuth com allowlist de e-mail para o proprietário inicial, Neon Postgres e Vercel. Rotas privadas exigem sessão permitida; APIs privadas retornam `401` sem sessão.

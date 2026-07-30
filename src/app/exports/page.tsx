@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { AppShell } from "@/components/layout/app-shell";
 import { getExportPreviews } from "@/features/export/api";
+import { RestorePreviewPanel } from "@/features/restore/components/restore-preview-panel";
 
 export const dynamic = "force-dynamic";
 
@@ -35,6 +36,8 @@ export default async function ExportsPage() {
             </li>
           ))}
         </ol>
+
+        <RestorePreviewPanel />
       </section>
     </AppShell>
   );

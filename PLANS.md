@@ -12,12 +12,12 @@ Deliver the approved KNOW/OS V1 through verified roadmap phases, without collaps
 
 Status: `COMPLETE`
 Owner: Codex lead agent
-Phase: `STEP 9 — RESTORE DRY-RUN PLANNER FOUNDATION`
+Phase: `STEP 10 — RESTORE DRY-RUN UI AND COMPATIBILITY`
 Autonomy: `HIGH WITH GUARDRAILS`
 
 ### Objective
 
-Implement the restore provenance schema and blocked dry-run planner from ADR 0016 before any user-state apply mode.
+Expose the blocked user-state dry-run plan in the product UI and add compatibility coverage before any user-state apply mode.
 
 ### Acceptance criteria
 
@@ -104,6 +104,17 @@ Implement the restore provenance schema and blocked dry-run planner from ADR 001
 - [x] 9.3 Dry-run validation gate.
   - Run migration generation, focused restore/import tests, lint, typecheck, full tests, build and diff check.
   - Gate passed with migration generation, focused tests, lint, typecheck, full tests, production audit, build and diff check.
+- [x] 10.1 Restore dry-run UI.
+  - Add a `/exports` restore preview panel that posts Backup JSON to `/api/restore/preview`.
+  - Display categories, source fingerprint, blocked apply state and user-state dry-run blockers.
+  - Added `RestorePreviewPanel` to `/exports` with textarea input, status region, dry-run summary, category plan and blocker readout.
+- [x] 10.2 Restore compatibility coverage.
+  - Add component coverage for the UI and contract coverage for missing Pack manifest blockers.
+  - Keep user-state apply unavailable.
+  - Added component test for the blocked dry-run UI and contract test for state without Pack manifests.
+- [x] 10.3 Restore UI validation gate.
+  - Run focused component/unit tests, lint, typecheck, full tests, build and diff check.
+  - Gate passed with focused tests, lint, typecheck, full tests, production audit, build and diff check.
 
 ### Assumptions
 
@@ -709,6 +720,17 @@ Add timestamped commands and exact outcomes during implementation.
 2026-07-30 BRT — pnpm build after restore dry-run foundation — passed.
 2026-07-30 BRT — pnpm typecheck after restoring `next-env.d.ts` dev route reference for Step 9 — passed.
 2026-07-30 BRT — git diff --check after restore dry-run foundation — passed.
+2026-07-30 BRT — git commit -m "Add restore dry-run foundation" — passed, commit `b1997bd`.
+2026-07-30 BRT — git push origin main after restore dry-run foundation — passed, pushed `b1997bd`.
+2026-07-30 BRT — pnpm exec vitest run tests/component/restore-preview-panel.test.tsx tests/unit/restore-contracts.test.ts — initially failed because `userEvent.type` parsed raw JSON braces as keyboard descriptors; switched the test to `fireEvent.change`.
+2026-07-30 BRT — pnpm exec vitest run tests/component/restore-preview-panel.test.tsx tests/unit/restore-contracts.test.ts — passed, 2 files and 6 tests.
+2026-07-30 BRT — pnpm lint after restore dry-run UI — passed.
+2026-07-30 BRT — pnpm typecheck after restore dry-run UI — passed.
+2026-07-30 BRT — pnpm test after restore dry-run UI — passed, 31 files and 77 tests, plus 1 skipped real-Postgres file/test.
+2026-07-30 BRT — pnpm security:audit after restore dry-run UI — passed with no known production vulnerabilities.
+2026-07-30 BRT — pnpm build after restore dry-run UI — passed.
+2026-07-30 BRT — pnpm typecheck after restoring `next-env.d.ts` dev route reference for Step 10 — passed.
+2026-07-30 BRT — git diff --check after restore dry-run UI — passed.
 ```
 
 ## Blockers
@@ -720,4 +742,4 @@ Interactive Google sign-in with the allowed owner account is user-operated in th
 
 ## NEXT ACTION
 
-Step 10 — restore dry-run UI and compatibility coverage: expose the blocked user-state dry-run plan in `/exports` or restore UI and add compatibility cases before any apply mode.
+Step 11 — restore apply remains blocked: choose the next safe roadmap increment or stop for explicit approval before implementing any user-state apply mode.

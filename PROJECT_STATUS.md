@@ -4,7 +4,7 @@ Last updated: 2026-07-30
 
 ## Current phase
 
-`V1 RESTORE DRY-RUN FOUNDATION IMPLEMENTED — RESTORE UI/COMPATIBILITY NEXT`
+`V1 RESTORE DRY-RUN UI IMPLEMENTED — USER-STATE APPLY BLOCKED`
 
 Phase 0 repository foundation is implemented and verified. The repository now contains a Next.js App Router scaffold with TypeScript strict mode, Tailwind/token generation, minimal accessible shell, Drizzle/PostgreSQL foundation, Zod validation, Vitest/Testing Library/Playwright smoke tests and GitHub Actions CI.
 
@@ -20,7 +20,7 @@ Phase 5 projects and gamification is implemented and verified. The implemented s
 
 Phase 6 portability and hardening is implemented and verified. The V1 local product now includes import preview/hardening, Backup/Progress/Teacher Context exports, non-destructive Backup restore for Pack manifests, accessibility/responsive audit coverage, baseline security headers, security audit documentation and deployment preparation within local-only guardrails.
 
-Production deployment is live at `https://know-os.vercel.app` using the ADR 0015 stack: Vercel, Neon Postgres and Auth.js Google OAuth. Step 2 implementation includes the Auth.js Google foundation, production environment contract, central session guard and Neon/Vercel runbook. Neon migrations have been applied and unauthenticated production smoke checks pass. The sign-in surface now uses the custom `/auth/signin` page following the KNOW/OS Design System, and Google OAuth requests include `prompt=select_account` so account selection is explicit. After a Google `invalid_client` response, Vercel Production OAuth/Auth environment values were re-applied from ignored local values, production was redeployed and the Google page was verified without `invalid_client`. A design-system motion pass now applies approved short motion tokens to app shell, sign-in and recurring content primitives while preserving reduced-motion behavior. Step 3 adds a real `/import` product surface for example/paste/file Track Pack activation with preview-before-apply semantics, deploys it to production and validates the first production learning loop at service level. Step 4 adds and runs guarded real-PostgreSQL validation through a disposable schema, covering checked-in migrations plus import/RUN/SUBMIT/progress behavior without touching production application tables. Step 5 adds production dependency vulnerability scanning, patched transitive runtime overrides and an enforced CSP candidate with Playwright coverage. Step 6 adds a Pack publication catalog and verifier so the accepted example Pack has immutable schema/ID/version/hash metadata before broader distribution. Step 7 adds persisted gamification projections for badge awards, mission progress and mission status-change audit events while keeping XP/review/mistake/mastery rules authoritative. Step 8 accepts ADR 0016 for conflict-safe full user-state restore replay policy. Step 9 implements the restore provenance schema foundation and a blocked `user_state_dry_run` plan in restore preview; ADR 0014 still keeps append-only user-state replay/merge out of V1 restore until compatibility tests, UI review and an explicit apply mode exist.
+Production deployment is live at `https://know-os.vercel.app` using the ADR 0015 stack: Vercel, Neon Postgres and Auth.js Google OAuth. Step 2 implementation includes the Auth.js Google foundation, production environment contract, central session guard and Neon/Vercel runbook. Neon migrations have been applied and unauthenticated production smoke checks pass. The sign-in surface now uses the custom `/auth/signin` page following the KNOW/OS Design System, and Google OAuth requests include `prompt=select_account` so account selection is explicit. After a Google `invalid_client` response, Vercel Production OAuth/Auth environment values were re-applied from ignored local values, production was redeployed and the Google page was verified without `invalid_client`. A design-system motion pass now applies approved short motion tokens to app shell, sign-in and recurring content primitives while preserving reduced-motion behavior. Step 3 adds a real `/import` product surface for example/paste/file Track Pack activation with preview-before-apply semantics, deploys it to production and validates the first production learning loop at service level. Step 4 adds and runs guarded real-PostgreSQL validation through a disposable schema, covering checked-in migrations plus import/RUN/SUBMIT/progress behavior without touching production application tables. Step 5 adds production dependency vulnerability scanning, patched transitive runtime overrides and an enforced CSP candidate with Playwright coverage. Step 6 adds a Pack publication catalog and verifier so the accepted example Pack has immutable schema/ID/version/hash metadata before broader distribution. Step 7 adds persisted gamification projections for badge awards, mission progress and mission status-change audit events while keeping XP/review/mistake/mastery rules authoritative. Step 8 accepts ADR 0016 for conflict-safe full user-state restore replay policy. Step 9 implements the restore provenance schema foundation and a blocked `user_state_dry_run` plan in restore preview. Step 10 exposes that dry-run plan in `/exports` with product UI coverage; append-only user-state replay/merge remains blocked until a future explicit apply mode is approved and implemented.
 
 ## Agent operating mode
 
@@ -136,6 +136,13 @@ Codex may progress through approved V1 roadmap phases without routine user confi
 - Restore preview includes `know-os.user-state-restore-dry-run.v1` with category plans, blockers, warnings and `applyEnabled=false`.
 - Unit coverage asserts stable Backup fingerprinting and blocked user-state replay planning.
 
+## Implemented in Step 10
+
+- `/exports` now includes a restore preview panel for Backup JSON.
+- The panel posts to `/api/restore/preview` and displays the blocked `user_state_dry_run` summary, source fingerprint, category plans and blockers.
+- No apply action exists for attempts, XP, history, mistakes, reviews or gamification projections.
+- Component and contract coverage verify the UI readout and missing Pack manifest blocker behavior.
+
 ## Implemented in Phase 6
 
 - Track Pack import size limit, preview endpoint and content-hash conflict reporting.
@@ -240,6 +247,19 @@ Latest Step 8 user-state restore policy results:
 ```text
 pnpm lint — passed.
 pnpm typecheck — passed.
+git diff --check — passed.
+```
+
+Latest Step 10 restore dry-run UI results:
+
+```text
+pnpm exec vitest run tests/component/restore-preview-panel.test.tsx tests/unit/restore-contracts.test.ts — initially failed because `userEvent.type` parsed raw JSON braces as keyboard descriptors; switched the test to `fireEvent.change`, rerun passed with 2 files and 6 tests.
+pnpm lint — passed.
+pnpm typecheck — passed.
+pnpm test — passed, 31 files and 77 tests, plus 1 skipped real-Postgres file/test.
+pnpm security:audit — passed with no known production vulnerabilities.
+pnpm build — passed.
+pnpm typecheck after restoring `next-env.d.ts` dev route reference — passed.
 git diff --check — passed.
 ```
 
@@ -447,7 +467,7 @@ Do not run `pnpm typecheck` concurrently with `pnpm build`; Next mutates generat
 
 ## Next milestone
 
-Step 10 — restore dry-run UI and compatibility coverage: expose the blocked user-state dry-run plan in `/exports` or restore UI and add compatibility cases before any apply mode.
+Step 11 — restore apply remains blocked: choose the next safe roadmap increment or stop for explicit approval before implementing any user-state apply mode.
 
 ## Risk register
 
@@ -465,4 +485,4 @@ Step 10 — restore dry-run UI and compatibility coverage: expose the blocked us
 
 ## NEXT ACTION
 
-Step 10 — restore dry-run UI and compatibility coverage: expose the blocked user-state dry-run plan in `/exports` or restore UI and add compatibility cases before any apply mode.
+Step 11 — restore apply remains blocked: choose the next safe roadmap increment or stop for explicit approval before implementing any user-state apply mode.

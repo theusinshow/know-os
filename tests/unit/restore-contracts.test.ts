@@ -90,6 +90,21 @@ describe("previewRestore", () => {
     );
   });
 
+  it("blocks user-state dry-run when the Backup has state without Pack manifests", () => {
+    const payload = {
+      ...backupExport.payload,
+      packManifests: []
+    };
+    const plan = buildUserStateRestoreDryRunPlan({
+      sourceExport: { ...backupExport, payload },
+      payload
+    });
+
+    expect(plan.blockers).toEqual(
+      expect.arrayContaining([expect.objectContaining({ code: "pack_manifest_required_for_user_state" })])
+    );
+  });
+
   it("applies Pack manifests non-destructively and skips automatic user-state overwrite", async () => {
     const repository: TrackImportRepository & { applied: number } = {
       applied: 0,
