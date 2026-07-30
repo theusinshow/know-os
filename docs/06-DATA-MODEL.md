@@ -33,7 +33,7 @@ Every user-owned record includes `owner_id`, even while V1 uses a single seeded 
 - `project_contexts`
 - `project_concepts`
 - `project_activities`
-- future `restore_provenance` ledger before user-state replay
+- `restore_provenance` ledger foundation before user-state replay
 
 ### Gamification
 
@@ -60,7 +60,7 @@ Corrections are represented through new records or explicit revocation/compensat
 
 ## Implemented V1 notes
 
-Current migrations implement imported content tables, owner-scoped progress/attempt/evidence/review/mistake state, optional project context joins to imported concepts and activities, append-only XP transactions, append-only badge awards, mission progress projections and mission progress status-change events.
+Current migrations implement imported content tables, owner-scoped progress/attempt/evidence/review/mistake state, optional project context joins to imported concepts and activities, append-only XP transactions, append-only badge awards, mission progress projections, mission progress status-change events and the `restore_provenance` ledger foundation required before full user-state replay.
 
 Rank, badge eligibility and mission status remain derived from deterministic rules over XP, reviews, mistakes and mastery evidence. The persisted gamification tables are read/export projections and audit records; they must not drive mastery or learning recommendations.
 

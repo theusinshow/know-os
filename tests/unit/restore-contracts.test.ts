@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import examplePack from "../../packs/examples/javascript-fundamentals.track.json";
 import { applyBackupRestore } from "@/features/restore/api";
-import { previewRestore } from "@/features/restore/restore-contracts";
+import { buildUserStateRestoreDryRunPlan, previewRestore } from "@/features/restore/restore-contracts";
 import type { TrackImportRepository } from "@/features/import/api";
 
 const backupExport = {
@@ -38,6 +38,11 @@ describe("previewRestore", () => {
       schema: "know-os.restore-preview.v1",
       sourceExportedAt: "2026-07-30T12:00:00.000Z",
       applicationMode: "non_destructive_plan",
+      userStatePlan: {
+        schema: "know-os.user-state-restore-dry-run.v1",
+        mode: "user_state_dry_run",
+        applyEnabled: false
+      },
       categories: expect.any(Array)
     });
     expect(previewRestore(backupExport)).toMatchObject({
@@ -56,6 +61,33 @@ describe("previewRestore", () => {
       status: "invalid",
       code: "unsupported_restore_kind"
     });
+  });
+
+  it("builds a blocked user-state dry-run plan with a stable source fingerprint", () => {
+    const first = buildUserStateRestoreDryRunPlan({
+      sourceExport: backupExport,
+      payload: backupExport.payload
+    });
+    const second = buildUserStateRestoreDryRunPlan({
+      sourceExport: { ...backupExport },
+      payload: backupExport.payload
+    });
+
+    expect(first.sourceExportFingerprint).toMatch(/^[a-f0-9]{64}$/);
+    expect(first.sourceExportFingerprint).toBe(second.sourceExportFingerprint);
+    expect(first.blockers).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ code: "user_state_apply_not_implemented" }),
+        expect.objectContaining({ code: "restore_provenance_required" })
+      ])
+    );
+    expect(first.categories).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: "attempts", sourceCount: 1, status: "blocked" }),
+        expect.objectContaining({ id: "xp", sourceCount: 1, status: "blocked" }),
+        expect.objectContaining({ id: "pack_manifests", sourceCount: 1, status: "plan_only" })
+      ])
+    );
   });
 
   it("applies Pack manifests non-destructively and skips automatic user-state overwrite", async () => {

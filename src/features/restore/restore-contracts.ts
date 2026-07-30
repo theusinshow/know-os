@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+import type { RestoreProvenanceRecord } from "@/db/repositories/restore-provenance-repository";
+import { hashCanonicalJson } from "@/lib/canonical-json";
+
 export const MAX_RESTORE_BYTES = 1024 * 1024;
 
 const exportPayloadSchema = z.object({
@@ -47,6 +50,7 @@ export type RestorePreviewResult =
       categories: readonly RestoreCategory[];
       warnings: readonly string[];
       applicationMode: "non_destructive_plan";
+      userStatePlan: UserStateRestoreDryRunPlan;
     }>
   | Readonly<{
       status: "invalid";
@@ -60,6 +64,33 @@ export type RestoreCategory = Readonly<{
   label: string;
   count: number;
   private: boolean;
+}>;
+
+export type UserStateRestoreDryRunPlan = Readonly<{
+  schema: "know-os.user-state-restore-dry-run.v1";
+  mode: "user_state_dry_run";
+  sourceExportFingerprint: string;
+  applyEnabled: false;
+  categories: readonly UserStateRestoreCategoryPlan[];
+  blockers: readonly UserStateRestoreBlocker[];
+  warnings: readonly string[];
+}>;
+
+export type UserStateRestoreCategoryPlan = Readonly<{
+  id: string;
+  label: string;
+  sourceCount: number;
+  restoreStrategy: "append_only_import" | "projection_rebuild" | "content_reference";
+  status: "empty" | "plan_only" | "blocked";
+  reason: string;
+}>;
+
+export type UserStateRestoreBlocker = Readonly<{
+  code:
+    | "user_state_apply_not_implemented"
+    | "restore_provenance_required"
+    | "pack_manifest_required_for_user_state";
+  message: string;
 }>;
 
 export function previewRestore(input: unknown): RestorePreviewResult {
@@ -128,7 +159,59 @@ export function previewRestore(input: unknown): RestorePreviewResult {
       "Restore deve ser revisado antes de aplicar porque pode incluir código-fonte, projetos e histórico privado.",
       "O plano V1 é não destrutivo: não apaga dados locais existentes."
     ],
-    applicationMode: "non_destructive_plan"
+    applicationMode: "non_destructive_plan",
+    userStatePlan: buildUserStateRestoreDryRunPlan({
+      sourceExport: parsed.data,
+      payload: backup.data
+    })
+  };
+}
+
+export function buildUserStateRestoreDryRunPlan({
+  sourceExport,
+  payload,
+  existingProvenance = []
+}: Readonly<{
+  sourceExport: unknown;
+  payload: RestoreBackupPayload;
+  existingProvenance?: readonly RestoreProvenanceRecord[];
+}>): UserStateRestoreDryRunPlan {
+  const sourceExportFingerprint = hashCanonicalJson(sourceExport);
+  const categories = getUserStateCategoryPlans(payload);
+  const userStateCount = categories
+    .filter((category) => category.restoreStrategy !== "content_reference")
+    .reduce((total, category) => total + category.sourceCount, 0);
+  const blockers: UserStateRestoreBlocker[] = [
+    {
+      code: "user_state_apply_not_implemented",
+      message: "Restore completo de estado ainda não possui modo apply habilitado."
+    },
+    {
+      code: "restore_provenance_required",
+      message: "Aplicação futura exige ledger de provenance e idempotência por registro de origem."
+    }
+  ];
+
+  if (userStateCount > 0 && payload.packManifests.length === 0) {
+    blockers.push({
+      code: "pack_manifest_required_for_user_state",
+      message: "Estado do usuário só pode ser planejado quando os manifests de Pack necessários acompanham o Backup."
+    });
+  }
+
+  return {
+    schema: "know-os.user-state-restore-dry-run.v1",
+    mode: "user_state_dry_run",
+    sourceExportFingerprint,
+    applyEnabled: false,
+    categories,
+    blockers,
+    warnings: [
+      "Dry-run apenas planeja replay de estado; o endpoint V1 não aplica tentativas, XP, histórico, erros, reviews ou gamificação.",
+      existingProvenance.length > 0
+        ? "Este fingerprint já possui registros de provenance; o apply futuro precisará tratar idempotência por registro."
+        : "Nenhum registro de provenance foi considerado neste dry-run."
+    ]
   };
 }
 
@@ -148,4 +231,59 @@ export function parseRestoreBackupPayload(input: unknown):
   }
 
   return { ok: true, exportedAt: parsed.data.exportedAt, payload: backup.data };
+}
+
+function getUserStateCategoryPlans(payload: RestoreBackupPayload): UserStateRestoreCategoryPlan[] {
+  return [
+    {
+      id: "pack_manifests",
+      label: "Manifestos de Pack",
+      sourceCount: payload.packManifests.length,
+      restoreStrategy: "content_reference",
+      status: payload.packManifests.length === 0 ? "empty" : "plan_only",
+      reason: "Conteúdo precisa ser resolvido antes de qualquer replay de estado."
+    },
+    appendOnlyPlan("attempts", "Tentativas", payload.recentAttempts.length),
+    appendOnlyPlan("mastery_evidence", "Evidência de mastery", payload.masteryEvidence.length),
+    projectionPlan("review_queue", "Fila de review", payload.dueReviews.length),
+    projectionPlan("mistakes", "Erros", payload.mistakes.length),
+    projectionPlan("projects", "Projetos", payload.projects.length),
+    appendOnlyPlan("xp", "XP", payload.xpSummary.transactions.length),
+    projectionPlan(
+      "gamification",
+      "Gamificação",
+      (payload.gamification?.badgeAwards.length ?? 0) +
+        (payload.gamification?.missionProgress.length ?? 0) +
+        (payload.gamification?.missionEvents.length ?? 0)
+    ),
+    appendOnlyPlan("history", "Histórico", payload.events.length)
+  ];
+}
+
+function appendOnlyPlan(id: string, label: string, sourceCount: number): UserStateRestoreCategoryPlan {
+  return {
+    id,
+    label,
+    sourceCount,
+    restoreStrategy: "append_only_import",
+    status: sourceCount === 0 ? "empty" : "blocked",
+    reason:
+      sourceCount === 0
+        ? "Sem registros para replay."
+        : "Replay append-only depende de provenance e apply futuro."
+  };
+}
+
+function projectionPlan(id: string, label: string, sourceCount: number): UserStateRestoreCategoryPlan {
+  return {
+    id,
+    label,
+    sourceCount,
+    restoreStrategy: "projection_rebuild",
+    status: sourceCount === 0 ? "empty" : "blocked",
+    reason:
+      sourceCount === 0
+        ? "Sem projeção para reconciliar."
+        : "Projeção precisa ser reconstruída a partir de registros append-only antes de aplicar."
+  };
 }

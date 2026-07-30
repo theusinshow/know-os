@@ -12,12 +12,12 @@ Deliver the approved KNOW/OS V1 through verified roadmap phases, without collaps
 
 Status: `COMPLETE`
 Owner: Codex lead agent
-Phase: `STEP 8 — USER-STATE RESTORE POLICY`
+Phase: `STEP 9 — RESTORE DRY-RUN PLANNER FOUNDATION`
 Autonomy: `HIGH WITH GUARDRAILS`
 
 ### Objective
 
-Design the conflict-safe append-only replay/merge policy before implementing restore of attempts, XP, history, mistakes, reviews or gamification projections.
+Implement the restore provenance schema and blocked dry-run planner from ADR 0016 before any user-state apply mode.
 
 ### Acceptance criteria
 
@@ -94,6 +94,16 @@ Design the conflict-safe append-only replay/merge policy before implementing res
 - [x] 8.3 Restore policy validation gate.
   - Run documentation-relevant type/test checks and diff check.
   - Gate passed with lint, typecheck and diff check.
+- [x] 9.1 Restore provenance schema.
+  - Add owner-scoped `restore_provenance` ledger with source export fingerprint, source record identity, local record identity and payload hash.
+  - Added `restore_provenance`, generated `src/db/migrations/0008_pale_shiver_man.sql` and added the read repository foundation.
+- [x] 9.2 Dry-run planner contract.
+  - Extend restore preview with `know-os.user-state-restore-dry-run.v1`, stable Backup fingerprint, category plans, warnings and blockers.
+  - Keep `applyEnabled=false`; do not import attempts, XP, history, mistakes, reviews or gamification projections.
+  - Restore preview now includes a blocked dry-run user-state plan and stable canonical Backup fingerprint.
+- [x] 9.3 Dry-run validation gate.
+  - Run migration generation, focused restore/import tests, lint, typecheck, full tests, build and diff check.
+  - Gate passed with migration generation, focused tests, lint, typecheck, full tests, production audit, build and diff check.
 
 ### Assumptions
 
@@ -688,6 +698,17 @@ Add timestamped commands and exact outcomes during implementation.
 2026-07-30 BRT — pnpm lint after Step 8 restore policy docs — passed.
 2026-07-30 BRT — pnpm typecheck after Step 8 restore policy docs — passed.
 2026-07-30 BRT — git diff --check after Step 8 restore policy docs — passed.
+2026-07-30 BRT — git commit -m "Define user-state restore replay policy" — passed, commit `632a86c`.
+2026-07-30 BRT — git push origin main after Step 8 restore policy — passed, pushed `632a86c`.
+2026-07-30 BRT — pnpm db:generate after restore provenance schema — passed, generated `src/db/migrations/0008_pale_shiver_man.sql`.
+2026-07-30 BRT — pnpm exec vitest run tests/unit/restore-contracts.test.ts tests/unit/track-pack-validation.test.ts — passed, 2 files and 7 tests.
+2026-07-30 BRT — pnpm lint after restore dry-run foundation — passed.
+2026-07-30 BRT — pnpm typecheck after restore dry-run foundation — passed.
+2026-07-30 BRT — pnpm test after restore dry-run foundation — passed, 30 files and 75 tests, plus 1 skipped real-Postgres file/test.
+2026-07-30 BRT — pnpm security:audit after restore dry-run foundation — passed with no known production vulnerabilities.
+2026-07-30 BRT — pnpm build after restore dry-run foundation — passed.
+2026-07-30 BRT — pnpm typecheck after restoring `next-env.d.ts` dev route reference for Step 9 — passed.
+2026-07-30 BRT — git diff --check after restore dry-run foundation — passed.
 ```
 
 ## Blockers
@@ -699,4 +720,4 @@ Interactive Google sign-in with the allowed owner account is user-operated in th
 
 ## NEXT ACTION
 
-Step 9 — restore dry-run planner foundation: implement the restore provenance schema and dry-run merge planner from ADR 0016 before any user-state apply mode.
+Step 10 — restore dry-run UI and compatibility coverage: expose the blocked user-state dry-run plan in `/exports` or restore UI and add compatibility cases before any apply mode.

@@ -259,6 +259,33 @@ export const missionProgressEvents = pgTable(
   (table) => [index("mission_progress_events_owner_created_idx").on(table.ownerId, table.createdAt)]
 );
 
+export const restoreProvenance = pgTable(
+  "restore_provenance",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    ownerId: text("owner_id")
+      .notNull()
+      .references(() => owners.id),
+    sourceExportFingerprint: text("source_export_fingerprint").notNull(),
+    sourceRecordKind: text("source_record_kind").notNull(),
+    sourceRecordId: text("source_record_id").notNull(),
+    sourceContentKey: text("source_content_key").notNull(),
+    localRecordKind: text("local_record_kind").notNull(),
+    localRecordId: text("local_record_id").notNull(),
+    payloadHash: text("payload_hash").notNull(),
+    appliedAt: timestamp("applied_at", { withTimezone: true }).notNull().defaultNow()
+  },
+  (table) => [
+    uniqueIndex("restore_provenance_source_record_idx").on(
+      table.ownerId,
+      table.sourceExportFingerprint,
+      table.sourceRecordKind,
+      table.sourceRecordId
+    ),
+    index("restore_provenance_owner_export_idx").on(table.ownerId, table.sourceExportFingerprint)
+  ]
+);
+
 export const attemptTestResults = pgTable("attempt_test_results", {
   id: uuid("id").primaryKey().defaultRandom(),
   attemptId: uuid("attempt_id")

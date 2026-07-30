@@ -57,6 +57,13 @@
       "when": 1785439505611,
       "tag": "0007_icy_vengeance",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1785440252570,
+      "tag": "0008_pale_shiver_man",
+      "breakpoints": true
     }
   ]
 }

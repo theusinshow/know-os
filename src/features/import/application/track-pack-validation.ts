@@ -1,6 +1,5 @@
-import { createHash } from "node:crypto";
-
 import { trackPackSchema, type TrackPack } from "@/features/import/application/track-pack-schema";
+import { hashCanonicalJson } from "@/lib/canonical-json";
 
 export type TrackPackIssue = Readonly<{
   code: "invalid_schema" | "duplicate_id" | "missing_concept";
@@ -40,7 +39,7 @@ export function validateTrackPack(input: unknown): TrackPackValidationResult {
 }
 
 export function hashTrackPack(pack: TrackPack) {
-  return createHash("sha256").update(canonicalJson(pack)).digest("hex");
+  return hashCanonicalJson(pack);
 }
 
 function validateSemantics(pack: TrackPack): TrackPackIssue[] {
@@ -100,19 +99,4 @@ function addUnique(ids: Map<string, string>, issues: TrackPackIssue[], id: strin
   }
 
   ids.set(id, path);
-}
-
-function canonicalJson(value: unknown): string {
-  if (Array.isArray(value)) {
-    return `[${value.map(canonicalJson).join(",")}]`;
-  }
-
-  if (value && typeof value === "object") {
-    return `{${Object.entries(value)
-      .sort(([left], [right]) => left.localeCompare(right))
-      .map(([key, nested]) => `${JSON.stringify(key)}:${canonicalJson(nested)}`)
-      .join(",")}}`;
-  }
-
-  return JSON.stringify(value);
 }
