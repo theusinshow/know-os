@@ -736,6 +736,65 @@ a {
   gap: var(--kos-spacing-6);
 }
 
+.generation-mode-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--kos-spacing-4);
+}
+
+.generation-panel {
+  display: grid;
+  gap: var(--kos-spacing-7);
+  border: var(--kos-border-rule) solid var(--kos-color-ink);
+  background: var(--kos-color-paper);
+  box-shadow: var(--kos-shadow-pressed);
+  padding: var(--kos-spacing-8);
+}
+
+.generation-form {
+  display: grid;
+  gap: var(--kos-spacing-6);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.generation-form label {
+  display: grid;
+  gap: var(--kos-spacing-3);
+}
+
+.generation-form input,
+.generation-form textarea {
+  min-height: var(--kos-touch-minimum);
+  border: var(--kos-border-rule) solid var(--kos-color-ink);
+  background: var(--kos-color-dimmed-paper);
+  color: var(--kos-color-ink);
+  font: inherit;
+  padding: var(--kos-spacing-5);
+}
+
+.generation-form textarea {
+  resize: vertical;
+}
+
+.generation-form-wide {
+  grid-column: 1 / -1;
+}
+
+.generation-prompt {
+  min-height: 260px;
+}
+
+.import-divider {
+  border-block: var(--kos-border-rule) solid var(--kos-color-ink);
+  background: var(--kos-color-panel);
+  font-family: var(--kos-typography-technical-family), monospace;
+  font-size: var(--kos-typography-technical-sizes-sm);
+  font-weight: var(--kos-typography-technical-weights-bold);
+  letter-spacing: var(--kos-typography-technical-tracking);
+  padding: var(--kos-spacing-4) var(--kos-spacing-6);
+  text-transform: uppercase;
+}
+
 .import-file-action {
   width: fit-content;
 }

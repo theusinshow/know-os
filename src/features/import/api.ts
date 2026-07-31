@@ -3,4 +3,7 @@ export type { TrackImportPreviewResult, TrackImportRepository, TrackImportResult
 export { MAX_TRACK_PACK_BYTES, readJsonRequestWithLimit } from "./application/import-request";
 export { trackPackSchema } from "./application/track-pack-schema";
 export type { TrackPack } from "./application/track-pack-schema";
+export { lessonPackSchema } from "./application/lesson-pack-schema";
+export type { LessonPack } from "./application/lesson-pack-schema";
+export { validateLessonPack } from "./application/lesson-pack-validation";
 export { validateTrackPack } from "./application/track-pack-validation";

@@ -1,31 +1,31 @@
 import { z } from "zod";
 
-const stableId = z.string().trim().min(1);
+export const stableIdSchema = z.string().trim().min(1);
 
-const conceptSchema = z.object({
-  id: stableId,
+export const conceptSchema = z.object({
+  id: stableIdSchema,
   title: z.string().trim().min(1),
   summary: z.string().optional()
 });
 
-const blockSchema = z
+export const blockSchema = z
   .object({
-    id: stableId,
+    id: stableIdSchema,
     type: z.enum(["text", "concept", "note", "warning", "code", "example", "prediction", "summary"])
   })
   .passthrough();
 
-const activitySchema = z
+export const activitySchema = z
   .object({
-    id: stableId,
+    id: stableIdSchema,
     type: z.enum(["prediction", "multiple-choice", "explain", "code", "debug"]),
-    conceptIds: z.array(stableId).min(1),
+    conceptIds: z.array(stableIdSchema).min(1),
     prompt: z.string().trim().min(1)
   })
   .passthrough();
 
-const lessonSchema = z.object({
-  id: stableId,
+export const lessonSchema = z.object({
+  id: stableIdSchema,
   version: z.number().int().min(1),
   title: z.string().trim().min(1),
   concepts: z.array(conceptSchema),
@@ -34,7 +34,7 @@ const lessonSchema = z.object({
 });
 
 const moduleSchema = z.object({
-  id: stableId,
+  id: stableIdSchema,
   title: z.string().trim().min(1),
   lessons: z.array(lessonSchema)
 });
@@ -45,7 +45,7 @@ export const trackPackSchema = z.object({
   version: z.number().int().min(1),
   language: z.string().default("pt-BR"),
   track: z.object({
-    id: stableId,
+    id: stableIdSchema,
     title: z.string().trim().min(1),
     description: z.string().optional(),
     modules: z.array(moduleSchema)

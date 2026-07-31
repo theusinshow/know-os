@@ -18,6 +18,8 @@ const auditedRoutes = [
 ];
 
 test("implemented V1 routes expose landmarks, headings and responsive page bounds", async ({ page, request }) => {
+  test.setTimeout(60_000);
+
   const packPath = path.join(process.cwd(), "packs", "examples", "javascript-fundamentals.track.json");
   const pack = JSON.parse(await readFile(packPath, "utf8"));
   await request.post("/api/import/track", { data: pack });

@@ -184,14 +184,16 @@ Implement first-release content generation with two modes: Manual Copy and Paste
   - Persist `GenerationJob`, selected mode/model, normalized spec, compiled prompt, status timeline, raw response metadata hash where safe, validation result references and provider usage estimates.
   - Never persist API keys, client secrets or unredacted provider credentials.
   - Implemented owner-scoped `generation_jobs`, Drizzle and memory repositories, status timeline persistence, compiled prompt/spec storage and provider usage storage. Generated `0009_volatile_captain_britain.sql`.
-- [ ] 14.3 Lesson Pack parser and shared validation pipeline.
+- [x] 14.3 Lesson Pack parser and shared validation pipeline.
   - Create/update: lesson Pack schema/semantic validator under `src/features/import/application/**` or a new Pack-validation module, plus fixtures/tests.
   - Add `caderno.lesson.v1` parser and semantic validation, then route manual/DeepSeek outputs into the same preview/diff/import path.
   - Ensure unsupported schema versions, malformed JSON and business-rule failures are blocked before preview/import.
-- [ ] 14.4 Manual generation product flow.
+  - Implemented `lessonPackSchema`, `validateLessonPack`, generated-output validation, malformed/Markdown blocking and Track Pack wrapping only after validated Lesson Pack JSON.
+- [x] 14.4 Manual generation product flow.
   - Create/update: generation UI components and server actions/API routes.
   - Implement Configure -> Compile Prompt -> Copy Prompt -> Paste AI JSON -> Validate -> Preview -> Import with `waiting_external_response` persistence.
   - Preserve form data when switching modes.
+  - Implemented `/import` mode selector, Manual Copy/Paste flow, DeepSeek readiness panel, compile/validate/import API routes and E2E coverage. Manual import rebuilds a validated Track Pack boundary before calling the existing atomic importer.
 - [ ] 14.5 DeepSeek provider adapter.
   - Create/update: `src/features/generation/infrastructure/deepseek-generation-provider.server.ts`, provider tests and request handler.
   - Use the OpenAI-compatible DeepSeek API from server-only code, `response_format: { type: "json_object" }`, timeout/cancellation support, one retry for empty/transient responses and no retry for auth/balance/validation failures.
@@ -861,6 +863,19 @@ Add timestamped commands and exact outcomes during implementation.
 2026-07-31 BRT — pnpm typecheck after Step 14.2 — passed.
 2026-07-31 BRT — pnpm build after Step 14.2 — passed.
 2026-07-31 BRT — git diff --check after Step 14.2 — passed.
+2026-07-31 BRT — pnpm exec vitest run tests/unit/lesson-pack-validation.test.ts tests/unit/track-pack-validation.test.ts tests/unit/track-import-service.test.ts tests/unit/generation-contracts.test.ts — initially failed after schema refactor because `stableId` was still referenced; fixed to `stableIdSchema`.
+2026-07-31 BRT — pnpm exec vitest run tests/unit/lesson-pack-validation.test.ts tests/unit/track-pack-validation.test.ts tests/unit/track-import-service.test.ts tests/unit/generation-contracts.test.ts — passed, 4 files and 18 tests.
+2026-07-31 BRT — pnpm typecheck after Step 14.3 — passed.
+2026-07-31 BRT — pnpm exec vitest run tests/unit/lesson-pack-validation.test.ts tests/unit/manual-generation-service.test.ts tests/unit/generation-contracts.test.ts tests/integration/generation-job-repository.test.ts after Step 14.4 routes/services — passed, 4 files and 16 tests.
+2026-07-31 BRT — pnpm typecheck after Step 14.4 routes/UI — passed.
+2026-07-31 BRT — pnpm lint after Step 14.4 UI — passed.
+2026-07-31 BRT — pnpm exec playwright test tests/e2e/import-ui.spec.ts --project=chromium — passed, 2 tests covering Track Pack import and manual generated Lesson Pack import.
+2026-07-31 BRT — pnpm test after Step 14.4 — passed, 36 files and 96 tests, plus 1 skipped real-Postgres file/test.
+2026-07-31 BRT — pnpm security:audit after Step 14.4 — passed with no known production vulnerabilities.
+2026-07-31 BRT — pnpm typecheck after Step 14.4 — passed.
+2026-07-31 BRT — pnpm build after Step 14.4 — passed.
+2026-07-31 BRT — pnpm test:e2e after Step 14.4 — initially failed because the single accessibility route sweep exceeded its 30s test timeout after the heavier `/import` generation surface; assertions had passed up to `/exports` page content. Increased only that test timeout to 60s.
+2026-07-31 BRT — pnpm test:e2e after accessibility timeout adjustment — passed, 22 tests across desktop Chromium and mobile Chrome.
 ```
 
 ## Blockers
@@ -869,9 +884,9 @@ Add timestamped commands and exact outcomes during implementation.
 No real local PostgreSQL service is available outside `.env.local`; `pnpm test:postgres` validates the configured PostgreSQL service through a disposable schema and production database writes must remain non-destructive and explicitly scoped.
 Authenticated Chrome walkthrough is available, but `/exports` and `/achievements` fail in production with Server Components render errors after Step 11 deployment. The likely repair is applying checked-in migrations `0007_icy_vengeance.sql` and `0008_pale_shiver_man.sql` to Neon production with `pnpm db:migrate`, which requires explicit user confirmation as an external database schema write.
 Step 13 UI alignment has been checkpointed and pushed as `81f4ce3`.
-Step 14.0 through 14.2 are implemented locally and validated. No DeepSeek credentials should be requested or exposed; use an unconfigured provider state unless the user configures `DEEPSEEK_API_KEY` in ignored server environment.
+Step 14.0 through 14.4 are implemented locally and focused-validation passed. No DeepSeek credentials should be requested or exposed; use an unconfigured provider state unless the user configures `DEEPSEEK_API_KEY` in ignored server environment.
 ```
 
 ## NEXT ACTION
 
-Continue Step 14 with increment 14.3: implement `caderno.lesson.v1` parser/semantic validation and route generated JSON into the shared validation/preview boundary without allowing raw model output to import directly. Keep the separate Neon production migration blocker untouched until explicit confirmation.
+Continue Step 14 with increment 14.5: implement the server-only DeepSeek provider adapter, retries/error mapping and shared generated-output validation path. Keep the separate Neon production migration blocker untouched until explicit confirmation.

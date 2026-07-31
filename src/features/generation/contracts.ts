@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export const generationStatuses = [
   "draft",
   "compiled",
@@ -22,16 +24,37 @@ export type GenerationMode = "manual_copy_paste" | "deepseek";
 
 export type GenerationSchemaTarget = "caderno.lesson.v1";
 
-export type GenerationSpec = Readonly<{
-  targetSchema: GenerationSchemaTarget;
-  language: "pt-BR";
-  audienceLevel: "beginner" | "intermediate" | "advanced";
-  lessonTitle: string;
-  lessonGoal: string;
-  concepts: readonly Readonly<{ id: string; title: string; summary?: string }>[];
-  activityTypes: readonly ("prediction" | "multiple-choice" | "explain" | "code" | "debug")[];
-  constraints: readonly string[];
-}>;
+export const generationImportTargetSchema = z.object({
+  packId: z.string().regex(/^[a-z0-9][a-z0-9._-]{2,127}$/),
+  version: z.number().int().min(1),
+  trackId: z.string().trim().min(1),
+  trackTitle: z.string().trim().min(1),
+  moduleId: z.string().trim().min(1),
+  moduleTitle: z.string().trim().min(1)
+});
+
+export const generationSpecSchema = z.object({
+  targetSchema: z.literal("caderno.lesson.v1"),
+  language: z.literal("pt-BR"),
+  audienceLevel: z.enum(["beginner", "intermediate", "advanced"]),
+  lessonTitle: z.string().trim().min(1),
+  lessonGoal: z.string().trim().min(1),
+  concepts: z
+    .array(
+      z.object({
+        id: z.string().trim().min(1),
+        title: z.string().trim().min(1),
+        summary: z.string().trim().optional()
+      })
+    )
+    .min(1),
+  activityTypes: z.array(z.enum(["prediction", "multiple-choice", "explain", "code", "debug"])).min(1),
+  constraints: z.array(z.string().trim().min(1)).default([]),
+  importTarget: generationImportTargetSchema
+});
+
+export type GenerationImportTarget = z.infer<typeof generationImportTargetSchema>;
+export type GenerationSpec = z.infer<typeof generationSpecSchema>;
 
 export type CompiledGenerationPrompt = Readonly<{
   targetSchema: GenerationSchemaTarget;

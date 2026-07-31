@@ -15,7 +15,15 @@ const spec: GenerationSpec = {
   lessonGoal: "Ensinar declaracao e leitura de variaveis.",
   concepts: [{ id: "js-variable", title: "Variavel" }],
   activityTypes: ["prediction", "code"],
-  constraints: ["Inclua uma atividade de previsao antes de codigo."]
+  constraints: ["Inclua uma atividade de previsao antes de codigo."],
+  importTarget: {
+    packId: "generated.javascript.variables",
+    version: 1,
+    trackId: "generated-javascript",
+    trackTitle: "JavaScript gerado",
+    moduleId: "generated-basics",
+    moduleTitle: "Fundamentos gerados"
+  }
 };
 
 describe("generation contracts", () => {

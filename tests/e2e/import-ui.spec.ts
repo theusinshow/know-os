@@ -24,3 +24,65 @@ test("imports the bundled example Track Pack through the product surface", async
   await page.goto("/tracks");
   await expect(page.getByRole("link", { name: /JavaScript/ }).first()).toBeVisible();
 });
+
+test("validates and imports a manually generated Lesson Pack through the product surface", async ({ page }) => {
+  await page.goto("/import");
+
+  await expect(page.getByRole("tab", { name: "Manual / Copy Paste" })).toHaveAttribute("aria-selected", "true");
+  await page.getByRole("button", { name: "Compilar prompt" }).click();
+  await expect(page.getByRole("status", { name: "Estado da geração" })).toContainText("Prompt compilado");
+  await expect(page.getByLabel("Prompt compilado")).toContainText("caderno.lesson.v1");
+
+  const generatedLesson = {
+    schema: "caderno.lesson.v1",
+    language: "pt-BR",
+    lesson: {
+      id: "generated-function-lesson",
+      version: 1,
+      title: "Funções em JavaScript",
+      concepts: [
+        {
+          id: "js-function",
+          title: "Função",
+          summary: "Bloco reutilizável de lógica."
+        }
+      ],
+      blocks: [
+        {
+          id: "generated-function-intro",
+          type: "text",
+          text: "Uma função organiza uma tarefa que pode ser chamada mais de uma vez."
+        }
+      ],
+      activities: [
+        {
+          id: "generated-function-predict",
+          type: "prediction",
+          conceptIds: ["js-function"],
+          prompt: "O que será exibido ao chamar uma função que retorna 2 + 2?"
+        },
+        {
+          id: "generated-function-code",
+          type: "code",
+          conceptIds: ["js-function"],
+          prompt: "Crie uma função soma que retorna a soma de dois números.",
+          starterCode: "function soma(a, b) {\n  return 0;\n}",
+          tests: []
+        }
+      ]
+    }
+  };
+
+  await page.getByLabel("JSON gerado").fill(JSON.stringify(generatedLesson, null, 2));
+  await page.getByRole("button", { name: "Validar" }).click();
+  await expect(page.getByRole("status", { name: "Estado da geração" })).toContainText("JSON validado");
+  await expect(page.getByRole("region", { name: "Preview da lição" })).toContainText("Funções em JavaScript");
+
+  await page.getByRole("button", { name: "Importar lição" }).click();
+  await expect(page.getByRole("status", { name: "Estado da geração" })).toContainText(
+    /Lição gerada importada|Lição gerada já estava importada/
+  );
+
+  await page.goto("/tracks");
+  await expect(page.getByRole("link", { name: /JavaScript gerado/ }).first()).toBeVisible();
+});

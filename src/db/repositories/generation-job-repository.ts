@@ -2,7 +2,7 @@ import { and, eq } from "drizzle-orm";
 import type { PgDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core";
 
 import { getDatabase } from "@/db/connection";
-import { generationJobs } from "@/db/schema";
+import { generationJobs, owners } from "@/db/schema";
 import type * as schema from "@/db/schema";
 import type {
   CompiledGenerationPrompt,
@@ -55,22 +55,29 @@ export class GenerationJobRepository {
   async create(input: CreateGenerationJobInput): Promise<GenerationJobRecord> {
     const now = input.now ?? new Date();
     const status = input.status ?? (input.compiledPrompt ? "compiled" : "draft");
-    const [row] = await this.db
-      .insert(generationJobs)
-      .values({
-        ownerId: input.ownerId,
-        mode: input.mode,
-        provider: input.provider,
-        model: input.model ?? null,
-        targetSchema: input.spec.targetSchema,
-        spec: input.spec,
-        compiledPrompt: input.compiledPrompt ?? null,
-        status,
-        statusTimeline: [{ status, at: now.toISOString() }],
-        createdAt: now,
-        updatedAt: now
-      })
-      .returning();
+    const [row] = await this.db.transaction(async (tx) => {
+      await tx
+        .insert(owners)
+        .values({ id: input.ownerId, displayName: "Local owner" })
+        .onConflictDoNothing({ target: owners.id });
+
+      return tx
+        .insert(generationJobs)
+        .values({
+          ownerId: input.ownerId,
+          mode: input.mode,
+          provider: input.provider,
+          model: input.model ?? null,
+          targetSchema: input.spec.targetSchema,
+          spec: input.spec,
+          compiledPrompt: input.compiledPrompt ?? null,
+          status,
+          statusTimeline: [{ status, at: now.toISOString() }],
+          createdAt: now,
+          updatedAt: now
+        })
+        .returning();
+    });
 
     if (!row) {
       throw new Error("Failed to create GenerationJob");

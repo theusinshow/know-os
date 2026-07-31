@@ -17,7 +17,15 @@ const spec: GenerationSpec = {
   lessonGoal: "Ensinar repeticao com for.",
   concepts: [{ id: "js-loop", title: "Loop" }],
   activityTypes: ["prediction", "code"],
-  constraints: ["Nao importar resposta crua sem validacao."]
+  constraints: ["Nao importar resposta crua sem validacao."],
+  importTarget: {
+    packId: "generated.javascript.loops",
+    version: 1,
+    trackId: "generated-javascript",
+    trackTitle: "JavaScript gerado",
+    moduleId: "generated-basics",
+    moduleTitle: "Fundamentos gerados"
+  }
 };
 
 describe("GenerationJobRepository", () => {

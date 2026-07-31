@@ -1,11 +1,11 @@
 import { trackPackSchema, type TrackPack } from "@/features/import/application/track-pack-schema";
+import {
+  validateLessonChildren,
+  type PackValidationIssue
+} from "@/features/import/application/lesson-pack-validation";
 import { hashCanonicalJson } from "@/lib/canonical-json";
 
-export type TrackPackIssue = Readonly<{
-  code: "invalid_schema" | "duplicate_id" | "missing_concept";
-  message: string;
-  path: string;
-}>;
+export type TrackPackIssue = PackValidationIssue;
 
 export type TrackPackValidationResult =
   | Readonly<{ ok: true; pack: TrackPack; contentHash: string }>
@@ -54,32 +54,9 @@ function validateSemantics(pack: TrackPack): TrackPackIssue[] {
 
     module.lessons.forEach((lesson, lessonIndex) => {
       const lessonPath = `${modulePath}.lessons.${lessonIndex}`;
-      const conceptIds = new Set<string>();
 
       addUnique(ids, issues, lesson.id, `${lessonPath}.id`);
-
-      lesson.concepts.forEach((concept, conceptIndex) => {
-        conceptIds.add(concept.id);
-        addUnique(ids, issues, concept.id, `${lessonPath}.concepts.${conceptIndex}.id`);
-      });
-
-      lesson.blocks.forEach((block, blockIndex) => {
-        addUnique(ids, issues, block.id, `${lessonPath}.blocks.${blockIndex}.id`);
-      });
-
-      lesson.activities.forEach((activity, activityIndex) => {
-        addUnique(ids, issues, activity.id, `${lessonPath}.activities.${activityIndex}.id`);
-
-        activity.conceptIds.forEach((conceptId, conceptIndex) => {
-          if (!conceptIds.has(conceptId)) {
-            issues.push({
-              code: "missing_concept",
-              message: `Activity references unknown concept '${conceptId}'.`,
-              path: `${lessonPath}.activities.${activityIndex}.conceptIds.${conceptIndex}`
-            });
-          }
-        });
-      });
+      validateLessonChildren(lesson, lessonPath, ids, issues);
     });
   });
 
