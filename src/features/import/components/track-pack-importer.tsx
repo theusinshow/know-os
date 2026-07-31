@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Clipboard, FileJson, Upload } from "lucide-react";
+import { ArrowRightLeft, Check, Clipboard, Eye, FileJson, RefreshCcw, Upload } from "lucide-react";
 import { useId, useMemo, useState } from "react";
 
 type PreviewSummary = Readonly<{
@@ -56,6 +56,9 @@ type ImportResult =
 type ApiError = Readonly<{
   code?: string;
   message?: string;
+  retryable?: boolean;
+  jobId?: string;
+  status?: string;
   issues?: readonly { path: string; message: string }[];
 }>;
 
@@ -79,6 +82,16 @@ type CompiledPrompt = Readonly<{
   targetSchema: "caderno.lesson.v1";
   prompt: string;
   jsonExample: string;
+}>;
+
+type ManualRecoveryDraft = Readonly<{
+  id: number;
+  jobId: string;
+  compiledPrompt: CompiledPrompt;
+  lessonTitle: string;
+  lessonGoal: string;
+  conceptLines: string;
+  message: string;
 }>;
 
 type GeneratedLessonPreview = Readonly<{
@@ -120,18 +133,24 @@ function formatEstimatedUsd(value: number | undefined) {
   }).format(value);
 }
 
-async function readApiError(response: Response): Promise<string> {
-  const payload = (await response.json().catch(() => null)) as ApiError | null;
+async function readApiErrorPayload(response: Response): Promise<ApiError | null> {
+  return (await response.json().catch(() => null)) as ApiError | null;
+}
 
+function formatApiError(payload: ApiError | null, fallback: string) {
   if (!payload) {
-    return "A resposta da importação não pôde ser lida.";
+    return fallback;
   }
 
   if (payload.issues?.length) {
     return payload.issues.map((issue) => `${issue.path}: ${issue.message}`).join(" ");
   }
 
-  return payload.message ?? payload.code ?? "A importação não foi concluída.";
+  return payload.message ?? payload.code ?? fallback;
+}
+
+async function readApiError(response: Response): Promise<string> {
+  return formatApiError(await readApiErrorPayload(response), "A resposta da importação não pôde ser lida.");
 }
 
 function parseConceptLines(source: string) {
@@ -161,6 +180,7 @@ export function TrackPackImporter({ deepSeek }: Readonly<{ deepSeek: DeepSeekRea
   const [error, setError] = useState<string | null>(null);
   const [isBusy, setIsBusy] = useState(false);
   const [mode, setMode] = useState<"manual" | "deepseek">("manual");
+  const [manualRecovery, setManualRecovery] = useState<ManualRecoveryDraft | null>(null);
 
   const canApply = useMemo(() => preview?.status === "ready" && !isBusy, [isBusy, preview]);
 
@@ -322,10 +342,16 @@ export function TrackPackImporter({ deepSeek }: Readonly<{ deepSeek: DeepSeekRea
       </div>
 
       <div hidden={mode !== "manual"}>
-        <ManualGenerationPanel />
+        <ManualGenerationPanel key={manualRecovery?.id ?? "manual"} recovery={manualRecovery} />
       </div>
       <div hidden={mode !== "deepseek"}>
-        <DeepSeekGenerationPanel deepSeek={deepSeek} />
+        <DeepSeekGenerationPanel
+          deepSeek={deepSeek}
+          onSwitchToManual={(recovery) => {
+            setManualRecovery(recovery);
+            setMode("manual");
+          }}
+        />
       </div>
 
       <div className="import-divider" role="separator">
@@ -391,21 +417,25 @@ export function TrackPackImporter({ deepSeek }: Readonly<{ deepSeek: DeepSeekRea
   );
 }
 
-function ManualGenerationPanel() {
+function ManualGenerationPanel({ recovery }: Readonly<{ recovery: ManualRecoveryDraft | null }>) {
   const titleId = useId();
   const goalId = useId();
   const conceptsId = useId();
   const promptId = useId();
   const generatedId = useId();
-  const [lessonTitle, setLessonTitle] = useState("Funções em JavaScript");
-  const [lessonGoal, setLessonGoal] = useState("Ensinar como declarar e chamar funções simples.");
-  const [conceptLines, setConceptLines] = useState("js-function | Função | Bloco reutilizável de lógica.");
-  const [jobId, setJobId] = useState<string | null>(null);
-  const [compiledPrompt, setCompiledPrompt] = useState<CompiledPrompt | null>(null);
+  const [lessonTitle, setLessonTitle] = useState(recovery?.lessonTitle ?? "Funções em JavaScript");
+  const [lessonGoal, setLessonGoal] = useState(
+    recovery?.lessonGoal ?? "Ensinar como declarar e chamar funções simples."
+  );
+  const [conceptLines, setConceptLines] = useState(
+    recovery?.conceptLines ?? "js-function | Função | Bloco reutilizável de lógica."
+  );
+  const [jobId, setJobId] = useState<string | null>(recovery?.jobId ?? null);
+  const [compiledPrompt, setCompiledPrompt] = useState<CompiledPrompt | null>(recovery?.compiledPrompt ?? null);
   const [generatedJson, setGeneratedJson] = useState("");
   const [preview, setPreview] = useState<GeneratedLessonPreview | null>(null);
   const [importResult, setImportResult] = useState<ImportResult | null>(null);
-  const [message, setMessage] = useState("Configure a lição e compile o prompt.");
+  const [message, setMessage] = useState(recovery?.message ?? "Configure a lição e compile o prompt.");
   const [error, setError] = useState<string | null>(null);
   const [isBusy, setIsBusy] = useState(false);
 
@@ -625,7 +655,22 @@ function ManualGenerationPanel() {
   );
 }
 
-function DeepSeekGenerationPanel({ deepSeek }: Readonly<{ deepSeek: DeepSeekReadiness }>) {
+type DeepSeekFailure = Readonly<{
+  message: string;
+  technicalDetails: Readonly<{
+    httpStatus: number | "network_error";
+    code?: string;
+    retryable?: boolean;
+    jobId?: string;
+    generationStatus?: string;
+    message: string;
+  }>;
+}>;
+
+function DeepSeekGenerationPanel({
+  deepSeek,
+  onSwitchToManual
+}: Readonly<{ deepSeek: DeepSeekReadiness; onSwitchToManual(recovery: ManualRecoveryDraft): void }>) {
   const [message, setMessage] = useState(
     deepSeek.status === "configured" ? "DeepSeek configurado. Gere a lição para validar." : "DeepSeek sem chave configurada."
   );
@@ -634,8 +679,14 @@ function DeepSeekGenerationPanel({ deepSeek }: Readonly<{ deepSeek: DeepSeekRead
   const [jobId, setJobId] = useState<string | null>(null);
   const [preview, setPreview] = useState<GeneratedLessonPreview | null>(null);
   const [usage, setUsage] = useState<GenerationUsage | null>(null);
+  const [manualFallback, setManualFallback] = useState<ManualRecoveryDraft | null>(null);
+  const [failure, setFailure] = useState<DeepSeekFailure | null>(null);
+  const [showTechnicalDetails, setShowTechnicalDetails] = useState(false);
   const [importResult, setImportResult] = useState<ImportResult | null>(null);
   const [isBusy, setIsBusy] = useState(false);
+  const lessonTitle = "Funções em JavaScript";
+  const lessonGoal = "Ensinar como declarar e chamar funções simples.";
+  const conceptLines = "js-function | Função | Bloco reutilizável de lógica.";
   const importTarget = useMemo(
     () => ({
       packId: "generated.javascript.deepseek",
@@ -653,8 +704,8 @@ function DeepSeekGenerationPanel({ deepSeek }: Readonly<{ deepSeek: DeepSeekRead
       targetSchema: "caderno.lesson.v1",
       language: "pt-BR",
       audienceLevel: "beginner",
-      lessonTitle: "Funções em JavaScript",
-      lessonGoal: "Ensinar como declarar e chamar funções simples.",
+      lessonTitle,
+      lessonGoal,
       concepts: [{ id: "js-function", title: "Função", summary: "Bloco reutilizável de lógica." }],
       activityTypes: ["prediction", "code"],
       constraints: [
@@ -666,15 +717,55 @@ function DeepSeekGenerationPanel({ deepSeek }: Readonly<{ deepSeek: DeepSeekRead
     };
   }
 
+  async function compileManualFallback() {
+    const response = await fetch("/api/generation/manual/compile", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(buildSpec())
+    });
+
+    if (!response.ok) {
+      setError(await readApiError(response));
+      setMessage("Fallback manual bloqueado.");
+      return null;
+    }
+
+    const payload = (await response.json()) as {
+      jobId: string;
+      compiledPrompt: CompiledPrompt;
+    };
+    const recovery: ManualRecoveryDraft = {
+      id: Date.now(),
+      jobId: payload.jobId,
+      compiledPrompt: payload.compiledPrompt,
+      lessonTitle,
+      lessonGoal,
+      conceptLines,
+      message: "Prompt preservado a partir da falha DeepSeek. Cole a resposta JSON no campo abaixo."
+    };
+
+    setManualFallback(recovery);
+    return recovery;
+  }
+
   async function generateWithDeepSeek() {
     setIsBusy(true);
     setError(null);
     setPreview(null);
     setUsage(null);
+    setFailure(null);
+    setShowTechnicalDetails(false);
     setImportResult(null);
-    setMessage("Gerando e validando com DeepSeek...");
+    setMessage("Preparando fallback manual...");
 
     try {
+      const recovery = await compileManualFallback();
+
+      if (!recovery) {
+        return;
+      }
+
+      setMessage("Gerando e validando com DeepSeek...");
       const response = await fetch("/api/generation/deepseek/generate", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -682,8 +773,22 @@ function DeepSeekGenerationPanel({ deepSeek }: Readonly<{ deepSeek: DeepSeekRead
       });
 
       if (!response.ok) {
-        setError(await readApiError(response));
-        setMessage("Geração direta bloqueada.");
+        const payload = await readApiErrorPayload(response);
+        const failureMessage = formatApiError(payload, "A geração DeepSeek não pôde ser concluída.");
+
+        setError(failureMessage);
+        setFailure({
+          message: failureMessage,
+          technicalDetails: {
+            httpStatus: response.status,
+            code: payload?.code,
+            retryable: payload?.retryable,
+            jobId: payload?.jobId,
+            generationStatus: payload?.status,
+            message: failureMessage
+          }
+        });
+        setMessage("Geração direta bloqueada. Use Retry ou continue pelo Manual.");
         return;
       }
 
@@ -698,9 +803,39 @@ function DeepSeekGenerationPanel({ deepSeek }: Readonly<{ deepSeek: DeepSeekRead
       setPreview(payload.preview);
       setUsage(payload.usage);
       setMessage("DeepSeek retornou JSON validado. Preview liberado para importação.");
+    } catch {
+      const failureMessage = "Geração direta falhou antes de receber resposta.";
+
+      setError(failureMessage);
+      setFailure({
+        message: failureMessage,
+        technicalDetails: {
+          httpStatus: "network_error",
+          message: failureMessage,
+          retryable: true
+        }
+      });
+      setMessage("Geração direta bloqueada. Use Retry ou continue pelo Manual.");
     } finally {
       setIsBusy(false);
     }
+  }
+
+  async function copyFallbackPrompt() {
+    if (!manualFallback) {
+      return;
+    }
+
+    await navigator.clipboard?.writeText(manualFallback.compiledPrompt.prompt);
+    setMessage("Prompt de fallback copiado.");
+  }
+
+  function switchToManualFallback() {
+    if (!manualFallback) {
+      return;
+    }
+
+    onSwitchToManual(manualFallback);
   }
 
   async function importDeepSeekLesson() {
@@ -763,6 +898,43 @@ function DeepSeekGenerationPanel({ deepSeek }: Readonly<{ deepSeek: DeepSeekRead
           </span>
         </div>
       ) : null}
+      {failure ? (
+        <div className="lesson-callout" data-variant="invalid" role="alert" aria-label="Recuperação da geração DeepSeek">
+          <strong>Geração direta bloqueada.</strong>
+          <span>{failure.message}</span>
+          <div className="activity-actions">
+            <button className="secondary-action" type="button" onClick={() => void generateWithDeepSeek()} disabled={isBusy}>
+              <RefreshCcw aria-hidden="true" />
+              Retry
+            </button>
+            <button className="secondary-action" type="button" onClick={switchToManualFallback} disabled={!manualFallback}>
+              <ArrowRightLeft aria-hidden="true" />
+              Switch to Manual
+            </button>
+            <button className="secondary-action" type="button" onClick={() => void copyFallbackPrompt()} disabled={!manualFallback}>
+              <Clipboard aria-hidden="true" />
+              Copy Prompt
+            </button>
+            <button
+              className="secondary-action"
+              type="button"
+              aria-expanded={showTechnicalDetails}
+              onClick={() => setShowTechnicalDetails((current) => !current)}
+            >
+              <Eye aria-hidden="true" />
+              View Technical Details
+            </button>
+          </div>
+          {showTechnicalDetails ? (
+            <textarea
+              className="code-editor generation-prompt"
+              readOnly
+              aria-label="Detalhes técnicos da falha DeepSeek"
+              value={JSON.stringify(failure.technicalDetails, null, 2)}
+            />
+          ) : null}
+        </div>
+      ) : null}
       <div className="activity-actions">
         <button
           className="primary-action"
@@ -776,7 +948,7 @@ function DeepSeekGenerationPanel({ deepSeek }: Readonly<{ deepSeek: DeepSeekRead
       <p className="activity-status" role="status" aria-label="Estado da geração DeepSeek" aria-live="polite">
         {message}
       </p>
-      {error ? (
+      {error && !failure ? (
         <div className="lesson-callout" data-variant="invalid" role="alert">
           <strong>Geração bloqueada.</strong>
           <span>{error}</span>

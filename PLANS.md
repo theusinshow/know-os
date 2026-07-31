@@ -45,17 +45,17 @@ Implement first-release content generation with two modes: Manual Copy and Paste
 - [x] `/import` or a dedicated generation surface exposes a mode selector with `MANUAL / COPY AND PASTE` and `AI / DEEPSEEK`.
 - [x] Manual mode is fully functional: Configure -> Compile Prompt -> Copy Prompt -> Paste AI JSON -> Validate -> Preview -> Import.
 - [x] A persisted `GenerationJob` survives the manual waiting state with status `waiting_external_response`.
-- [ ] DeepSeek mode has complete UI, domain contract, configuration detection and provider adapter; the card remains visible as `UNCONFIGURED` when `DEEPSEEK_API_KEY` is absent.
+- [x] DeepSeek mode has complete UI, domain contract, configuration detection and provider adapter; the card remains visible as `UNCONFIGURED` when `DEEPSEEK_API_KEY` is absent.
 - [x] Server env supports `DEEPSEEK_API_KEY`, `DEEPSEEK_BASE_URL`, `DEEPSEEK_DEFAULT_MODEL`, `DEEPSEEK_PRO_MODEL` without exposing secrets to client code.
-- [ ] Provider abstraction includes `ManualGenerationProvider` and `DeepSeekGenerationProvider`; app code outside the adapter does not import DeepSeek/OpenAI-compatible client specifics directly.
+- [x] Provider abstraction includes `ManualGenerationProvider` and `DeepSeekGenerationProvider`; app code outside the adapter does not import DeepSeek/OpenAI-compatible client specifics directly.
 - [x] DeepSeek defaults to `deepseek-v4-flash`, supports advanced `deepseek-v4-pro`, and never uses retired `deepseek-chat` or `deepseek-reasoner`.
 - [x] DeepSeek requests execute only from server-only modules, use `response_format: { type: "json_object" }`, explicitly request JSON, include a compact JSON example, require `caderno.lesson.v1`, prohibit Markdown outside JSON and default Thinking Mode off.
 - [x] Empty or transient provider failures retry once; authentication, insufficient balance and deterministic validation errors do not retry automatically.
-- [ ] Failure UI preserves `GenerationSpec` and compiled prompt and offers Retry, Switch to Manual, Copy Prompt and View Technical Details.
+- [x] Failure UI preserves `GenerationSpec` and compiled prompt and offers Retry, Switch to Manual, Copy Prompt and View Technical Details.
 - [x] Generation statuses include: `draft`, `compiled`, `waiting_external_response`, `ready`, `generating`, `receiving`, `validating`, `repairing`, `ready_to_import`, `invalid`, `rate_limited`, `insufficient_balance`, `timeout`, `failed`, `imported`.
 - [x] Provider usage is persisted when returned with model, input tokens, output tokens, cache-hit tokens, estimated cost and timestamp; pricing lives in one versioned configuration module and UI labels cost as an estimate.
 - [x] Manual and DeepSeek outputs use exactly the same parser, schema validator, business validator, preview, diff and atomic importer. No raw model response can be imported directly.
-- [ ] Required tests cover unconfigured DeepSeek, client secret isolation, model defaults, mode switching state preservation, valid/invalid DeepSeek JSON validation, empty-response retry, auth failure no-retry, failure-to-manual fallback, usage persistence and import bypass prevention.
+- [x] Required tests cover unconfigured DeepSeek, client secret isolation, model defaults, mode switching state preservation, valid/invalid DeepSeek JSON validation, empty-response retry, auth failure no-retry, failure-to-manual fallback, usage persistence and import bypass prevention.
 
 ### Post-V1 hardening increments
 
@@ -203,13 +203,15 @@ Implement first-release content generation with two modes: Manual Copy and Paste
   - Create/update: versioned pricing config module and usage persistence/read models.
   - Persist provider usage when returned and label estimated cost as an estimate everywhere in UI/API.
   - Implemented `src/features/generation/pricing.ts` with official DeepSeek model pricing captured as `deepseek-api-pricing-2026-07-31`, provider-side cost estimation, persisted `pricingVersion` metadata and a DeepSeek preview callout that labels the USD value as estimated.
-- [ ] 14.7 Failure recovery UI.
+- [x] 14.7 Failure recovery UI.
   - Add Retry, Switch to Manual, Copy Prompt and View Technical Details actions for failed generation without losing `GenerationSpec` or compiled prompt.
   - Keep DeepSeek mode visible while unconfigured and disable only the direct generation action.
-- [ ] 14.8 Generation validation gate.
+  - Implemented DeepSeek fallback state that compiles the same `GenerationSpec` through the Manual pipeline before direct generation, preserves the compiled prompt on failure, exposes Retry, Switch to Manual, Copy Prompt and View Technical Details, and keeps technical details limited to sanitized status/error metadata.
+- [x] 14.8 Generation validation gate.
   - Run focused unit/component/integration tests for generation, import validation reuse and provider behavior.
   - Run `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, focused Playwright generation smoke and `git diff --check`.
   - Checkpoint locally and ask before push/deployment.
+  - Final validation and local checkpoint are complete in this increment.
 
 ### Assumptions
 
@@ -895,6 +897,23 @@ Add timestamped commands and exact outcomes during implementation.
 2026-07-31 BRT — pnpm build after Step 14.6 — passed and built `/api/generation/deepseek/generate`.
 2026-07-31 BRT — pnpm test:e2e after Step 14.6 — passed, 22 tests across desktop Chromium and mobile Chrome.
 2026-07-31 BRT — git diff --check after Step 14.6 — passed with LF/CRLF normalization warnings only.
+2026-07-31 BRT — pnpm exec vitest run tests/component/track-pack-importer-generation.test.tsx tests/unit/deepseek-generation-provider.test.ts after Step 14.7 — initially failed on a component test matcher; fixed to inspect the textarea value directly.
+2026-07-31 BRT — pnpm exec vitest run tests/component/track-pack-importer-generation.test.tsx tests/unit/deepseek-generation-provider.test.ts after Step 14.7 matcher fix — passed, 2 files and 5 tests.
+2026-07-31 BRT — pnpm typecheck after Step 14.7 — initially failed on a stale `failure` condition in Manual error rendering; fixed the Manual and DeepSeek alert conditions.
+2026-07-31 BRT — pnpm lint after Step 14.7 — initially failed because recovery state was synchronized via `useEffect`; replaced it with keyed Manual remount and state initializers.
+2026-07-31 BRT — pnpm typecheck after Step 14.7 fixes — passed.
+2026-07-31 BRT — pnpm lint after Step 14.7 fixes — passed.
+2026-07-31 BRT — pnpm test after Step 14.7 — passed, 39 files and 104 tests, plus 1 skipped real-Postgres file/test.
+2026-07-31 BRT — pnpm security:audit after Step 14.7 — passed with no known production vulnerabilities.
+2026-07-31 BRT — pnpm build after Step 14.7 — passed and built `/api/generation/deepseek/generate` plus `/api/generation/manual/compile`.
+2026-07-31 BRT — pnpm test:e2e after Step 14.7 — passed, 22 tests across desktop Chromium and mobile Chrome.
+2026-07-31 BRT — pnpm exec vitest run tests/unit/deepseek-generation-route.test.ts tests/unit/manual-generation-provider.test.ts tests/component/track-pack-importer-generation.test.tsx after provider abstraction and route tests — initially failed because the mocked DeepSeek provider was not constructable; fixed the mock constructor.
+2026-07-31 BRT — pnpm exec vitest run tests/unit/deepseek-generation-route.test.ts tests/unit/manual-generation-provider.test.ts tests/component/track-pack-importer-generation.test.tsx after mock fix — passed, 3 files and 4 tests.
+2026-07-31 BRT — pnpm exec vitest run tests/unit/manual-generation-provider.test.ts tests/component/track-pack-importer-generation.test.tsx tests/unit/deepseek-generation-provider.test.ts tests/unit/generation-contracts.test.ts after ManualGenerationProvider — passed, 4 files and 10 tests.
+2026-07-31 BRT — pnpm typecheck after final Step 14 tests — passed.
+2026-07-31 BRT — pnpm lint after final Step 14 tests — passed.
+2026-07-31 BRT — pnpm test after final Step 14 tests — passed, 41 files and 107 tests, plus 1 skipped real-Postgres file/test.
+2026-07-31 BRT — git diff --check after final Step 14 docs — passed with LF/CRLF normalization warnings only.
 ```
 
 ## Blockers
@@ -903,9 +922,9 @@ Add timestamped commands and exact outcomes during implementation.
 No real local PostgreSQL service is available outside `.env.local`; `pnpm test:postgres` validates the configured PostgreSQL service through a disposable schema and production database writes must remain non-destructive and explicitly scoped.
 Authenticated Chrome walkthrough is available, but `/exports` and `/achievements` fail in production with Server Components render errors after Step 11 deployment. The likely repair is applying checked-in migrations `0007_icy_vengeance.sql` and `0008_pale_shiver_man.sql` to Neon production with `pnpm db:migrate`, which requires explicit user confirmation as an external database schema write.
 Step 13 UI alignment has been checkpointed and pushed as `81f4ce3`.
-Step 14.0 through 14.6 are implemented locally and fully validated. No DeepSeek credentials should be requested or exposed; use an unconfigured provider state unless the user configures `DEEPSEEK_API_KEY` in ignored server environment.
+Step 14.0 through 14.8 are implemented locally and validated. No DeepSeek credentials should be requested or exposed; use an unconfigured provider state unless the user configures `DEEPSEEK_API_KEY` in ignored server environment.
 ```
 
 ## NEXT ACTION
 
-Continue Step 14 with increment 14.7: add Retry, Switch to Manual, Copy Prompt and View Technical Details actions for failed generation without losing `GenerationSpec` or compiled prompt. Keep the separate Neon production migration blocker untouched until explicit confirmation.
+Local Step 14 implementation is complete. Do not push, deploy or apply production Neon migrations without explicit confirmation.

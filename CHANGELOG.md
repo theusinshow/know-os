@@ -75,6 +75,8 @@ The format follows Keep a Changelog principles. Product versions will follow Sem
 - Manual Copy/Paste generation flow on `/import`, with prompt compilation, copied prompt, pasted AI JSON validation, generated lesson preview and atomic import through a reconstructed Track Pack boundary.
 - Server-only DeepSeek generation adapter and `/api/generation/deepseek/generate`, using JSON-object responses, retry/error mapping and the shared generated Lesson Pack validation path before preview.
 - Versioned DeepSeek usage/cost estimates for generated content, including persisted pricing metadata and an estimated-cost label in the DeepSeek preview flow.
+- DeepSeek failure-recovery UI with Retry, Switch to Manual, Copy Prompt and sanitized technical details while preserving the fallback prompt for the same generation spec.
+- Manual generation provider abstraction and DeepSeek route validation tests covering valid and invalid generated JSON before preview/import.
 - Zod server-environment validation.
 - Vitest, Testing Library and Playwright smoke coverage.
 - GitHub Actions baseline CI and separate Playwright E2E workflow.

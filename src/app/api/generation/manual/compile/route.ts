@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import { ensureDatabaseReady } from "@/db/connection";
 import { readJsonRequestWithLimit } from "@/features/import/api";
-import { compileManualGenerationSpec } from "@/features/generation/manual-generation-service";
+import { ManualGenerationProvider } from "@/features/generation/infrastructure/manual-generation-provider";
 import { getGenerationJobRepository } from "@/features/generation/server-repositories";
 import { getServerEnv } from "@/lib/env";
 
@@ -24,7 +24,8 @@ export async function POST(request: Request) {
     );
   }
 
-  const compiled = compileManualGenerationSpec(parsedRequest.body);
+  const provider = new ManualGenerationProvider();
+  const compiled = provider.compile(parsedRequest.body);
 
   if (!compiled.ok) {
     return NextResponse.json(

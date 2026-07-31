@@ -179,6 +179,8 @@ Codex may progress through approved V1 roadmap phases without routine user confi
 - Implemented 14.4 Manual Copy/Paste flow on `/import`: Configure -> Compile Prompt -> Copy Prompt -> Paste AI JSON -> Validate -> Preview -> Import, with `waiting_external_response` job persistence and import through a reconstructed validated Track Pack boundary.
 - Implemented 14.5 DeepSeek adapter: server-only provider, OpenAI-compatible JSON request, `response_format: { type: "json_object" }`, one retry for empty/transient/timeout responses, non-retry auth/balance/rate failures, `/api/generation/deepseek/generate` and shared generated-output validation before preview.
 - Implemented 14.6 usage/cost estimates: versioned DeepSeek pricing config `deepseek-api-pricing-2026-07-31`, provider-side USD estimate from input/output/cache-hit usage, persisted `pricingVersion` metadata and a DeepSeek preview callout labeled as estimated cost.
+- Implemented 14.7 failure recovery UI: failed DeepSeek generation preserves a Manual fallback prompt for the same `GenerationSpec`, exposes Retry, Switch to Manual, Copy Prompt and View Technical Details, and limits technical details to sanitized status/error metadata.
+- Implemented 14.8 validation gate and provider abstraction completion: `ManualGenerationProvider` now wraps the manual compile path beside `DeepSeekGenerationProvider`, route tests cover valid and invalid DeepSeek generated JSON before preview/import, and the local validation gate has passed.
 - Manual flow must be complete: Configure -> Compile Prompt -> Copy Prompt -> Paste AI JSON -> Validate -> Preview -> Import, preserving a persisted `GenerationJob` with `waiting_external_response`.
 - DeepSeek flow must be visible even when unconfigured; absent `DEEPSEEK_API_KEY` shows `AI / DEEPSEEK` with `STATUS API NOT CONFIGURED`, disables direct generation only and allows switching to Manual without losing form data.
 - Server env keys implemented: `DEEPSEEK_API_KEY`, `DEEPSEEK_BASE_URL`, `DEEPSEEK_DEFAULT_MODEL`, `DEEPSEEK_PRO_MODEL`; no `NEXT_PUBLIC_` secret exposure is allowed.
@@ -200,7 +202,7 @@ Codex may progress through approved V1 roadmap phases without routine user confi
 
 ## Not implemented
 
-Authenticated owner browser walkthrough/polish after service-level production validation, external sync, full user-state replay/merge restore, generation failure-recovery UI and multi-Pack distribution/release workflow.
+Authenticated owner browser walkthrough/polish after service-level production validation, external sync, full user-state replay/merge restore and multi-Pack distribution/release workflow.
 
 ## Verification
 
@@ -591,13 +593,30 @@ pnpm security:audit after Step 14.6 — passed with no known production vulnerab
 pnpm build after Step 14.6 — passed and built `/api/generation/deepseek/generate`.
 pnpm test:e2e after Step 14.6 — passed, 22 tests across desktop Chromium and mobile Chrome.
 git diff --check after Step 14.6 — passed with LF/CRLF normalization warnings only.
+pnpm exec vitest run tests/component/track-pack-importer-generation.test.tsx tests/unit/deepseek-generation-provider.test.ts after Step 14.7 — initially failed on a component test matcher; fixed to inspect the textarea value directly.
+pnpm exec vitest run tests/component/track-pack-importer-generation.test.tsx tests/unit/deepseek-generation-provider.test.ts after Step 14.7 matcher fix — passed, 2 files and 5 tests.
+pnpm typecheck after Step 14.7 — initially failed on a stale `failure` condition in Manual error rendering; fixed the Manual and DeepSeek alert conditions.
+pnpm lint after Step 14.7 — initially failed because recovery state was synchronized via `useEffect`; replaced it with keyed Manual remount and state initializers.
+pnpm typecheck after Step 14.7 fixes — passed.
+pnpm lint after Step 14.7 fixes — passed.
+pnpm test after Step 14.7 — passed, 39 files and 104 tests, plus 1 skipped real-Postgres file/test.
+pnpm security:audit after Step 14.7 — passed with no known production vulnerabilities.
+pnpm build after Step 14.7 — passed and built `/api/generation/deepseek/generate` plus `/api/generation/manual/compile`.
+pnpm test:e2e after Step 14.7 — passed, 22 tests across desktop Chromium and mobile Chrome.
+pnpm exec vitest run tests/unit/deepseek-generation-route.test.ts tests/unit/manual-generation-provider.test.ts tests/component/track-pack-importer-generation.test.tsx after provider abstraction and route tests — initially failed because the mocked DeepSeek provider was not constructable; fixed the mock constructor.
+pnpm exec vitest run tests/unit/deepseek-generation-route.test.ts tests/unit/manual-generation-provider.test.ts tests/component/track-pack-importer-generation.test.tsx after mock fix — passed, 3 files and 4 tests.
+pnpm exec vitest run tests/unit/manual-generation-provider.test.ts tests/component/track-pack-importer-generation.test.tsx tests/unit/deepseek-generation-provider.test.ts tests/unit/generation-contracts.test.ts after ManualGenerationProvider — passed, 4 files and 10 tests.
+pnpm typecheck after final Step 14 tests — passed.
+pnpm lint after final Step 14 tests — passed.
+pnpm test after final Step 14 tests — passed, 41 files and 107 tests, plus 1 skipped real-Postgres file/test.
+git diff --check after final Step 14 docs — passed with LF/CRLF normalization warnings only.
 ```
 
 Do not run `pnpm typecheck` concurrently with `pnpm build`; Next mutates generated `.next` types during build.
 
 ## Next milestone
 
-Continue Step 14 increment 14.7: add Retry, Switch to Manual, Copy Prompt and View Technical Details actions for failed generation without losing `GenerationSpec` or compiled prompt. Keep the separate Neon production migration blocker untouched until explicit confirmation.
+Local Step 14 implementation is complete. Do not push, deploy or apply production Neon migrations without explicit confirmation.
 
 ## Risk register
 
@@ -618,4 +637,4 @@ Continue Step 14 increment 14.7: add Retry, Switch to Manual, Copy Prompt and Vi
 
 ## NEXT ACTION
 
-Continue Step 14 increment 14.7: add Retry, Switch to Manual, Copy Prompt and View Technical Details actions for failed generation without losing `GenerationSpec` or compiled prompt. Keep the separate Neon production migration blocker untouched until explicit confirmation.
+Local Step 14 implementation is complete. Do not push, deploy or apply production Neon migrations without explicit confirmation.
