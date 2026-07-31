@@ -9,6 +9,10 @@ describe("server environment contract", () => {
       AUTH_GOOGLE_SECRET: undefined,
       AUTH_SECRET: undefined,
       AUTH_TRUST_HOST: undefined,
+      DEEPSEEK_API_KEY: undefined,
+      DEEPSEEK_BASE_URL: "https://api.deepseek.com",
+      DEEPSEEK_DEFAULT_MODEL: "deepseek-v4-flash",
+      DEEPSEEK_PRO_MODEL: "deepseek-v4-pro",
       KNOW_OS_ALLOWED_GOOGLE_EMAILS: [],
       KNOW_OS_OWNER_ID: "local-owner"
     });
@@ -31,6 +35,10 @@ describe("server environment contract", () => {
         AUTH_SECRET: "",
         AUTH_TRUST_HOST: "",
         DATABASE_URL: "",
+        DEEPSEEK_API_KEY: "",
+        DEEPSEEK_BASE_URL: "",
+        DEEPSEEK_DEFAULT_MODEL: "",
+        DEEPSEEK_PRO_MODEL: "",
         KNOW_OS_ALLOWED_GOOGLE_EMAILS: ""
       })
     ).toMatchObject({
@@ -40,6 +48,10 @@ describe("server environment contract", () => {
       AUTH_SECRET: undefined,
       AUTH_TRUST_HOST: undefined,
       DATABASE_URL: undefined,
+      DEEPSEEK_API_KEY: undefined,
+      DEEPSEEK_BASE_URL: "https://api.deepseek.com",
+      DEEPSEEK_DEFAULT_MODEL: "deepseek-v4-flash",
+      DEEPSEEK_PRO_MODEL: "deepseek-v4-pro",
       KNOW_OS_ALLOWED_GOOGLE_EMAILS: []
     });
   });
@@ -51,5 +63,10 @@ describe("server environment contract", () => {
   it("parses Auth.js trusted-host setting for hosted reverse proxies", () => {
     expect(getServerEnv({ AUTH_TRUST_HOST: "true" }).AUTH_TRUST_HOST).toBe("true");
     expect(() => getServerEnv({ AUTH_TRUST_HOST: "yes" })).toThrow();
+  });
+
+  it("rejects retired DeepSeek model aliases", () => {
+    expect(() => getServerEnv({ DEEPSEEK_DEFAULT_MODEL: "deepseek-chat" })).toThrow();
+    expect(() => getServerEnv({ DEEPSEEK_PRO_MODEL: "deepseek-reasoner" })).toThrow();
   });
 });

@@ -68,6 +68,9 @@ The format follows Keep a Changelog principles. Product versions will follow Sem
 - Restore preview UI on `/exports` showing blocked user-state dry-run categories, source fingerprint and blockers.
 - Per-request nonce CSP through `src/proxy.ts`, with production `script-src` no longer using `unsafe-inline` or `unsafe-eval`.
 - Route-aware primary navigation component for the shared app shell.
+- Step 14 generation foundation with provider-independent contracts, prompt compiler, raw JSON parser, server-only DeepSeek readiness detection and owner-scoped `GenerationJob` persistence.
+- DeepSeek server environment placeholders and validation for `DEEPSEEK_API_KEY`, `DEEPSEEK_BASE_URL`, `DEEPSEEK_DEFAULT_MODEL` and `DEEPSEEK_PRO_MODEL` without exposing secrets through `NEXT_PUBLIC_*`.
+- `generation_jobs` persistence schema, migration and repository tests for generation status timelines, compiled prompts, normalized specs and provider usage estimates.
 - Zod server-environment validation.
 - Vitest, Testing Library and Playwright smoke coverage.
 - GitHub Actions baseline CI and separate Playwright E2E workflow.

@@ -286,6 +286,33 @@ export const restoreProvenance = pgTable(
   ]
 );
 
+export const generationJobs = pgTable(
+  "generation_jobs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    ownerId: text("owner_id")
+      .notNull()
+      .references(() => owners.id),
+    mode: text("mode").notNull(),
+    provider: text("provider").notNull(),
+    model: text("model"),
+    targetSchema: text("target_schema").notNull(),
+    spec: jsonb("spec").notNull(),
+    compiledPrompt: jsonb("compiled_prompt"),
+    status: text("status").notNull(),
+    statusTimeline: jsonb("status_timeline").notNull(),
+    rawResponseMetadataHash: text("raw_response_metadata_hash"),
+    validationResult: jsonb("validation_result"),
+    providerUsage: jsonb("provider_usage"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow()
+  },
+  (table) => [
+    index("generation_jobs_owner_created_idx").on(table.ownerId, table.createdAt),
+    index("generation_jobs_owner_status_idx").on(table.ownerId, table.status)
+  ]
+);
+
 export const attemptTestResults = pgTable("attempt_test_results", {
   id: uuid("id").primaryKey().defaultRandom(),
   attemptId: uuid("attempt_id")

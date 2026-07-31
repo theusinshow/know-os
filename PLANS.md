@@ -10,7 +10,7 @@ Deliver the approved KNOW/OS V1 through verified roadmap phases, without collaps
 
 ## Current phase
 
-Status: `READY`
+Status: `IN PROGRESS`
 Owner: Codex lead agent
 Phase: `STEP 14 — GENERATION MODES AND DEEPSEEK PROVIDER`
 Autonomy: `HIGH WITH GUARDRAILS`
@@ -170,17 +170,20 @@ Implement first-release content generation with two modes: Manual Copy and Paste
   - Run lint, typecheck, unit tests, build, focused Playwright smoke and local screenshot capture.
   - Update durable status/changelog and checkpoint/push when the gate passes.
   - Implemented, checkpointed and pushed as `81f4ce3`.
-- [ ] 14.0 Deep orientation.
+- [x] 14.0 Deep orientation.
   - Read/update: `docs/11-PACK-SPEC.md`, `docs/13-IMPORT-EXPORT.md`, `docs/16-SECURITY-ARCHITECTURE.md`, `docs/20-ACCEPTANCE-CRITERIA.md`, `docs/22-API-CONVENTIONS.md`, `docs/23-ERROR-HANDLING.md`, ADR 0010 and applicable import/domain files.
   - Confirm whether generation imports `caderno.lesson.v1` directly or wraps validated Lesson Packs into an atomic Track/Module import boundary; if this is a durable Pack-pipeline choice, create an ADR.
-- [ ] 14.1 Generation contracts and environment.
+  - Orientation completed on 2026-07-31. Generation output will target `caderno.lesson.v1` as the normalized model/manual artifact, but raw output remains blocked from import until the shared parser, schema validator, business validator, preview/diff and atomic importer are implemented in later Step 14 increments. No ADR is required for 14.0/14.1 because no Pack schema or import behavior changes in this increment.
+- [x] 14.1 Generation contracts and environment.
   - Create/update: `src/features/generation/**`, `src/lib/env.ts`, `.env.example`, tests/unit env/provider readiness tests.
   - Define `GenerationSpec`, `GenerationStatus`, provider-independent request/result/errors, prompt compiler and server-only provider interface.
   - Add DeepSeek configuration detection with defaults: base URL `https://api.deepseek.com`, default model `deepseek-v4-flash`, pro model `deepseek-v4-pro`.
-- [ ] 14.2 Persistence foundation.
+  - Implemented generation contracts, provider-independent prompt compilation, raw JSON parser, server-only DeepSeek readiness detection, env defaults and model-alias rejection. Added `server-only` as an explicit runtime guard dependency.
+- [x] 14.2 Persistence foundation.
   - Create/update: `src/db/schema/user-state.ts`, `src/db/repositories/generation-job-repository.ts`, memory repository, generated migration and integration tests.
   - Persist `GenerationJob`, selected mode/model, normalized spec, compiled prompt, status timeline, raw response metadata hash where safe, validation result references and provider usage estimates.
   - Never persist API keys, client secrets or unredacted provider credentials.
+  - Implemented owner-scoped `generation_jobs`, Drizzle and memory repositories, status timeline persistence, compiled prompt/spec storage and provider usage storage. Generated `0009_volatile_captain_britain.sql`.
 - [ ] 14.3 Lesson Pack parser and shared validation pipeline.
   - Create/update: lesson Pack schema/semantic validator under `src/features/import/application/**` or a new Pack-validation module, plus fixtures/tests.
   - Add `caderno.lesson.v1` parser and semantic validation, then route manual/DeepSeek outputs into the same preview/diff/import path.
@@ -839,6 +842,25 @@ Add timestamped commands and exact outcomes during implementation.
 2026-07-30 BRT — pnpm exec playwright test tests/e2e/accessibility.spec.ts tests/e2e/import-ui.spec.ts --project=chromium — initially failed because `.env.local` OAuth values forced the local harness to `/auth/signin`; fixed `playwright.config.ts` to force local no-OAuth mode with a disposable test secret; rerun passed, 3 tests.
 2026-07-30 BRT — Playwright screenshot capture — captured `test-results/ui-alignment/today-desktop.png`, `import-desktop.png`, `lesson-desktop.png` and `progress-mobile.png`; visual review found and fixed sidebar placeholder overflow and low-contrast terminal empty text.
 2026-07-30 BRT — pnpm test:e2e after Step 13 UI alignment — first run failed because a leftover disposable Next dev server was still running on PID 63392; stopped it and reran successfully, 20 tests across desktop Chromium and mobile Chrome.
+2026-07-31 BRT — Step 14.0 orientation: read Pack/import/security/API/error docs, ADR 0010 and current import pipeline; decided generated output targets `caderno.lesson.v1` but remains blocked from import until the shared validation/preview/import pipeline exists.
+2026-07-31 BRT — pnpm exec vitest run tests/unit/env.test.ts tests/unit/generation-contracts.test.ts after Step 14.1 — initially failed because `server-only` was not installed; added `server-only@0.0.1`.
+2026-07-31 BRT — pnpm exec vitest run tests/unit/env.test.ts tests/unit/generation-contracts.test.ts after adding `server-only` — passed, 2 files and 10 tests.
+2026-07-31 BRT — pnpm typecheck after Step 14.1 — passed.
+2026-07-31 BRT — pnpm lint after Step 14.1 — passed.
+2026-07-31 BRT — pnpm install --frozen-lockfile after Step 14.1 — passed, already up to date.
+2026-07-31 BRT — pnpm test after Step 14.1 — passed, 33 files and 84 tests, plus 1 skipped real-Postgres file/test.
+2026-07-31 BRT — pnpm security:audit after Step 14.1 — passed with no known production vulnerabilities.
+2026-07-31 BRT — pnpm build after Step 14.1 — passed.
+2026-07-31 BRT — git diff --check after Step 14.1 — passed.
+2026-07-31 BRT — pnpm db:generate after Step 14.2 persistence schema — passed, generated `src/db/migrations/0009_volatile_captain_britain.sql`.
+2026-07-31 BRT — pnpm exec vitest run tests/integration/generation-job-repository.test.ts tests/unit/generation-contracts.test.ts tests/unit/env.test.ts — passed, 3 files and 12 tests.
+2026-07-31 BRT — pnpm exec vitest run tests/integration/generation-job-repository.test.ts after memory repository global-store alignment — passed, 1 file and 2 tests.
+2026-07-31 BRT — pnpm lint after Step 14.2 — passed.
+2026-07-31 BRT — pnpm test after Step 14.2 — passed, 34 files and 86 tests, plus 1 skipped real-Postgres file/test.
+2026-07-31 BRT — pnpm security:audit after Step 14.2 — passed with no known production vulnerabilities.
+2026-07-31 BRT — pnpm typecheck after Step 14.2 — passed.
+2026-07-31 BRT — pnpm build after Step 14.2 — passed.
+2026-07-31 BRT — git diff --check after Step 14.2 — passed.
 ```
 
 ## Blockers
@@ -847,9 +869,9 @@ Add timestamped commands and exact outcomes during implementation.
 No real local PostgreSQL service is available outside `.env.local`; `pnpm test:postgres` validates the configured PostgreSQL service through a disposable schema and production database writes must remain non-destructive and explicitly scoped.
 Authenticated Chrome walkthrough is available, but `/exports` and `/achievements` fail in production with Server Components render errors after Step 11 deployment. The likely repair is applying checked-in migrations `0007_icy_vengeance.sql` and `0008_pale_shiver_man.sql` to Neon production with `pnpm db:migrate`, which requires explicit user confirmation as an external database schema write.
 Step 13 UI alignment has been checkpointed and pushed as `81f4ce3`.
-Step 14 is planned and ready to implement next. No DeepSeek credentials should be requested or exposed; use an unconfigured provider state unless the user configures `DEEPSEEK_API_KEY` in ignored server environment.
+Step 14.0 through 14.2 are implemented locally and validated. No DeepSeek credentials should be requested or exposed; use an unconfigured provider state unless the user configures `DEEPSEEK_API_KEY` in ignored server environment.
 ```
 
 ## NEXT ACTION
 
-Begin Step 14 with increment 14.0: orient from Pack/import/security/API/error docs and current import pipeline, then implement generation contracts and server-only DeepSeek configuration detection. Keep the separate Neon production migration blocker untouched until explicit confirmation.
+Continue Step 14 with increment 14.3: implement `caderno.lesson.v1` parser/semantic validation and route generated JSON into the shared validation/preview boundary without allowing raw model output to import directly. Keep the separate Neon production migration blocker untouched until explicit confirmation.

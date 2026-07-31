@@ -1,10 +1,10 @@
 # KNOW/OS — Project Status
 
-Last updated: 2026-07-30
+Last updated: 2026-07-31
 
 ## Current phase
 
-`STEP 14 READY — GENERATION MODES AND DEEPSEEK PROVIDER`
+`STEP 14 IN PROGRESS — GENERATION MODES AND DEEPSEEK PROVIDER`
 
 Phase 0 repository foundation is implemented and verified. The repository now contains a Next.js App Router scaffold with TypeScript strict mode, Tailwind/token generation, minimal accessible shell, Drizzle/PostgreSQL foundation, Zod validation, Vitest/Testing Library/Playwright smoke tests and GitHub Actions CI.
 
@@ -20,7 +20,7 @@ Phase 5 projects and gamification is implemented and verified. The implemented s
 
 Phase 6 portability and hardening is implemented and verified. The V1 local product now includes import preview/hardening, Backup/Progress/Teacher Context exports, non-destructive Backup restore for Pack manifests, accessibility/responsive audit coverage, baseline security headers, security audit documentation and deployment preparation within local-only guardrails.
 
-Production deployment is live at `https://know-os.vercel.app` using the ADR 0015 stack: Vercel, Neon Postgres and Auth.js Google OAuth. Step 2 implementation includes the Auth.js Google foundation, production environment contract, central session guard and Neon/Vercel runbook. Neon migrations have been applied and unauthenticated production smoke checks pass. The sign-in surface now uses the custom `/auth/signin` page following the KNOW/OS Design System, and Google OAuth requests include `prompt=select_account` so account selection is explicit. After a Google `invalid_client` response, Vercel Production OAuth/Auth environment values were re-applied from ignored local values, production was redeployed and the Google page was verified without `invalid_client`. A design-system motion pass now applies approved short motion tokens to app shell, sign-in and recurring content primitives while preserving reduced-motion behavior. Step 3 adds a real `/import` product surface for example/paste/file Track Pack activation with preview-before-apply semantics, deploys it to production and validates the first production learning loop at service level. Step 4 adds and runs guarded real-PostgreSQL validation through a disposable schema, covering checked-in migrations plus import/RUN/SUBMIT/progress behavior without touching production application tables. Step 5 adds production dependency vulnerability scanning, patched transitive runtime overrides and an enforced CSP candidate with Playwright coverage. Step 6 adds a Pack publication catalog and verifier so the accepted example Pack has immutable schema/ID/version/hash metadata before broader distribution. Step 7 adds persisted gamification projections for badge awards, mission progress and mission status-change audit events while keeping XP/review/mistake/mastery rules authoritative. Step 8 accepts ADR 0016 for conflict-safe full user-state restore replay policy. Step 9 implements the restore provenance schema foundation and a blocked `user_state_dry_run` plan in restore preview. Step 10 exposes that dry-run plan in `/exports` with product UI coverage. Step 11 moves the central guard to the Next.js 16 `src/proxy.ts` convention and applies nonce-bearing CSP to runtime responses. Step 12 authenticated production walkthrough confirms most protected pages load, but `/exports` and `/achievements` fail with production Server Components render errors until Neon production migrations are explicitly approved and applied; append-only user-state replay/merge remains blocked until a future explicit apply mode is approved and implemented. Step 13 UI alignment is implemented, validated and pushed as commit `81f4ce3`: the app shell now uses stronger window chrome, route-aware navigation, boxed sections, differentiated surfaces and fixed sidebar/terminal visual issues. Step 14 is planned for tomorrow: Manual Copy/Paste and Direct DeepSeek generation modes with a shared normalized generation, validation, preview and import pipeline.
+Production deployment is live at `https://know-os.vercel.app` using the ADR 0015 stack: Vercel, Neon Postgres and Auth.js Google OAuth. Step 2 implementation includes the Auth.js Google foundation, production environment contract, central session guard and Neon/Vercel runbook. Neon migrations have been applied and unauthenticated production smoke checks pass. The sign-in surface now uses the custom `/auth/signin` page following the KNOW/OS Design System, and Google OAuth requests include `prompt=select_account` so account selection is explicit. After a Google `invalid_client` response, Vercel Production OAuth/Auth environment values were re-applied from ignored local values, production was redeployed and the Google page was verified without `invalid_client`. A design-system motion pass now applies approved short motion tokens to app shell, sign-in and recurring content primitives while preserving reduced-motion behavior. Step 3 adds a real `/import` product surface for example/paste/file Track Pack activation with preview-before-apply semantics, deploys it to production and validates the first production learning loop at service level. Step 4 adds and runs guarded real-PostgreSQL validation through a disposable schema, covering checked-in migrations plus import/RUN/SUBMIT/progress behavior without touching production application tables. Step 5 adds production dependency vulnerability scanning, patched transitive runtime overrides and an enforced CSP candidate with Playwright coverage. Step 6 adds a Pack publication catalog and verifier so the accepted example Pack has immutable schema/ID/version/hash metadata before broader distribution. Step 7 adds persisted gamification projections for badge awards, mission progress and mission status-change audit events while keeping XP/review/mistake/mastery rules authoritative. Step 8 accepts ADR 0016 for conflict-safe full user-state restore replay policy. Step 9 implements the restore provenance schema foundation and a blocked `user_state_dry_run` plan in restore preview. Step 10 exposes that dry-run plan in `/exports` with product UI coverage. Step 11 moves the central guard to the Next.js 16 `src/proxy.ts` convention and applies nonce-bearing CSP to runtime responses. Step 12 authenticated production walkthrough confirms most protected pages load, but `/exports` and `/achievements` fail with production Server Components render errors until Neon production migrations are explicitly approved and applied; append-only user-state replay/merge remains blocked until a future explicit apply mode is approved and implemented. Step 13 UI alignment is implemented, validated and pushed as commit `81f4ce3`: the app shell now uses stronger window chrome, route-aware navigation, boxed sections, differentiated surfaces and fixed sidebar/terminal visual issues. Step 14 has started locally: 14.0 through 14.2 add the generation contracts, prompt compiler, JSON parser, server-only DeepSeek readiness detection and owner-scoped `GenerationJob` persistence foundation.
 
 ## Agent operating mode
 
@@ -170,11 +170,14 @@ Codex may progress through approved V1 roadmap phases without routine user confi
 
 ## Step 14 generation modes and DeepSeek provider
 
-- Planned next increment introduces first-release generation with two modes: Manual Copy and Paste, and Direct AI Generation with DeepSeek.
+- Step 14 introduces first-release generation with two modes: Manual Copy and Paste, and Direct AI Generation with DeepSeek.
 - Both modes must share the same normalized `GenerationSpec`, prompt compiler, JSON parser, Pack validator, business validator, preview/diff and atomic importer.
+- Implemented 14.0 orientation: generated output targets `caderno.lesson.v1`, but raw model/manual JSON cannot import until the shared validation/preview/import pipeline exists.
+- Implemented 14.1 contracts/environment: `GenerationSpec`, full `GenerationStatus` vocabulary, provider request/result/error contracts, prompt compiler, raw JSON parser, `server-only` DeepSeek readiness config and env defaults.
+- Implemented 14.2 persistence foundation: `generation_jobs` table, Drizzle and memory repositories, status timeline, compiled prompt/spec storage, provider usage storage and migration `0009_volatile_captain_britain.sql`.
 - Manual flow must be complete: Configure -> Compile Prompt -> Copy Prompt -> Paste AI JSON -> Validate -> Preview -> Import, preserving a persisted `GenerationJob` with `waiting_external_response`.
 - DeepSeek flow must be visible even when unconfigured; absent `DEEPSEEK_API_KEY` shows `AI / DEEPSEEK` with `STATUS API NOT CONFIGURED`, disables direct generation only and allows switching to Manual without losing form data.
-- Server env keys planned: `DEEPSEEK_API_KEY`, `DEEPSEEK_BASE_URL`, `DEEPSEEK_DEFAULT_MODEL`, `DEEPSEEK_PRO_MODEL`; no `NEXT_PUBLIC_` secret exposure is allowed.
+- Server env keys implemented: `DEEPSEEK_API_KEY`, `DEEPSEEK_BASE_URL`, `DEEPSEEK_DEFAULT_MODEL`, `DEEPSEEK_PRO_MODEL`; no `NEXT_PUBLIC_` secret exposure is allowed.
 - Provider abstraction planned: `ManualGenerationProvider` and server-only `DeepSeekGenerationProvider`; app code must not import provider-specific API clients directly.
 - DeepSeek model IDs are fixed by user instruction for this work: default `deepseek-v4-flash`, advanced `deepseek-v4-pro`; retired aliases `deepseek-chat` and `deepseek-reasoner` are prohibited.
 - The implementation must add or confirm `caderno.lesson.v1` validation before importing generated output; raw model responses can never import directly.
@@ -193,9 +196,32 @@ Codex may progress through approved V1 roadmap phases without routine user confi
 
 ## Not implemented
 
-Authenticated owner browser walkthrough/polish after service-level production validation, external sync, full user-state replay/merge restore, generation modes/DeepSeek provider and multi-Pack distribution/release workflow.
+Authenticated owner browser walkthrough/polish after service-level production validation, external sync, full user-state replay/merge restore, generation UI/provider execution/lesson-pack validation pipeline and multi-Pack distribution/release workflow.
 
 ## Verification
+
+Latest Step 14.0-14.2 generation foundation results:
+
+```text
+pnpm exec vitest run tests/unit/env.test.ts tests/unit/generation-contracts.test.ts — initially failed because `server-only` was not installed; added `server-only@0.0.1`.
+pnpm exec vitest run tests/unit/env.test.ts tests/unit/generation-contracts.test.ts — passed, 2 files and 10 tests.
+pnpm typecheck — passed.
+pnpm lint — passed.
+pnpm install --frozen-lockfile — passed, already up to date.
+pnpm test after Step 14.1 — passed, 33 files and 84 tests, plus 1 skipped real-Postgres file/test.
+pnpm security:audit — passed with no known production vulnerabilities.
+pnpm build after Step 14.1 — passed.
+git diff --check after Step 14.1 — passed.
+pnpm db:generate — passed, generated `src/db/migrations/0009_volatile_captain_britain.sql`.
+pnpm exec vitest run tests/integration/generation-job-repository.test.ts tests/unit/generation-contracts.test.ts tests/unit/env.test.ts — passed, 3 files and 12 tests.
+pnpm exec vitest run tests/integration/generation-job-repository.test.ts — passed after memory repository global-store alignment, 1 file and 2 tests.
+pnpm lint after Step 14.2 — passed.
+pnpm test after Step 14.2 — passed, 34 files and 86 tests, plus 1 skipped real-Postgres file/test.
+pnpm security:audit after Step 14.2 — passed with no known production vulnerabilities.
+pnpm typecheck after Step 14.2 — passed.
+pnpm build after Step 14.2 — passed.
+git diff --check after Step 14.2 — passed.
+```
 
 Latest Step 3.1 product import activation results:
 
@@ -537,7 +563,7 @@ Do not run `pnpm typecheck` concurrently with `pnpm build`; Next mutates generat
 
 ## Next milestone
 
-Begin Step 14 increment 14.0: orient from Pack/import/security/API/error docs and current import pipeline, then implement generation contracts and server-only DeepSeek configuration detection. Keep the separate Neon production migration blocker untouched until explicit confirmation.
+Continue Step 14 increment 14.3: implement `caderno.lesson.v1` parser/semantic validation and route generated JSON into the shared validation/preview boundary without allowing raw model output to import directly. Keep the separate Neon production migration blocker untouched until explicit confirmation.
 
 ## Risk register
 
@@ -551,10 +577,11 @@ Begin Step 14 increment 14.0: orient from Pack/import/security/API/error docs an
 - No real local PostgreSQL service is available outside `.env.local`; `pnpm test:postgres` validates the configured PostgreSQL service through a disposable schema and destructive production database operations remain out of scope.
 - Production Neon schema appears behind checked-in migrations after Steps 7 and 9; `/exports` and `/achievements` fail until migrations are explicitly approved and applied.
 - Step 14 must not request, print, persist or expose `DEEPSEEK_API_KEY`; use `UNCONFIGURED` locally until the user adds the key to ignored server environment.
+- Local migration `0009_volatile_captain_britain.sql` is generated for generation job persistence. Do not apply it to production Neon without explicit confirmation.
 - Playwright uses `memory://local` because PGlite works for Vitest/Drizzle integration but cannot be bundled reliably inside the Next dev server.
 - Backup restore applies Pack manifests only in V1. User-state replay/merge is intentionally blocked by ADR 0014 until a conflict-safe append-only restore policy exists.
 - Full dev dependency audit has one residual `eslint -> minimatch@3 -> brace-expansion` advisory path; production dependency audit is clean and the compatible dev pin is documented until the ESLint/minimatch path can move safely.
 
 ## NEXT ACTION
 
-Begin Step 14 increment 14.0: orient from Pack/import/security/API/error docs and current import pipeline, then implement generation contracts and server-only DeepSeek configuration detection. Keep the separate Neon production migration blocker untouched until explicit confirmation.
+Continue Step 14 increment 14.3: implement `caderno.lesson.v1` parser/semantic validation and route generated JSON into the shared validation/preview boundary without allowing raw model output to import directly. Keep the separate Neon production migration blocker untouched until explicit confirmation.
