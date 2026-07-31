@@ -65,6 +65,16 @@ type DeepSeekReadiness = Readonly<{
   proModel: "deepseek-v4-flash" | "deepseek-v4-pro";
 }>;
 
+type GenerationUsage = Readonly<{
+  model: string;
+  inputTokens?: number;
+  outputTokens?: number;
+  cacheHitTokens?: number;
+  estimatedCostUsd?: number;
+  pricingVersion?: string;
+  measuredAt: string;
+}>;
+
 type CompiledPrompt = Readonly<{
   targetSchema: "caderno.lesson.v1";
   prompt: string;
@@ -95,6 +105,19 @@ function parseJsonSource(source: string) {
   } catch {
     return { ok: false as const, message: "O conteúdo informado não é um JSON válido." };
   }
+}
+
+function formatEstimatedUsd(value: number | undefined) {
+  if (value === undefined) {
+    return "Indisponível";
+  }
+
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 6,
+    maximumFractionDigits: 9
+  }).format(value);
 }
 
 async function readApiError(response: Response): Promise<string> {
@@ -610,6 +633,7 @@ function DeepSeekGenerationPanel({ deepSeek }: Readonly<{ deepSeek: DeepSeekRead
   const [rawJson, setRawJson] = useState("");
   const [jobId, setJobId] = useState<string | null>(null);
   const [preview, setPreview] = useState<GeneratedLessonPreview | null>(null);
+  const [usage, setUsage] = useState<GenerationUsage | null>(null);
   const [importResult, setImportResult] = useState<ImportResult | null>(null);
   const [isBusy, setIsBusy] = useState(false);
   const importTarget = useMemo(
@@ -646,6 +670,7 @@ function DeepSeekGenerationPanel({ deepSeek }: Readonly<{ deepSeek: DeepSeekRead
     setIsBusy(true);
     setError(null);
     setPreview(null);
+    setUsage(null);
     setImportResult(null);
     setMessage("Gerando e validando com DeepSeek...");
 
@@ -666,10 +691,12 @@ function DeepSeekGenerationPanel({ deepSeek }: Readonly<{ deepSeek: DeepSeekRead
         jobId: string;
         rawJson: string;
         preview: GeneratedLessonPreview;
+        usage: GenerationUsage | null;
       };
       setJobId(payload.jobId);
       setRawJson(payload.rawJson);
       setPreview(payload.preview);
+      setUsage(payload.usage);
       setMessage("DeepSeek retornou JSON validado. Preview liberado para importação.");
     } finally {
       setIsBusy(false);
@@ -727,6 +754,15 @@ function DeepSeekGenerationPanel({ deepSeek }: Readonly<{ deepSeek: DeepSeekRead
         <textarea className="code-editor generation-prompt" readOnly aria-label="JSON retornado pela DeepSeek" value={rawJson} />
       ) : null}
       {preview ? <GeneratedLessonPreviewPanel preview={preview} /> : null}
+      {usage ? (
+        <div className="lesson-callout" data-variant="concept" role="status" aria-label="Uso estimado da geração">
+          <strong>Custo estimado: {formatEstimatedUsd(usage.estimatedCostUsd)}</strong>
+          <span>
+            Modelo: {usage.model}. Entrada: {usage.inputTokens ?? "Indisponível"} tokens. Saída:{" "}
+            {usage.outputTokens ?? "Indisponível"} tokens. Cache hit: {usage.cacheHitTokens ?? 0} tokens.
+          </span>
+        </div>
+      ) : null}
       <div className="activity-actions">
         <button
           className="primary-action"

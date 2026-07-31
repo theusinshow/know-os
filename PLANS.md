@@ -42,19 +42,19 @@ Implement first-release content generation with two modes: Manual Copy and Paste
 
 ### Step 14 acceptance criteria
 
-- [ ] `/import` or a dedicated generation surface exposes a mode selector with `MANUAL / COPY AND PASTE` and `AI / DEEPSEEK`.
-- [ ] Manual mode is fully functional: Configure -> Compile Prompt -> Copy Prompt -> Paste AI JSON -> Validate -> Preview -> Import.
-- [ ] A persisted `GenerationJob` survives the manual waiting state with status `waiting_external_response`.
+- [x] `/import` or a dedicated generation surface exposes a mode selector with `MANUAL / COPY AND PASTE` and `AI / DEEPSEEK`.
+- [x] Manual mode is fully functional: Configure -> Compile Prompt -> Copy Prompt -> Paste AI JSON -> Validate -> Preview -> Import.
+- [x] A persisted `GenerationJob` survives the manual waiting state with status `waiting_external_response`.
 - [ ] DeepSeek mode has complete UI, domain contract, configuration detection and provider adapter; the card remains visible as `UNCONFIGURED` when `DEEPSEEK_API_KEY` is absent.
-- [ ] Server env supports `DEEPSEEK_API_KEY`, `DEEPSEEK_BASE_URL`, `DEEPSEEK_DEFAULT_MODEL`, `DEEPSEEK_PRO_MODEL` without exposing secrets to client code.
+- [x] Server env supports `DEEPSEEK_API_KEY`, `DEEPSEEK_BASE_URL`, `DEEPSEEK_DEFAULT_MODEL`, `DEEPSEEK_PRO_MODEL` without exposing secrets to client code.
 - [ ] Provider abstraction includes `ManualGenerationProvider` and `DeepSeekGenerationProvider`; app code outside the adapter does not import DeepSeek/OpenAI-compatible client specifics directly.
-- [ ] DeepSeek defaults to `deepseek-v4-flash`, supports advanced `deepseek-v4-pro`, and never uses retired `deepseek-chat` or `deepseek-reasoner`.
-- [ ] DeepSeek requests execute only from server-only modules, use `response_format: { type: "json_object" }`, explicitly request JSON, include a compact JSON example, require `caderno.lesson.v1`, prohibit Markdown outside JSON and default Thinking Mode off.
-- [ ] Empty or transient provider failures retry once; authentication, insufficient balance and deterministic validation errors do not retry automatically.
+- [x] DeepSeek defaults to `deepseek-v4-flash`, supports advanced `deepseek-v4-pro`, and never uses retired `deepseek-chat` or `deepseek-reasoner`.
+- [x] DeepSeek requests execute only from server-only modules, use `response_format: { type: "json_object" }`, explicitly request JSON, include a compact JSON example, require `caderno.lesson.v1`, prohibit Markdown outside JSON and default Thinking Mode off.
+- [x] Empty or transient provider failures retry once; authentication, insufficient balance and deterministic validation errors do not retry automatically.
 - [ ] Failure UI preserves `GenerationSpec` and compiled prompt and offers Retry, Switch to Manual, Copy Prompt and View Technical Details.
-- [ ] Generation statuses include: `draft`, `compiled`, `waiting_external_response`, `ready`, `generating`, `receiving`, `validating`, `repairing`, `ready_to_import`, `invalid`, `rate_limited`, `insufficient_balance`, `timeout`, `failed`, `imported`.
-- [ ] Provider usage is persisted when returned with model, input tokens, output tokens, cache-hit tokens, estimated cost and timestamp; pricing lives in one versioned configuration module and UI labels cost as an estimate.
-- [ ] Manual and DeepSeek outputs use exactly the same parser, schema validator, business validator, preview, diff and atomic importer. No raw model response can be imported directly.
+- [x] Generation statuses include: `draft`, `compiled`, `waiting_external_response`, `ready`, `generating`, `receiving`, `validating`, `repairing`, `ready_to_import`, `invalid`, `rate_limited`, `insufficient_balance`, `timeout`, `failed`, `imported`.
+- [x] Provider usage is persisted when returned with model, input tokens, output tokens, cache-hit tokens, estimated cost and timestamp; pricing lives in one versioned configuration module and UI labels cost as an estimate.
+- [x] Manual and DeepSeek outputs use exactly the same parser, schema validator, business validator, preview, diff and atomic importer. No raw model response can be imported directly.
 - [ ] Required tests cover unconfigured DeepSeek, client secret isolation, model defaults, mode switching state preservation, valid/invalid DeepSeek JSON validation, empty-response retry, auth failure no-retry, failure-to-manual fallback, usage persistence and import bypass prevention.
 
 ### Post-V1 hardening increments
@@ -199,9 +199,10 @@ Implement first-release content generation with two modes: Manual Copy and Paste
   - Use the OpenAI-compatible DeepSeek API from server-only code, `response_format: { type: "json_object" }`, timeout/cancellation support, one retry for empty/transient responses and no retry for auth/balance/validation failures.
   - Map errors to `invalid`, `rate_limited`, `insufficient_balance`, `timeout` and `failed` statuses with technical details available without exposing secrets.
   - Implemented server-only `DeepSeekGenerationProvider`, `/api/generation/deepseek/generate`, JSON-only OpenAI-compatible request construction, one retry for empty/transient/timeout results, non-retry auth/balance/rate handling and UI action wiring while preserving Manual form state across mode switches.
-- [ ] 14.6 Usage/cost estimates.
+- [x] 14.6 Usage/cost estimates.
   - Create/update: versioned pricing config module and usage persistence/read models.
   - Persist provider usage when returned and label estimated cost as an estimate everywhere in UI/API.
+  - Implemented `src/features/generation/pricing.ts` with official DeepSeek model pricing captured as `deepseek-api-pricing-2026-07-31`, provider-side cost estimation, persisted `pricingVersion` metadata and a DeepSeek preview callout that labels the USD value as estimated.
 - [ ] 14.7 Failure recovery UI.
   - Add Retry, Switch to Manual, Copy Prompt and View Technical Details actions for failed generation without losing `GenerationSpec` or compiled prompt.
   - Keep DeepSeek mode visible while unconfigured and disable only the direct generation action.
@@ -886,6 +887,14 @@ Add timestamped commands and exact outcomes during implementation.
 2026-07-31 BRT — pnpm security:audit after Step 14.5 — passed with no known production vulnerabilities.
 2026-07-31 BRT — pnpm build after Step 14.5 — passed and built `/api/generation/deepseek/generate`.
 2026-07-31 BRT — pnpm test:e2e after Step 14.5 — passed, 22 tests across desktop Chromium and mobile Chrome.
+2026-07-31 BRT — pnpm exec vitest run tests/unit/deepseek-generation-provider.test.ts tests/unit/generation-pricing.test.ts tests/integration/generation-job-repository.test.ts after Step 14.6 — passed, 3 files and 9 tests.
+2026-07-31 BRT — pnpm typecheck after Step 14.6 — passed.
+2026-07-31 BRT — pnpm lint after Step 14.6 — passed.
+2026-07-31 BRT — pnpm test after Step 14.6 — passed, 38 files and 103 tests, plus 1 skipped real-Postgres file/test.
+2026-07-31 BRT — pnpm security:audit after Step 14.6 — passed with no known production vulnerabilities.
+2026-07-31 BRT — pnpm build after Step 14.6 — passed and built `/api/generation/deepseek/generate`.
+2026-07-31 BRT — pnpm test:e2e after Step 14.6 — passed, 22 tests across desktop Chromium and mobile Chrome.
+2026-07-31 BRT — git diff --check after Step 14.6 — passed with LF/CRLF normalization warnings only.
 ```
 
 ## Blockers
@@ -894,9 +903,9 @@ Add timestamped commands and exact outcomes during implementation.
 No real local PostgreSQL service is available outside `.env.local`; `pnpm test:postgres` validates the configured PostgreSQL service through a disposable schema and production database writes must remain non-destructive and explicitly scoped.
 Authenticated Chrome walkthrough is available, but `/exports` and `/achievements` fail in production with Server Components render errors after Step 11 deployment. The likely repair is applying checked-in migrations `0007_icy_vengeance.sql` and `0008_pale_shiver_man.sql` to Neon production with `pnpm db:migrate`, which requires explicit user confirmation as an external database schema write.
 Step 13 UI alignment has been checkpointed and pushed as `81f4ce3`.
-Step 14.0 through 14.5 are implemented locally and validated. No DeepSeek credentials should be requested or exposed; use an unconfigured provider state unless the user configures `DEEPSEEK_API_KEY` in ignored server environment.
+Step 14.0 through 14.6 are implemented locally and fully validated. No DeepSeek credentials should be requested or exposed; use an unconfigured provider state unless the user configures `DEEPSEEK_API_KEY` in ignored server environment.
 ```
 
 ## NEXT ACTION
 
-Continue Step 14 with increment 14.6: add versioned DeepSeek usage/cost estimate configuration, persist returned usage consistently and label cost as an estimate. Keep the separate Neon production migration blocker untouched until explicit confirmation.
+Continue Step 14 with increment 14.7: add Retry, Switch to Manual, Copy Prompt and View Technical Details actions for failed generation without losing `GenerationSpec` or compiled prompt. Keep the separate Neon production migration blocker untouched until explicit confirmation.

@@ -60,7 +60,9 @@ describe("DeepSeekGenerationProvider", () => {
         model: "deepseek-v4-flash",
         inputTokens: 10,
         outputTokens: 20,
-        cacheHitTokens: 2
+        cacheHitTokens: 2,
+        estimatedCostUsd: 0.000006726,
+        pricingVersion: "deepseek-api-pricing-2026-07-31"
       }
     });
 

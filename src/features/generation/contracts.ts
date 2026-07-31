@@ -68,6 +68,7 @@ export type GenerationProviderUsage = Readonly<{
   outputTokens?: number;
   cacheHitTokens?: number;
   estimatedCostUsd?: number;
+  pricingVersion?: string;
   measuredAt: string;
 }>;
 

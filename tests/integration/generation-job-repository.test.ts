@@ -87,6 +87,7 @@ describe("GenerationJobRepository", () => {
       outputTokens: 200,
       cacheHitTokens: 0,
       estimatedCostUsd: 0.001,
+      pricingVersion: "deepseek-api-pricing-2026-07-31",
       measuredAt: "2026-07-31T12:00:00.000Z"
     });
 
@@ -94,7 +95,8 @@ describe("GenerationJobRepository", () => {
       status: "compiled",
       providerUsage: {
         model: "deepseek-v4-flash",
-        estimatedCostUsd: 0.001
+        estimatedCostUsd: 0.001,
+        pricingVersion: "deepseek-api-pricing-2026-07-31"
       }
     });
   });

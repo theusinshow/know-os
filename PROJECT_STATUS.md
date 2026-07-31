@@ -178,6 +178,7 @@ Codex may progress through approved V1 roadmap phases without routine user confi
 - Implemented 14.3 Lesson Pack validation: `caderno.lesson.v1` parser, semantic validation, generated-output validation and malformed/Markdown blocking before preview or import.
 - Implemented 14.4 Manual Copy/Paste flow on `/import`: Configure -> Compile Prompt -> Copy Prompt -> Paste AI JSON -> Validate -> Preview -> Import, with `waiting_external_response` job persistence and import through a reconstructed validated Track Pack boundary.
 - Implemented 14.5 DeepSeek adapter: server-only provider, OpenAI-compatible JSON request, `response_format: { type: "json_object" }`, one retry for empty/transient/timeout responses, non-retry auth/balance/rate failures, `/api/generation/deepseek/generate` and shared generated-output validation before preview.
+- Implemented 14.6 usage/cost estimates: versioned DeepSeek pricing config `deepseek-api-pricing-2026-07-31`, provider-side USD estimate from input/output/cache-hit usage, persisted `pricingVersion` metadata and a DeepSeek preview callout labeled as estimated cost.
 - Manual flow must be complete: Configure -> Compile Prompt -> Copy Prompt -> Paste AI JSON -> Validate -> Preview -> Import, preserving a persisted `GenerationJob` with `waiting_external_response`.
 - DeepSeek flow must be visible even when unconfigured; absent `DEEPSEEK_API_KEY` shows `AI / DEEPSEEK` with `STATUS API NOT CONFIGURED`, disables direct generation only and allows switching to Manual without losing form data.
 - Server env keys implemented: `DEEPSEEK_API_KEY`, `DEEPSEEK_BASE_URL`, `DEEPSEEK_DEFAULT_MODEL`, `DEEPSEEK_PRO_MODEL`; no `NEXT_PUBLIC_` secret exposure is allowed.
@@ -199,7 +200,7 @@ Codex may progress through approved V1 roadmap phases without routine user confi
 
 ## Not implemented
 
-Authenticated owner browser walkthrough/polish after service-level production validation, external sync, full user-state replay/merge restore, generation usage/cost UI and multi-Pack distribution/release workflow.
+Authenticated owner browser walkthrough/polish after service-level production validation, external sync, full user-state replay/merge restore, generation failure-recovery UI and multi-Pack distribution/release workflow.
 
 ## Verification
 
@@ -582,13 +583,21 @@ production smoke `/` after custom sign-in — passed, 307 redirect to `/auth/sig
 production smoke `/auth/signin` after custom sign-in — passed, 200 OK.
 production smoke `/api/export/preview` after custom sign-in — passed, 401 unauthenticated.
 production Google OAuth redirect request after custom sign-in — passed, observed `accounts.google.com` request with `prompt=select_account`.
+pnpm exec vitest run tests/unit/deepseek-generation-provider.test.ts tests/unit/generation-pricing.test.ts tests/integration/generation-job-repository.test.ts after Step 14.6 — passed, 3 files and 9 tests.
+pnpm typecheck after Step 14.6 — passed.
+pnpm lint after Step 14.6 — passed.
+pnpm test after Step 14.6 — passed, 38 files and 103 tests, plus 1 skipped real-Postgres file/test.
+pnpm security:audit after Step 14.6 — passed with no known production vulnerabilities.
+pnpm build after Step 14.6 — passed and built `/api/generation/deepseek/generate`.
+pnpm test:e2e after Step 14.6 — passed, 22 tests across desktop Chromium and mobile Chrome.
+git diff --check after Step 14.6 — passed with LF/CRLF normalization warnings only.
 ```
 
 Do not run `pnpm typecheck` concurrently with `pnpm build`; Next mutates generated `.next` types during build.
 
 ## Next milestone
 
-Continue Step 14 increment 14.6: add versioned DeepSeek usage/cost estimate configuration, persist returned usage consistently and label cost as an estimate. Keep the separate Neon production migration blocker untouched until explicit confirmation.
+Continue Step 14 increment 14.7: add Retry, Switch to Manual, Copy Prompt and View Technical Details actions for failed generation without losing `GenerationSpec` or compiled prompt. Keep the separate Neon production migration blocker untouched until explicit confirmation.
 
 ## Risk register
 
@@ -609,4 +618,4 @@ Continue Step 14 increment 14.6: add versioned DeepSeek usage/cost estimate conf
 
 ## NEXT ACTION
 
-Continue Step 14 increment 14.6: add versioned DeepSeek usage/cost estimate configuration, persist returned usage consistently and label cost as an estimate. Keep the separate Neon production migration blocker untouched until explicit confirmation.
+Continue Step 14 increment 14.7: add Retry, Switch to Manual, Copy Prompt and View Technical Details actions for failed generation without losing `GenerationSpec` or compiled prompt. Keep the separate Neon production migration blocker untouched until explicit confirmation.

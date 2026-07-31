@@ -8,6 +8,7 @@ import type {
   GenerationProviderUsage
 } from "@/features/generation/contracts";
 import { getDeepSeekProviderConfig, type DeepSeekProviderConfig } from "@/features/generation/infrastructure/deepseek-config.server";
+import { withDeepSeekUsageEstimate } from "@/features/generation/pricing";
 
 type FetchLike = (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
 
@@ -159,13 +160,13 @@ function mapUsage(
     return undefined;
   }
 
-  return {
+  return withDeepSeekUsageEstimate({
     model,
     inputTokens: usage.prompt_tokens,
     outputTokens: usage.completion_tokens,
     cacheHitTokens: usage.prompt_cache_hit_tokens,
     measuredAt: new Date().toISOString()
-  };
+  });
 }
 
 function mapDeepSeekHttpError(status: number, payload: DeepSeekChatCompletion | null): GenerationProviderError {
