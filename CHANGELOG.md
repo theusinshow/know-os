@@ -73,6 +73,7 @@ The format follows Keep a Changelog principles. Product versions will follow Sem
 - `generation_jobs` persistence schema, migration and repository tests for generation status timelines, compiled prompts, normalized specs and provider usage estimates.
 - `caderno.lesson.v1` validation for generated Lesson Packs, including duplicate stable ID and missing concept-reference checks before preview or import.
 - Manual Copy/Paste generation flow on `/import`, with prompt compilation, copied prompt, pasted AI JSON validation, generated lesson preview and atomic import through a reconstructed Track Pack boundary.
+- Server-only DeepSeek generation adapter and `/api/generation/deepseek/generate`, using JSON-object responses, retry/error mapping and the shared generated Lesson Pack validation path before preview.
 - Zod server-environment validation.
 - Vitest, Testing Library and Playwright smoke coverage.
 - GitHub Actions baseline CI and separate Playwright E2E workflow.

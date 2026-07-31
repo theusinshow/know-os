@@ -17,6 +17,11 @@ export type DeepSeekGenerationConfig = Readonly<{
   availableModels: readonly ["deepseek-v4-flash", "deepseek-v4-pro"];
 }>;
 
+export type DeepSeekProviderConfig = DeepSeekGenerationConfig &
+  Readonly<{
+    apiKey: string | null;
+  }>;
+
 export function getDeepSeekGenerationConfig(env: ServerEnv = getServerEnv()): DeepSeekGenerationConfig {
   return {
     provider: "deepseek",
@@ -25,5 +30,12 @@ export function getDeepSeekGenerationConfig(env: ServerEnv = getServerEnv()): De
     defaultModel: env.DEEPSEEK_DEFAULT_MODEL,
     proModel: env.DEEPSEEK_PRO_MODEL,
     availableModels: ["deepseek-v4-flash", "deepseek-v4-pro"]
+  };
+}
+
+export function getDeepSeekProviderConfig(env: ServerEnv = getServerEnv()): DeepSeekProviderConfig {
+  return {
+    ...getDeepSeekGenerationConfig(env),
+    apiKey: env.DEEPSEEK_API_KEY ?? null
   };
 }

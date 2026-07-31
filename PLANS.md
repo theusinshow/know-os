@@ -194,10 +194,11 @@ Implement first-release content generation with two modes: Manual Copy and Paste
   - Implement Configure -> Compile Prompt -> Copy Prompt -> Paste AI JSON -> Validate -> Preview -> Import with `waiting_external_response` persistence.
   - Preserve form data when switching modes.
   - Implemented `/import` mode selector, Manual Copy/Paste flow, DeepSeek readiness panel, compile/validate/import API routes and E2E coverage. Manual import rebuilds a validated Track Pack boundary before calling the existing atomic importer.
-- [ ] 14.5 DeepSeek provider adapter.
+- [x] 14.5 DeepSeek provider adapter.
   - Create/update: `src/features/generation/infrastructure/deepseek-generation-provider.server.ts`, provider tests and request handler.
   - Use the OpenAI-compatible DeepSeek API from server-only code, `response_format: { type: "json_object" }`, timeout/cancellation support, one retry for empty/transient responses and no retry for auth/balance/validation failures.
   - Map errors to `invalid`, `rate_limited`, `insufficient_balance`, `timeout` and `failed` statuses with technical details available without exposing secrets.
+  - Implemented server-only `DeepSeekGenerationProvider`, `/api/generation/deepseek/generate`, JSON-only OpenAI-compatible request construction, one retry for empty/transient/timeout results, non-retry auth/balance/rate handling and UI action wiring while preserving Manual form state across mode switches.
 - [ ] 14.6 Usage/cost estimates.
   - Create/update: versioned pricing config module and usage persistence/read models.
   - Persist provider usage when returned and label estimated cost as an estimate everywhere in UI/API.
@@ -876,6 +877,15 @@ Add timestamped commands and exact outcomes during implementation.
 2026-07-31 BRT — pnpm build after Step 14.4 — passed.
 2026-07-31 BRT — pnpm test:e2e after Step 14.4 — initially failed because the single accessibility route sweep exceeded its 30s test timeout after the heavier `/import` generation surface; assertions had passed up to `/exports` page content. Increased only that test timeout to 60s.
 2026-07-31 BRT — pnpm test:e2e after accessibility timeout adjustment — passed, 22 tests across desktop Chromium and mobile Chrome.
+2026-07-31 BRT — pnpm exec vitest run tests/unit/deepseek-generation-provider.test.ts tests/unit/generation-contracts.test.ts tests/unit/manual-generation-service.test.ts tests/unit/lesson-pack-validation.test.ts after Step 14.5 — passed, 4 files and 18 tests.
+2026-07-31 BRT — pnpm typecheck after Step 14.5 — initially failed on Vitest mock call tuple inference; fixed test cast.
+2026-07-31 BRT — pnpm typecheck after Step 14.5 test typing fix — passed.
+2026-07-31 BRT — pnpm lint after Step 14.5 — passed.
+2026-07-31 BRT — pnpm exec playwright test tests/e2e/import-ui.spec.ts --project=chromium after Step 14.5 UI preservation — passed, 2 tests.
+2026-07-31 BRT — pnpm test after Step 14.5 — passed, 37 files and 100 tests, plus 1 skipped real-Postgres file/test.
+2026-07-31 BRT — pnpm security:audit after Step 14.5 — passed with no known production vulnerabilities.
+2026-07-31 BRT — pnpm build after Step 14.5 — passed and built `/api/generation/deepseek/generate`.
+2026-07-31 BRT — pnpm test:e2e after Step 14.5 — passed, 22 tests across desktop Chromium and mobile Chrome.
 ```
 
 ## Blockers
@@ -884,9 +894,9 @@ Add timestamped commands and exact outcomes during implementation.
 No real local PostgreSQL service is available outside `.env.local`; `pnpm test:postgres` validates the configured PostgreSQL service through a disposable schema and production database writes must remain non-destructive and explicitly scoped.
 Authenticated Chrome walkthrough is available, but `/exports` and `/achievements` fail in production with Server Components render errors after Step 11 deployment. The likely repair is applying checked-in migrations `0007_icy_vengeance.sql` and `0008_pale_shiver_man.sql` to Neon production with `pnpm db:migrate`, which requires explicit user confirmation as an external database schema write.
 Step 13 UI alignment has been checkpointed and pushed as `81f4ce3`.
-Step 14.0 through 14.4 are implemented locally and focused-validation passed. No DeepSeek credentials should be requested or exposed; use an unconfigured provider state unless the user configures `DEEPSEEK_API_KEY` in ignored server environment.
+Step 14.0 through 14.5 are implemented locally and validated. No DeepSeek credentials should be requested or exposed; use an unconfigured provider state unless the user configures `DEEPSEEK_API_KEY` in ignored server environment.
 ```
 
 ## NEXT ACTION
 
-Continue Step 14 with increment 14.5: implement the server-only DeepSeek provider adapter, retries/error mapping and shared generated-output validation path. Keep the separate Neon production migration blocker untouched until explicit confirmation.
+Continue Step 14 with increment 14.6: add versioned DeepSeek usage/cost estimate configuration, persist returned usage consistently and label cost as an estimate. Keep the separate Neon production migration blocker untouched until explicit confirmation.

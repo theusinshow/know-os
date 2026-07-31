@@ -298,7 +298,12 @@ export function TrackPackImporter({ deepSeek }: Readonly<{ deepSeek: DeepSeekRea
         </button>
       </div>
 
-      {mode === "manual" ? <ManualGenerationPanel /> : <DeepSeekGenerationPanel deepSeek={deepSeek} />}
+      <div hidden={mode !== "manual"}>
+        <ManualGenerationPanel />
+      </div>
+      <div hidden={mode !== "deepseek"}>
+        <DeepSeekGenerationPanel deepSeek={deepSeek} />
+      </div>
 
       <div className="import-divider" role="separator">
         Importação direta de Track Pack
@@ -598,6 +603,105 @@ function ManualGenerationPanel() {
 }
 
 function DeepSeekGenerationPanel({ deepSeek }: Readonly<{ deepSeek: DeepSeekReadiness }>) {
+  const [message, setMessage] = useState(
+    deepSeek.status === "configured" ? "DeepSeek configurado. Gere a lição para validar." : "DeepSeek sem chave configurada."
+  );
+  const [error, setError] = useState<string | null>(null);
+  const [rawJson, setRawJson] = useState("");
+  const [jobId, setJobId] = useState<string | null>(null);
+  const [preview, setPreview] = useState<GeneratedLessonPreview | null>(null);
+  const [importResult, setImportResult] = useState<ImportResult | null>(null);
+  const [isBusy, setIsBusy] = useState(false);
+  const importTarget = useMemo(
+    () => ({
+      packId: "generated.javascript.deepseek",
+      version: 1,
+      trackId: "generated-javascript",
+      trackTitle: "JavaScript gerado",
+      moduleId: "generated-basics",
+      moduleTitle: "Fundamentos gerados"
+    }),
+    []
+  );
+
+  function buildSpec() {
+    return {
+      targetSchema: "caderno.lesson.v1",
+      language: "pt-BR",
+      audienceLevel: "beginner",
+      lessonTitle: "Funções em JavaScript",
+      lessonGoal: "Ensinar como declarar e chamar funções simples.",
+      concepts: [{ id: "js-function", title: "Função", summary: "Bloco reutilizável de lógica." }],
+      activityTypes: ["prediction", "code"],
+      constraints: [
+        "Use blocos curtos.",
+        "Inclua pelo menos uma atividade de previsao antes da atividade de codigo.",
+        "Nao inclua Markdown fora do JSON."
+      ],
+      importTarget
+    };
+  }
+
+  async function generateWithDeepSeek() {
+    setIsBusy(true);
+    setError(null);
+    setPreview(null);
+    setImportResult(null);
+    setMessage("Gerando e validando com DeepSeek...");
+
+    try {
+      const response = await fetch("/api/generation/deepseek/generate", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ spec: buildSpec(), model: deepSeek.defaultModel })
+      });
+
+      if (!response.ok) {
+        setError(await readApiError(response));
+        setMessage("Geração direta bloqueada.");
+        return;
+      }
+
+      const payload = (await response.json()) as {
+        jobId: string;
+        rawJson: string;
+        preview: GeneratedLessonPreview;
+      };
+      setJobId(payload.jobId);
+      setRawJson(payload.rawJson);
+      setPreview(payload.preview);
+      setMessage("DeepSeek retornou JSON validado. Preview liberado para importação.");
+    } finally {
+      setIsBusy(false);
+    }
+  }
+
+  async function importDeepSeekLesson() {
+    setIsBusy(true);
+    setError(null);
+    setMessage("Importando lição gerada...");
+
+    try {
+      const response = await fetch("/api/generation/lesson/import", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ jobId, rawJson, importTarget })
+      });
+
+      if (!response.ok) {
+        setError(await readApiError(response));
+        setMessage(response.status === 409 ? "Conflito detectado. Nada foi aplicado." : "Importação bloqueada.");
+        return;
+      }
+
+      const payload = (await response.json()) as ImportResult;
+      setImportResult(payload);
+      setMessage(payload.status === "already_imported" ? "Lição gerada já estava importada." : "Lição gerada importada.");
+    } finally {
+      setIsBusy(false);
+    }
+  }
+
   return (
     <section className="generation-panel" aria-labelledby="deepseek-generation-title">
       <div className="test-panel-header">
@@ -611,9 +715,38 @@ function DeepSeekGenerationPanel({ deepSeek }: Readonly<{ deepSeek: DeepSeekRead
           desabilitada enquanto a chave server-side não estiver configurada.
         </span>
       </div>
-      <button className="primary-action" type="button" disabled>
+      <button
+        className="primary-action"
+        type="button"
+        onClick={() => void generateWithDeepSeek()}
+        disabled={deepSeek.status !== "configured" || isBusy}
+      >
         Gerar com DeepSeek
       </button>
+      {rawJson ? (
+        <textarea className="code-editor generation-prompt" readOnly aria-label="JSON retornado pela DeepSeek" value={rawJson} />
+      ) : null}
+      {preview ? <GeneratedLessonPreviewPanel preview={preview} /> : null}
+      <div className="activity-actions">
+        <button
+          className="primary-action"
+          type="button"
+          onClick={() => void importDeepSeekLesson()}
+          disabled={!preview || isBusy}
+        >
+          Importar lição
+        </button>
+      </div>
+      <p className="activity-status" role="status" aria-label="Estado da geração DeepSeek" aria-live="polite">
+        {message}
+      </p>
+      {error ? (
+        <div className="lesson-callout" data-variant="invalid" role="alert">
+          <strong>Geração bloqueada.</strong>
+          <span>{error}</span>
+        </div>
+      ) : null}
+      {importResult ? <ImportResultPanel result={importResult} /> : null}
     </section>
   );
 }
