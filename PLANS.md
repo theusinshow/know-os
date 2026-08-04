@@ -12,12 +12,12 @@ Deliver the approved KNOW/OS V1 through verified roadmap phases, without collaps
 
 Status: `READY FOR REVIEW`
 Owner: Codex lead agent
-Phase: `STEP 17 — LESSON MOBILE STUDY FLOW POLISH`
+Phase: `STEP 18 — CATALOG AND PROGRESS MOBILE CONTINUITY`
 Autonomy: `HIGH WITH GUARDRAILS`
 
 ### Objective
 
-Make the imported-catalog lesson page easier to use on mobile by adding a compact study-flow anchor and tightening practice-panel density. Keep the theoretical lesson, concept references and practice activities distinct, preserve RUN versus SUBMIT SOLUTION behavior and avoid production deploy, production database migration or credential work.
+Reduce mobile disorientation after content activation by adding visible continuation paths from the Track detail and Progress screens back into the study flow. Keep the change local, use scoped area accents instead of expanding yellow decoration, preserve RUN versus SUBMIT SOLUTION behavior and avoid production deploy, production database migration or credential work.
 
 ### Acceptance criteria
 
@@ -144,6 +144,25 @@ Make the imported-catalog lesson page easier to use on mobile by adding a compac
   - Add a concise in-page lesson flow navigation after the lesson progress summary.
   - Apply mobile-only `.activity-panel` density rules for practice panels.
   - Add focused Playwright regression coverage for the mobile lesson route after example Pack import.
+  - Validated locally and checkpointed without pushing.
+
+### Step 18 acceptance criteria
+
+- [x] `/tracks/[trackId]` exposes a visible continuation CTA to the first lesson after imported content is active.
+- [x] `/progress` exposes a visible continuation CTA back to the catalog instead of becoming a dead-end summary screen.
+- [x] Continuation CTAs use scoped area-accent styling and brutalist border/shadow cues, not additional global yellow decoration.
+- [x] Mobile 375 px coverage verifies no horizontal overflow on the Track detail continuation path.
+- [x] Existing RUN/SUBMIT behavior remains unchanged by this navigation polish.
+- [x] Documentation, changelog and project status record the Step 18 behavior and validation results.
+- [x] No deploy, production migration, credential handling or push is performed in this step.
+
+### Step 18 implemented increment
+
+- [x] 18.1 Catalog/progress mobile continuation polish.
+  - Add a first-lesson continuation CTA to imported Track detail pages after the Track progress summary.
+  - Add a Progress-page continuation CTA back to `/tracks` so mobile users can return to the active catalog from their progress summary.
+  - Style both CTAs with `.study-next-action`, mixing paper with the active area accent and retaining solid neobrutalist borders/shadows.
+  - Add focused Playwright regression coverage for 375 px Track detail and Progress continuation.
   - Validated locally and checkpointed without pushing.
 
 ### Post-V1 hardening increments
@@ -1046,6 +1065,14 @@ Add timestamped commands and exact outcomes during implementation.
 2026-08-04 BRT — pnpm test — passed after Step 17, 41 files and 107 tests, plus 1 skipped real-Postgres file/test.
 2026-08-04 BRT — pnpm test:e2e — passed after Step 17, 28 tests across desktop Chromium and mobile Chrome.
 2026-08-04 BRT — pnpm build — passed after Step 17; generated 157 design tokens and built all implemented app/API routes.
+2026-08-04 BRT — Step 18 implementation: added first-lesson continuation on `/tracks/[trackId]`, a `Continuar estudando` CTA on `/progress` and scoped `.study-next-action` accent styling.
+2026-08-04 BRT — pnpm exec playwright test tests/e2e/vertical-slice.spec.ts --project=mobile-chrome — initially failed because the new Track CTA duplicated the lesson title accessible name; fixed the CTA with an explicit `aria-label` and reran successfully, 3 mobile tests.
+2026-08-04 BRT — pnpm lint — passed after Step 18 catalog/progress mobile continuation polish.
+2026-08-04 BRT — pnpm typecheck — passed after Step 18 catalog/progress mobile continuation polish.
+2026-08-04 BRT — pnpm test — passed after Step 18, 41 files and 107 tests, plus 1 skipped real-Postgres file/test.
+2026-08-04 BRT — pnpm test:e2e — passed after Step 18, 30 tests across desktop Chromium and mobile Chrome.
+2026-08-04 BRT — pnpm build — passed after Step 18; generated 157 design tokens and built all implemented app/API routes.
+2026-08-04 BRT — git diff --check — passed after Step 18 docs with LF/CRLF normalization warnings only.
 ```
 
 ## Blockers
@@ -1058,8 +1085,9 @@ Step 14.0 through 14.8 are implemented locally and validated. No DeepSeek creden
 Step 15.0 through 15.7 are implemented, validated and pushed as `1d334d6`.
 Step 16 import mobile density polish is implemented, validated and checkpointed locally.
 Step 17 lesson mobile study-flow polish is implemented and validated locally. Do not push, deploy or apply production Neon migrations without explicit confirmation.
+Step 18 catalog/progress mobile continuation polish is implemented and validated locally. Do not push, deploy or apply production Neon migrations without explicit confirmation.
 ```
 
 ## NEXT ACTION
 
-Step 17 is ready for review and checkpointed locally. The next safe action is continuing the next local UX increment or pushing the accumulated local commits only if the user explicitly asks; do not deploy or apply production Neon migrations without explicit confirmation.
+Step 18 is ready for review and checkpointed locally. The next safe action is continuing the next local UX increment or pushing the accumulated local commits only if the user explicitly asks; do not deploy or apply production Neon migrations without explicit confirmation.

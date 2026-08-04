@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { AppShell } from "@/components/layout/app-shell";
 import { getXpSummary } from "@/features/gamification/api";
 
@@ -12,6 +14,10 @@ export default async function ProgressPage() {
         <p className="eyebrow">Progress</p>
         <h1 id="progress-title">Progresso</h1>
         <p>XP mede esforço e jornada. Mastery continua separado e baseado em evidência de conceito.</p>
+        <Link className="today-action study-next-action" href="/tracks">
+          <strong>Continuar estudando</strong>
+          <span>Volte ao catálogo para abrir a próxima aula ou revisar a trilha ativa.</span>
+        </Link>
 
         <section className="module-section" aria-labelledby="xp-title">
           <h2 id="xp-title">XP</h2>

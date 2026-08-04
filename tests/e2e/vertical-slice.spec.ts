@@ -38,6 +38,32 @@ test("mobile lesson page exposes the study flow and compact practice controls", 
   expect(submitBox?.y).toBeGreaterThan((runBox?.y ?? 0) + (runBox?.height ?? 0));
 });
 
+test("mobile catalog and progress keep a visible continuation path", async ({ page, request }) => {
+  const packPath = path.join(process.cwd(), "packs", "examples", "javascript-fundamentals.track.json");
+  const pack = JSON.parse(await readFile(packPath, "utf8"));
+  const importResponse = await request.post("/api/import/track", { data: pack });
+
+  expect([200, 201]).toContain(importResponse.status());
+
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto("/tracks/javascript");
+
+  const continueLesson = page.getByRole("link", { name: /Continuar pela primeira aula/ });
+  await expect(continueLesson).toBeVisible();
+  await expect(continueLesson).toContainText("Variáveis, tipos e operadores");
+  await expect
+    .poll(async () =>
+      page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1)
+    )
+    .toBe(true);
+
+  await page.goto("/progress");
+  const continueStudying = page.getByRole("link", { name: /Continuar estudando/ });
+  await expect(continueStudying).toBeVisible();
+  await continueStudying.click();
+  await expect(page.getByRole("heading", { name: "Catálogo" })).toBeVisible();
+});
+
 test("imports a Track Pack, browses the lesson, runs code, submits and shows history", async ({ page, request }) => {
   const packPath = path.join(process.cwd(), "packs", "examples", "javascript-fundamentals.track.json");
   const pack = JSON.parse(await readFile(packPath, "utf8"));

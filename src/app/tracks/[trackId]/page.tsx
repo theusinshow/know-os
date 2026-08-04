@@ -18,6 +18,8 @@ export default async function TrackPage({ params }: TrackPageProps) {
     notFound();
   }
 
+  const firstLesson = track.modules.flatMap((module) => module.lessons).at(0);
+
   return (
     <AppShell>
       <section className="foundation-panel content-panel accent-panel accent-learn" aria-labelledby="track-title">
@@ -25,6 +27,17 @@ export default async function TrackPage({ params }: TrackPageProps) {
         <h1 id="track-title">{track.title}</h1>
         <p>{track.description}</p>
         <ProgressSummary progress={progress} />
+
+        {firstLesson ? (
+          <Link
+            aria-label="Continuar pela primeira aula"
+            className="today-action study-next-action"
+            href={`/lessons/${firstLesson.stableId}`}
+          >
+            <strong>Continuar pela primeira aula</strong>
+            <span>{firstLesson.title}</span>
+          </Link>
+        ) : null}
 
         <div className="module-stack" aria-label="Módulos da trilha">
           {track.modules.map((module) => (
