@@ -12,12 +12,12 @@ Deliver the approved KNOW/OS V1 through verified roadmap phases, without collaps
 
 Status: `READY FOR REVIEW`
 Owner: Codex lead agent
-Phase: `STEP 19 — COMPLETE GENERATED TRACK PACK IMPORT`
+Phase: `STEP 20 — MOBILE STUDY FLOW DISTILLATION`
 Autonomy: `HIGH WITH GUARDRAILS`
 
 ### Objective
 
-Validate and locally import the user-provided complete programming Track Pack generated outside the app. Keep all content on the normal validation/preview/import path, raise only the local JSON request ceiling needed for complete generated tracks, preserve payload-size protection and avoid production deploy, production database migration or credential work.
+Reduce the mobile cognitive load found by the Impeccable critique after importing the complete programming Track Pack. Keep all routes and imported content available, but make the first study path clearer through collapsed secondary navigation, progressive disclosure for large catalogs and safe renderers for imported static activity types.
 
 ### Acceptance criteria
 
@@ -190,6 +190,38 @@ Validate and locally import the user-provided complete programming Track Pack ge
   - Start a local no-OAuth dev server.
   - Preview and import the validated Track Pack through `/api/import/track/preview` and `/api/import/track`.
   - Open `/tracks/programacao-aplicada-com-ia` and the first lesson to verify the study path.
+
+### Step 20 acceptance criteria
+
+- [x] Mobile study surfaces reduce cognitive load from the Impeccable critique without removing routes or imported content.
+- [x] Secondary navigation remains reachable, but does not stay expanded as a competing route list on secondary pages.
+- [x] Secondary navigation touch targets meet the 44 px minimum below 1200 px.
+- [x] Track detail prioritizes the continuation path and current module before exposing the full imported catalog.
+- [x] Knowledge Map no longer renders a 100+ item ungrouped mobile list as the first experience.
+- [x] `prediction` and `multiple-choice` imported activities render as safe learner-facing prompts instead of `ATIVIDADE INDISPONÍVEL`.
+- [x] RUN and SUBMIT SOLUTION semantics remain unchanged for executable code/debug activities.
+- [x] Focused unit/component and Playwright mobile checks pass. The official owned-server Playwright run was blocked while preserving the live imported `memory://local` server; a custom Playwright smoke passed against `http://127.0.0.1:3211`.
+- [x] Documentation, changelog, project status and this verification log record the Step 20 behavior and remaining risks.
+
+### Step 20 planned increments
+
+- [x] 20.1 Navigation distillation.
+  - Keep the primary four study destinations visible.
+  - Keep `Mais` closed by default so secondary routes do not compete with the screen task.
+  - Preserve access to all secondary routes and visible current state when `Mais` is opened.
+  - Repair mobile secondary link hit areas to the canonical touch target.
+- [x] 20.2 Track and Knowledge Map progressive disclosure.
+  - Keep the Track continuation CTA first.
+  - Expand only the opening/current module by default and collapse the remaining module catalog behind native disclosure controls.
+  - Group Knowledge Map concepts into a compact "focus first" set plus collapsed full index.
+- [x] 20.3 Imported activity hardening.
+  - Add allowlisted safe renderers for `prediction` and `multiple-choice`.
+  - Parse config defensively with optional choices/explanation fields only.
+  - Keep unsupported types visible as safe status content.
+- [x] 20.4 Validation and documentation.
+  - Run focused component tests for the activity registry.
+  - Run focused Playwright mobile coverage for navigation, track disclosure and lesson activity renderers.
+  - Run lint/typecheck and update `PROJECT_STATUS.md`, `CHANGELOG.md` and this plan.
 
 ### Post-V1 hardening increments
 
@@ -1111,6 +1143,15 @@ Add timestamped commands and exact outcomes during implementation.
 2026-08-04 BRT — pnpm test — passed after Step 19, 41 files and 108 tests, plus 1 skipped real-Postgres file/test.
 2026-08-04 BRT — pnpm build — passed after Step 19; generated 157 design tokens and built all implemented app/API routes.
 2026-08-04 BRT — git diff --check — passed after Step 19 docs with LF/CRLF normalization warnings only.
+2026-08-04 BRT — Step 20 Impeccable critique: identified P1 mobile load in secondary navigation, Track/Knowledge Map inventory exposure and imported static activities rendering as unavailable.
+2026-08-04 BRT — Step 20 implementation: kept `Mais` closed by default with 44 px secondary targets, collapsed Track modules after the first module, split Knowledge Map into 12 focused concepts plus collapsed full index, and added safe `prediction`/`multiple-choice` renderers.
+2026-08-04 BRT — pnpm exec vitest run tests/component/activity-registry.test.tsx — passed after Step 20, 1 file and 3 tests.
+2026-08-04 BRT — pnpm exec playwright test tests/e2e/shell.spec.ts tests/e2e/import-ui.spec.ts tests/e2e/vertical-slice.spec.ts --project=chromium — blocked before test execution because the existing `next dev` PID 30108 on port 3211 preserves the imported `memory://local` study pack.
+2026-08-04 BRT — node test-results\step20-ux-smoke.mjs — passed against live `http://127.0.0.1:3211`: no mobile overflow on audited routes, 10 Track modules with 1 open, 12 focused Knowledge Map concepts, and no static imported activity rendered as unavailable.
+2026-08-04 BRT — pnpm lint — passed after Step 20 mobile study-flow distillation.
+2026-08-04 BRT — pnpm typecheck — passed after Step 20 mobile study-flow distillation.
+2026-08-04 BRT — pnpm test — passed after Step 20, 41 files and 109 tests, plus 1 skipped real-Postgres file/test.
+2026-08-04 BRT — pnpm build — passed after Step 20; generated 157 design tokens and built all implemented app/API routes.
 ```
 
 ## Blockers
@@ -1125,8 +1166,9 @@ Step 16 import mobile density polish is implemented, validated and checkpointed 
 Step 17 lesson mobile study-flow polish is implemented and validated locally. Do not push, deploy or apply production Neon migrations without explicit confirmation.
 Step 18 catalog/progress mobile continuation polish is implemented and validated locally. Do not push, deploy or apply production Neon migrations without explicit confirmation.
 Step 19 complete generated Track Pack validation/import is implemented and validated locally. Do not push, deploy or apply production Neon migrations without explicit confirmation.
+Step 20 mobile study-flow distillation is implemented and validated locally. Official owned-server Playwright remains deferred while the live imported memory server stays running on port 3211.
 ```
 
 ## NEXT ACTION
 
-Step 19 is ready for review. The validated programming Track Pack is imported in the running local memory server at `http://127.0.0.1:3211`; keep that server running while studying because `memory://local` content is process-local. Do not deploy or apply production Neon migrations without explicit confirmation.
+Step 20 is ready for review on the running local memory server at `http://127.0.0.1:3211`. The validated programming Track Pack is still available there; keep that server running while studying because `memory://local` content is process-local. Do not deploy or apply production Neon migrations without explicit confirmation.

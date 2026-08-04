@@ -80,6 +80,7 @@ The format follows Keep a Changelog principles. Product versions will follow Sem
 - Step 15 first-run callout for empty-catalog study surfaces, routing Today, Tracks, Review, Mistakes and Knowledge Map back to the content activation path.
 - Scoped product-area accent tokens for import/onboarding, learn, practice, review, mistakes, progress and generation surfaces.
 - Visual identity guide for exact logo, lockup, clear space, size, color, typography, area accents, app usage and implementation checklist rules.
+- Safe imported static activity renderers for `prediction` and `multiple-choice`, including choices, hints and expected-answer disclosure where present.
 - Zod server-environment validation.
 - Vitest, Testing Library and Playwright smoke coverage.
 - GitHub Actions baseline CI and separate Playwright E2E workflow.
@@ -107,6 +108,8 @@ The format follows Keep a Changelog principles. Product versions will follow Sem
 - Track Pack JSON imports now allow complete generated tracks up to 1 MiB while retaining oversized request blocking.
 - Lesson pages now expose compact `Aula`, `Conceitos` and `Prática` anchors, with mobile practice panels tightened for shorter code editing and stacked RUN/SUBMIT controls.
 - Track detail and Progress mobile screens now keep visible continuation paths back into the study flow using scoped area-accent CTAs.
+- Secondary navigation now stays collapsed behind `Mais` by default on mobile, while preserving access to secondary routes and 44 px touch targets.
+- Track detail and Knowledge Map now use progressive disclosure so complete imported catalogs do not dominate the first mobile study view.
 - Area accents now use small brutalist border/shadow cues while keeping yellow reserved for signal/action/current/focus roles.
 - Central route/API guard moved from legacy `middleware.ts` to `src/proxy.ts` so Next.js 16 recognizes the network boundary.
 - Initial Codex prompt now authorizes phase-by-phase V1 execution instead of stopping after Phase 0.

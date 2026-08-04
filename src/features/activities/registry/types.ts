@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import type { SourceDiffLine } from "@/features/attempts/source-diff";
 import type { CodeActivityConfig } from "@/features/activities/application/code-activity-config";
+import type { StaticActivityConfig } from "@/features/activities/application/static-activity-config";
 import type { JavaScriptExecutionResult, JavaScriptTestResult } from "@/runtime/javascript/api";
 
 export type ActivityRecord = Readonly<{
@@ -14,9 +15,12 @@ export type ActivityRecord = Readonly<{
 export type ActivityConfigByType = {
   code: CodeActivityConfig;
   debug: CodeActivityConfig;
+  prediction: StaticActivityConfig;
+  "multiple-choice": StaticActivityConfig;
 };
 
 export type KnownActivityType = keyof ActivityConfigByType;
+export type ExecutableActivityType = "code" | "debug";
 
 export type ActivityAttemptFeedback = Readonly<{
   attemptNumber: number;

@@ -62,7 +62,7 @@ export function PrimaryNav() {
         );
       })}
 
-      <details className={hasSecondaryCurrent ? "nav-more nav-more-current" : "nav-more"} open={hasSecondaryCurrent}>
+      <details className={hasSecondaryCurrent ? "nav-more nav-more-current" : "nav-more"}>
         <summary>
           <MoreHorizontal aria-hidden="true" />
           <span>Mais</span>

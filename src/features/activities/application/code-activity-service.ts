@@ -2,7 +2,7 @@ import { ActivityAttemptRepository } from "@/db/repositories/activity-attempt-re
 import { getDatabaseUrl } from "@/db/connection";
 import { MemoryActivityAttemptRepository } from "@/db/repositories/memory-store";
 import { getServerEnv } from "@/lib/env";
-import { getActivityDefinition, parseActivityConfig } from "@/features/activities/registry";
+import { isExecutableActivityType, parseActivityConfig } from "@/features/activities/registry";
 import { evaluateJavaScriptActivity, runJavaScript } from "@/runtime/javascript/api";
 import type { ActivityAttemptFeedback } from "@/features/activities/registry";
 import { diffSourceLines } from "@/features/attempts/source-diff";
@@ -32,7 +32,7 @@ export async function runCodeActivity(
   const ownerId = getServerEnv().KNOW_OS_OWNER_ID;
   const activity = await repository.getCodeActivity(activityStableId);
 
-  if (!activity || !getActivityDefinition(activity.type)) {
+  if (!activity || !isExecutableActivityType(activity.type)) {
     return { status: "not_found" };
   }
 
@@ -50,7 +50,7 @@ export async function submitCodeActivity(
   const ownerId = getServerEnv().KNOW_OS_OWNER_ID;
   const activity = await repository.getCodeActivity(activityStableId);
 
-  if (!activity || !getActivityDefinition(activity.type)) {
+  if (!activity || !isExecutableActivityType(activity.type)) {
     return { status: "not_found" };
   }
 
@@ -74,6 +74,10 @@ export async function getLatestActivityAttemptFeedback(
   const activity = await repository.getCodeActivity(activityStableId);
 
   if (!activity) {
+    return null;
+  }
+
+  if (!isExecutableActivityType(activity.type)) {
     return null;
   }
 

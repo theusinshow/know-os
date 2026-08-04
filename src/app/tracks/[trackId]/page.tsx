@@ -40,9 +40,13 @@ export default async function TrackPage({ params }: TrackPageProps) {
         ) : null}
 
         <div className="module-stack" aria-label="Módulos da trilha">
-          {track.modules.map((module) => (
-            <section key={module.stableId} className="module-section" aria-labelledby={`module-${module.stableId}`}>
-              <h2 id={`module-${module.stableId}`}>{module.title}</h2>
+          {track.modules.map((module, moduleIndex) => (
+            <details key={module.stableId} className="module-section module-disclosure" open={moduleIndex === 0}>
+              <summary aria-labelledby={`module-${module.stableId}`}>
+                <span className="technical-label">Módulo {moduleIndex + 1}</span>
+                <h2 id={`module-${module.stableId}`}>{module.title}</h2>
+                <span>{module.lessons.length} aulas</span>
+              </summary>
               <ol className="record-list">
                 {module.lessons.map((lesson) => (
                   <li key={lesson.stableId}>
@@ -53,7 +57,7 @@ export default async function TrackPage({ params }: TrackPageProps) {
                   </li>
                 ))}
               </ol>
-            </section>
+            </details>
           ))}
         </div>
       </section>

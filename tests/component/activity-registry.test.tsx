@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { getActivityDefinition, parseActivityConfig } from "@/features/activities/registry";
+import { getActivityDefinition, isExecutableActivityType, parseActivityConfig } from "@/features/activities/registry";
 
 describe("activity registry", () => {
   it("parses and renders code activities through the allowlisted definition", () => {
@@ -64,7 +64,61 @@ describe("activity registry", () => {
 
   it("rejects unsupported activity types before rendering arbitrary payloads", () => {
     expect(getActivityDefinition("debug")?.label).toBe("Atividade de debug");
+    expect(isExecutableActivityType("debug")).toBe(true);
+    expect(isExecutableActivityType("prediction")).toBe(false);
     expect(getActivityDefinition("diagram")).toBeNull();
     expect(() => parseActivityConfig("diagram", {})).toThrow("Unsupported activity type");
+  });
+
+  it("renders static imported activities without exposing them as unavailable", () => {
+    const predictionDefinition = getActivityDefinition("prediction");
+    const predictionConfig = parseActivityConfig("prediction", {
+      answer: "Mostra CronoCAD no terminal.",
+      explanation: "console.log envia texto para a saída."
+    });
+
+    expect(predictionDefinition?.label).toBe("Atividade de predição");
+
+    render(
+      predictionDefinition?.render({
+        activity: {
+          stableId: "prediction-1",
+          type: "prediction",
+          prompt: "Antes de executar, preveja a saída.",
+          config: predictionConfig
+        },
+        config: predictionConfig,
+        feedback: null
+      })
+    );
+
+    expect(screen.getByRole("heading", { name: "Antes de executar, preveja a saída." })).toBeInTheDocument();
+    expect(screen.getByText("Checagem de leitura. Nenhuma tentativa oficial é registrada nesta atividade.")).toBeInTheDocument();
+    expect(screen.queryByText(/Atividade indispon/i)).not.toBeInTheDocument();
+
+    const choiceDefinition = getActivityDefinition("multiple-choice");
+    const choiceConfig = parseActivityConfig("multiple-choice", {
+      choices: [
+        { label: "Node.js", correct: true },
+        { label: "CSS" }
+      ]
+    });
+
+    render(
+      choiceDefinition?.render({
+        activity: {
+          stableId: "choice-1",
+          type: "multiple-choice",
+          prompt: "Qual runtime executa JavaScript fora do navegador?",
+          config: choiceConfig
+        },
+        config: choiceConfig,
+        feedback: null
+      })
+    );
+
+    expect(screen.getByRole("heading", { name: "Qual runtime executa JavaScript fora do navegador?" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Alternativas")).toHaveTextContent("Node.js");
+    expect(screen.getAllByText("Ver resposta esperada")).toHaveLength(2);
   });
 });

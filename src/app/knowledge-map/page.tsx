@@ -8,6 +8,8 @@ export const dynamic = "force-dynamic";
 
 export default async function KnowledgeMapPage() {
   const concepts = await listKnowledgeMapConcepts();
+  const focusedConcepts = concepts.slice(0, 12);
+  const hiddenConceptCount = Math.max(concepts.length - focusedConcepts.length, 0);
 
   return (
     <AppShell>
@@ -22,21 +24,48 @@ export default async function KnowledgeMapPage() {
             description="O mapa é montado a partir dos conceitos das aulas importadas."
           />
         ) : (
-          <ol className="record-list" aria-label="Mapa de conceitos">
-            {concepts.map((concept) => (
-              <li key={concept.stableId}>
-                <Link href={`/concepts/${concept.stableId}`}>
-                  <strong>{concept.title}</strong>
-                  <span>{concept.summary ?? "Sem resumo."}</span>
-                  <small>
-                    {concept.lessonCount} lição · {concept.trackTitles.join(", ") || "sem trilha"}
-                  </small>
-                </Link>
-              </li>
-            ))}
-          </ol>
+          <div className="knowledge-map-sections">
+            <section className="module-section" aria-labelledby="knowledge-map-focus-title">
+              <h2 id="knowledge-map-focus-title">Conceitos em foco</h2>
+              <p>Comece por este recorte antes de abrir o índice completo.</p>
+              <ol className="record-list" aria-label="Conceitos em foco">
+                {focusedConcepts.map((concept) => (
+                  <li key={concept.stableId}>
+                    <Link href={`/concepts/${concept.stableId}`}>
+                      <strong>{concept.title}</strong>
+                      <span>{concept.summary ?? "Sem resumo."}</span>
+                      <small>{formatConceptScope(concept.lessonCount)}</small>
+                    </Link>
+                  </li>
+                ))}
+              </ol>
+            </section>
+
+            <details className="module-section module-disclosure">
+              <summary aria-labelledby="knowledge-map-index-title">
+                <span className="technical-label">Índice</span>
+                <h2 id="knowledge-map-index-title">Todos os conceitos</h2>
+                <span>{hiddenConceptCount} restantes</span>
+              </summary>
+              <ol className="record-list" aria-label="Índice completo de conceitos">
+                {concepts.map((concept) => (
+                  <li key={concept.stableId}>
+                    <Link href={`/concepts/${concept.stableId}`}>
+                      <strong>{concept.title}</strong>
+                      <span>{concept.summary ?? "Sem resumo."}</span>
+                      <small>{formatConceptScope(concept.lessonCount)}</small>
+                    </Link>
+                  </li>
+                ))}
+              </ol>
+            </details>
+          </div>
         )}
       </section>
     </AppShell>
   );
+}
+
+function formatConceptScope(lessonCount: number) {
+  return `${lessonCount} ${lessonCount === 1 ? "lição vinculada" : "lições vinculadas"}`;
 }

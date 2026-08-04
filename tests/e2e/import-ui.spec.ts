@@ -105,6 +105,12 @@ test("validates and imports a manually generated Lesson Pack through the product
     /Lição gerada importada|Lição gerada já estava importada/
   );
 
+  await page.goto("/lessons/generated-function-lesson");
+  await expect(page.getByRole("heading", { name: "Funções em JavaScript" })).toBeVisible();
+  await expect(page.getByText("Atividade de predição")).toBeVisible();
+  await expect(page.getByText("Checagem de leitura. Nenhuma tentativa oficial é registrada nesta atividade.")).toBeVisible();
+  await expect(page.getByText(/Atividade indispon/i)).toHaveCount(0);
+
   await page.goto("/tracks");
   await expect(page.getByRole("link", { name: /JavaScript gerado/ }).first()).toBeVisible();
 });

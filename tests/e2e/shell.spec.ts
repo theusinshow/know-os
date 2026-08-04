@@ -28,6 +28,21 @@ test("mobile shell keeps primary study navigation visible", async ({ page }) => 
     .toBe(true);
 });
 
+test("mobile secondary navigation stays collapsed until requested", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto("/import");
+
+  await expect(page.getByRole("heading", { name: "Ativar catálogo" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Importar" })).toBeHidden();
+
+  await page.getByText("Mais", { exact: true }).click();
+  const importLink = page.getByRole("link", { name: "Importar" });
+  await expect(importLink).toBeVisible();
+
+  const importBox = await importLink.boundingBox();
+  expect(importBox?.height).toBeGreaterThanOrEqual(44);
+});
+
 test("skip link targets the main landmark", async ({ page }) => {
   await page.goto("/");
   await page.keyboard.press("Tab");
