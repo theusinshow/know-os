@@ -12,12 +12,12 @@ Deliver the approved KNOW/OS V1 through verified roadmap phases, without collaps
 
 Status: `READY FOR REVIEW`
 Owner: Codex lead agent
-Phase: `STEP 16 — IMPORT MOBILE DENSITY POLISH`
+Phase: `STEP 17 — LESSON MOBILE STUDY FLOW POLISH`
 Autonomy: `HIGH WITH GUARDRAILS`
 
 ### Objective
 
-Reduce the remaining mobile density in the `/import` activation flow so a first-run learner can activate an existing Track Pack without being overwhelmed by oversized controls. Keep the change scoped to import/generation surfaces, preserve desktop operational density and avoid production deploy, production database migration or credential work.
+Make the imported-catalog lesson page easier to use on mobile by adding a compact study-flow anchor and tightening practice-panel density. Keep the theoretical lesson, concept references and practice activities distinct, preserve RUN versus SUBMIT SOLUTION behavior and avoid production deploy, production database migration or credential work.
 
 ### Acceptance criteria
 
@@ -127,6 +127,24 @@ Reduce the remaining mobile density in the `/import` activation flow so a first-
   - Added a regression test in `tests/e2e/import-ui.spec.ts` for 375 px `/import` bounds, compact textarea height and stacked first activation controls.
   - Stopped the stale local `next dev` server on port 3211 only after Playwright reported it blocked the owned test server.
   - Validation passed locally; production deployment remains unvalidated by user and untouched by this step.
+
+### Step 17 acceptance criteria
+
+- [x] Imported lesson pages expose a compact in-page study flow for `Aula`, `Conceitos` and `Prática`.
+- [x] The flow works as anchor navigation on mobile without adding a modal, wizard or separate route.
+- [x] Practice panels become easier to scan on 375 px screens: tighter panel padding, shorter code editor and stacked RUN/SUBMIT actions.
+- [x] RUN remains a non-attempt execution path and SUBMIT SOLUTION remains the official attempt path.
+- [x] Playwright coverage verifies the mobile lesson flow, no horizontal overflow and compact practice controls.
+- [x] Documentation, changelog and project status record the Step 17 behavior and validation results.
+- [x] No deploy, production migration, credential handling or push is performed in this step.
+
+### Step 17 planned increment
+
+- [x] 17.1 Lesson mobile study-flow polish.
+  - Add a concise in-page lesson flow navigation after the lesson progress summary.
+  - Apply mobile-only `.activity-panel` density rules for practice panels.
+  - Add focused Playwright regression coverage for the mobile lesson route after example Pack import.
+  - Validated locally and checkpointed without pushing.
 
 ### Post-V1 hardening increments
 
@@ -1022,6 +1040,12 @@ Add timestamped commands and exact outcomes during implementation.
 2026-08-04 BRT — pnpm build — passed after Step 16; generated 157 design tokens and built all implemented app/API routes.
 2026-08-04 BRT — Step 16 Playwright screenshot capture for `/import` at 375 px produced `test-results/step16-import-density/import-mobile-375.png`; visual inspection confirmed stacked first-step controls and no horizontal clipping. The inline capture command timed out while cleaning up the child process, then the leftover port 3211 owner was stopped.
 2026-08-04 BRT — git diff --check — passed after Step 16 docs with LF/CRLF normalization warnings only.
+2026-08-04 BRT — pnpm exec playwright test tests/e2e/vertical-slice.spec.ts --project=mobile-chrome — passed for Step 17, 2 mobile tests including lesson flow anchors and compact practice controls.
+2026-08-04 BRT — pnpm lint — passed after Step 17 lesson mobile study-flow polish.
+2026-08-04 BRT — pnpm typecheck — passed after Step 17 lesson mobile study-flow polish.
+2026-08-04 BRT — pnpm test — passed after Step 17, 41 files and 107 tests, plus 1 skipped real-Postgres file/test.
+2026-08-04 BRT — pnpm test:e2e — passed after Step 17, 28 tests across desktop Chromium and mobile Chrome.
+2026-08-04 BRT — pnpm build — passed after Step 17; generated 157 design tokens and built all implemented app/API routes.
 ```
 
 ## Blockers
@@ -1032,9 +1056,10 @@ Authenticated Chrome walkthrough is available, but `/exports` and `/achievements
 Step 13 UI alignment has been checkpointed and pushed as `81f4ce3`.
 Step 14.0 through 14.8 are implemented locally and validated. No DeepSeek credentials should be requested or exposed; use an unconfigured provider state unless the user configures `DEEPSEEK_API_KEY` in ignored server environment.
 Step 15.0 through 15.7 are implemented, validated and pushed as `1d334d6`.
-Step 16 import mobile density polish is implemented, validated and checkpointed locally. Do not push, deploy or apply production Neon migrations without explicit confirmation.
+Step 16 import mobile density polish is implemented, validated and checkpointed locally.
+Step 17 lesson mobile study-flow polish is implemented and validated locally. Do not push, deploy or apply production Neon migrations without explicit confirmation.
 ```
 
 ## NEXT ACTION
 
-Step 16 is ready for review and checkpointed locally. The next safe action is continuing the next local UX increment; do not push, deploy or apply production Neon migrations without explicit confirmation.
+Step 17 is ready for review and checkpointed locally. The next safe action is continuing the next local UX increment or pushing the accumulated local commits only if the user explicitly asks; do not deploy or apply production Neon migrations without explicit confirmation.

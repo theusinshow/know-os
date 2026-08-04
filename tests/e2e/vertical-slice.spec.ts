@@ -7,6 +7,37 @@ const passingSource =
   "const documentExists = true;\nconst userAuthorized = false;\nconst canOpen = documentExists && userAuthorized;\nconsole.log(canOpen);";
 const debugPassingSource = 'const base = "5";\nconst bonus = 2;\nconst total = Number(base) + bonus;\nconsole.log(total);';
 
+test("mobile lesson page exposes the study flow and compact practice controls", async ({ page, request }) => {
+  const packPath = path.join(process.cwd(), "packs", "examples", "javascript-fundamentals.track.json");
+  const pack = JSON.parse(await readFile(packPath, "utf8"));
+  const importResponse = await request.post("/api/import/track", { data: pack });
+
+  expect([200, 201]).toContain(importResponse.status());
+
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto("/lessons/js-fundamentals-001");
+
+  const lessonFlow = page.getByRole("navigation", { name: "Fluxo da aula" });
+  await expect(lessonFlow.getByRole("link", { name: /Aula/ })).toBeVisible();
+  await expect(lessonFlow.getByRole("link", { name: /Conceitos/ })).toBeVisible();
+  await lessonFlow.getByRole("link", { name: /Prática/ }).click();
+
+  await expect(page.getByRole("heading", { name: "Prática" })).toBeVisible();
+  await expect
+    .poll(async () =>
+      page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1)
+    )
+    .toBe(true);
+
+  const codePanel = page.getByRole("region", { name: /Crie uma condição/ });
+  const sourceBox = await codePanel.getByLabel("Código").boundingBox();
+  expect(sourceBox?.height).toBeLessThanOrEqual(230);
+
+  const runBox = await codePanel.getByRole("button", { name: "RUN" }).boundingBox();
+  const submitBox = await codePanel.getByRole("button", { name: "SUBMIT SOLUTION" }).boundingBox();
+  expect(submitBox?.y).toBeGreaterThan((runBox?.y ?? 0) + (runBox?.height ?? 0));
+});
+
 test("imports a Track Pack, browses the lesson, runs code, submits and shows history", async ({ page, request }) => {
   const packPath = path.join(process.cwd(), "packs", "examples", "javascript-fundamentals.track.json");
   const pack = JSON.parse(await readFile(packPath, "utf8"));

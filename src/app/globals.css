@@ -623,6 +623,50 @@ a {
   font-size: var(--kos-typography-body-sizes-lg);
 }
 
+.lesson-flow-nav {
+  display: grid;
+  gap: var(--kos-spacing-4);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.foundation-panel > .lesson-flow-nav {
+  margin: var(--kos-spacing-10) var(--kos-spacing-12) 0;
+}
+
+.lesson-flow-nav a {
+  min-height: var(--kos-touch-minimum);
+  display: grid;
+  gap: var(--kos-spacing-2);
+  border: var(--kos-border-hair) solid var(--kos-color-ink);
+  background: var(--kos-color-paper);
+  box-shadow: var(--kos-shadow-pressed);
+  padding: var(--kos-spacing-5);
+  text-decoration: none;
+  transition:
+    background-color var(--kos-motion-fast) var(--kos-motion-linear),
+    box-shadow var(--kos-motion-fast) var(--kos-motion-easing),
+    transform var(--kos-motion-fast) var(--kos-motion-easing);
+}
+
+.lesson-flow-nav a:hover,
+.lesson-flow-nav a:focus-visible {
+  background: color-mix(in srgb, var(--kos-color-paper) 84%, var(--kos-area-accent));
+  box-shadow: var(--kos-shadow-raised);
+  transform: translateY(calc(-1 * var(--kos-motion-travel-min)));
+}
+
+.lesson-flow-nav span {
+  color: var(--kos-color-dim);
+  font-family: var(--kos-typography-technical-family), monospace;
+  font-size: var(--kos-typography-technical-sizes-xs);
+  font-weight: var(--kos-typography-technical-weights-bold);
+  letter-spacing: var(--kos-typography-technical-tracking);
+}
+
+.lesson-flow-nav strong {
+  font-size: var(--kos-typography-body-sizes-sm);
+}
+
 .concept-list {
   list-style-position: inside;
 }
@@ -1533,6 +1577,28 @@ a {
     padding-inline: var(--kos-spacing-6);
   }
 
+  .activity-panel {
+    gap: var(--kos-spacing-6);
+    padding: var(--kos-spacing-6);
+  }
+
+  .activity-panel .code-editor {
+    min-height: 180px;
+    padding: var(--kos-spacing-6);
+  }
+
+  .activity-panel .activity-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--kos-spacing-4);
+  }
+
+  .activity-panel .primary-action,
+  .activity-panel .secondary-action {
+    width: 100%;
+    padding-inline: var(--kos-spacing-6);
+  }
+
   .foundation-panel {
     box-shadow: var(--kos-shadow-raised);
     padding: 0;
@@ -1554,6 +1620,7 @@ a {
   .foundation-panel > .module-stack,
   .foundation-panel > .lesson-blocks,
   .foundation-panel > .import-workspace,
+  .foundation-panel > .lesson-flow-nav,
   .foundation-panel > .record-list,
   .foundation-panel > .concept-list,
   .foundation-panel > .foundation-list,
@@ -1634,6 +1701,7 @@ a {
   .concept-list > li,
   .module-stack > *,
   .lesson-blocks > *,
+  .lesson-flow-nav a,
   .auth-status > div,
   .lesson-text,
   .mastery-panel,
@@ -1661,6 +1729,7 @@ a {
   .foundation-panel,
   .concept-list li,
   .record-list li > a,
+  .lesson-flow-nav a,
   .mastery-panel,
   .lesson-callout,
   .today-action,

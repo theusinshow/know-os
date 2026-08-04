@@ -27,6 +27,21 @@ export default async function LessonPage({ params }: LessonPageProps) {
         <h1 id="lesson-title">{lesson.title}</h1>
         <ProgressSummary progress={progress} />
 
+        <nav className="lesson-flow-nav" aria-label="Fluxo da aula">
+          <a href="#lesson-body-title">
+            <span>01</span>
+            <strong>Aula</strong>
+          </a>
+          <a href="#concepts-title">
+            <span>02</span>
+            <strong>Conceitos</strong>
+          </a>
+          <a href="#activities-title">
+            <span>03</span>
+            <strong>Prática</strong>
+          </a>
+        </nav>
+
         <section className="module-section lesson-study-section" aria-labelledby="lesson-body-title">
           <p className="technical-label">Ler primeiro</p>
           <h2 id="lesson-body-title">Aula</h2>
