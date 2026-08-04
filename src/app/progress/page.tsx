@@ -8,7 +8,7 @@ export default async function ProgressPage() {
 
   return (
     <AppShell>
-      <section className="foundation-panel content-panel" aria-labelledby="progress-title">
+      <section className="foundation-panel content-panel accent-panel accent-progress" aria-labelledby="progress-title">
         <p className="eyebrow">Progress</p>
         <h1 id="progress-title">Progresso</h1>
         <p>XP mede esforço e jornada. Mastery continua separado e baseado em evidência de conceito.</p>

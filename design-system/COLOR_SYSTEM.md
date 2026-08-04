@@ -15,6 +15,8 @@ automaticamente a `prefers-color-scheme`.
 - `dim`: conteúdo secundário quando houver contraste suficiente;
 - `machine`: execução e saída técnica;
 - `signal`: ação primária e estado atual, com uso contido;
+- `accent.*`: acentos por área de produto, usados para orientar fluxo e seção,
+  nunca como estado isolado;
 - `success`, `warning`, `error`, `info`: reforço semântico, sempre acompanhados por texto/ícone.
 
 ## Contenção do signal
@@ -24,6 +26,24 @@ automaticamente a `prefers-color-scheme`.
 - foco editorial pontual;
 - nunca colorir vários cards para “decorar”;
 - não usar como sinônimo universal de sucesso.
+
+## Acentos por área
+
+Os acentos de área ajudam o usuário a reconhecer o tipo de trabalho em cada
+superfície sem transformar a interface em tema multicolorido.
+
+- `accent.onboarding`: primeiro uso, ativação de conteúdo e importação;
+- `accent.learn`: trilhas, aulas, conceitos e mapa;
+- `accent.practice`: prática, laboratório e atividades;
+- `accent.review`: revisão espaçada;
+- `accent.mistakes`: erros categorizados e recuperação;
+- `accent.progress`: progresso, XP, rank e evidências;
+- `accent.generation`: geração manual ou assistida por provedor.
+
+Uso permitido: eyebrow, selo técnico, borda interna completa, fundo tintado
+pontual e estados de agrupamento. Uso proibido: pintar cards inteiros de modo
+decorativo, substituir `signal` em CTA primária, ou comunicar estado apenas por
+cor.
 
 ## Superfície machine
 

@@ -12,6 +12,13 @@
   --kos-breakpoint-mobile: 0px;
   --kos-breakpoint-tablet: 768px;
   --kos-breakpoint-wide: 1440px;
+  --kos-color-accent-generation: #9A2F6A;
+  --kos-color-accent-learn: #2B4FC8;
+  --kos-color-accent-mistakes: #B83220;
+  --kos-color-accent-onboarding: #007C89;
+  --kos-color-accent-practice: #6A3FB5;
+  --kos-color-accent-progress: #1E6F49;
+  --kos-color-accent-review: #A45400;
   --kos-color-desk: #D9D4C7;
   --kos-color-dim: #6F6C62;
   --kos-color-dimmed-paper: #E6E0D4;

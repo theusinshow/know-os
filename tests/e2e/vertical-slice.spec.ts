@@ -77,6 +77,7 @@ test("imports a Track Pack, browses the lesson, runs code, submits and shows his
   await expect(page.getByLabel("Progresso")).toContainText("Lições concluídas");
   await expect(page.getByLabel("Progresso")).toContainText("1/1");
 
+  await page.getByText("Mais", { exact: true }).click();
   await page.getByRole("link", { name: "Histórico" }).click();
   await expect(page.getByRole("heading", { name: "Eventos" })).toBeVisible();
   await expect(page.getByLabel("Eventos de estudo")).toContainText("activity_submitted");

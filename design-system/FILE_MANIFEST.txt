@@ -20,6 +20,7 @@ RESPONSIVE.md
 SCREEN_SPECS.md
 TYPOGRAPHY.md
 UX_RECOMMENDATIONS.md
+VISUAL_IDENTITY.md
 assets/know-os-icon-180.png
 assets/know-os-icon-26.svg
 assets/know-os-icon-32.png

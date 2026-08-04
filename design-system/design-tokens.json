@@ -3,6 +3,13 @@
   "$version": "2.1.0",
   "$changelog": [
     {
+      "version": "2.2.0",
+      "date": "2026-08-04",
+      "changes": [
+        "Added scoped product-area accent tokens for first-run, learn, practice, review, mistakes, progress and generation surfaces"
+      ]
+    },
+    {
       "version": "2.1.0",
       "date": "2026-07-30",
       "changes": [
@@ -38,6 +45,15 @@
     "warning": "#8B5A00",
     "error": "#B83220",
     "info": "#2B4FC8",
+    "accent": {
+      "onboarding": "#007C89",
+      "learn": "#2B4FC8",
+      "practice": "#6A3FB5",
+      "review": "#A45400",
+      "mistakes": "#B83220",
+      "progress": "#1E6F49",
+      "generation": "#9A2F6A"
+    },
     "overlay": "rgba(14,14,12,0.62)",
     "mastery": {
       "0": "#B9B4A8",

@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BookOpen,
-  Braces,
   ChartNoAxesColumnIncreasing,
   Database,
   Download,
@@ -12,28 +11,27 @@ import {
   History,
   Map,
   Medal,
+  MoreHorizontal,
   RotateCcw,
   TriangleAlert,
   Upload
 } from "lucide-react";
 
-const navigationItems = [
-  { label: "Fundação", href: "/", icon: Database, match: ["/"] },
-  { label: "Trilhas", href: "/tracks", icon: BookOpen, match: ["/tracks", "/lessons", "/concepts"] },
+const primaryNavigationItems = [
+  { label: "Hoje", href: "/", icon: Database, match: ["/"] },
+  { label: "Aprender", href: "/tracks", icon: BookOpen, match: ["/tracks", "/lessons", "/concepts"] },
+  { label: "Praticar", href: "/review", icon: RotateCcw, match: ["/review", "/mistakes"] },
+  { label: "Progresso", href: "/progress", icon: ChartNoAxesColumnIncreasing, match: ["/progress"] }
+];
+
+const secondaryNavigationItems = [
   { label: "Importar", href: "/import", icon: Upload, match: ["/import"] },
   { label: "Histórico", href: "/history", icon: History, match: ["/history"] },
-  { label: "Review", href: "/review", icon: RotateCcw, match: ["/review"] },
   { label: "Erros", href: "/mistakes", icon: TriangleAlert, match: ["/mistakes"] },
   { label: "Projetos", href: "/projects", icon: FolderKanban, match: ["/projects"] },
-  { label: "Progresso", href: "/progress", icon: ChartNoAxesColumnIncreasing, match: ["/progress"] },
   { label: "Mapa", href: "/knowledge-map", icon: Map, match: ["/knowledge-map"] },
   { label: "Exports", href: "/exports", icon: Download, match: ["/exports"] },
   { label: "Badges", href: "/achievements", icon: Medal, match: ["/achievements"] }
-];
-
-const plannedItems = [
-  { label: "Lições", icon: Map },
-  { label: "Laboratório", icon: Braces }
 ];
 
 function isCurrentRoute(pathname: string, matches: string[]) {
@@ -42,10 +40,11 @@ function isCurrentRoute(pathname: string, matches: string[]) {
 
 export function PrimaryNav() {
   const pathname = usePathname() ?? "/";
+  const hasSecondaryCurrent = secondaryNavigationItems.some((item) => isCurrentRoute(pathname, item.match));
 
   return (
     <>
-      {navigationItems.map((item, index) => {
+      {primaryNavigationItems.map((item, index) => {
         const Icon = item.icon;
         const isCurrent = isCurrentRoute(pathname, item.match);
 
@@ -63,17 +62,31 @@ export function PrimaryNav() {
         );
       })}
 
-      {plannedItems.map((item) => {
-        const Icon = item.icon;
+      <details className={hasSecondaryCurrent ? "nav-more nav-more-current" : "nav-more"} open={hasSecondaryCurrent}>
+        <summary>
+          <MoreHorizontal aria-hidden="true" />
+          <span>Mais</span>
+        </summary>
 
-        return (
-          <span className="nav-placeholder" aria-disabled="true" key={item.label}>
-            <Icon aria-hidden="true" />
-            <span>{item.label}</span>
-            <span className="nav-note">em preparação</span>
-          </span>
-        );
-      })}
+        <div className="nav-more-panel">
+          {secondaryNavigationItems.map((item) => {
+            const Icon = item.icon;
+            const isCurrent = isCurrentRoute(pathname, item.match);
+
+            return (
+              <Link
+                className={isCurrent ? "nav-current" : "nav-link"}
+                href={item.href}
+                aria-current={isCurrent ? "page" : undefined}
+                key={item.href}
+              >
+                <Icon aria-hidden="true" />
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+        </div>
+      </details>
     </>
   );
 }

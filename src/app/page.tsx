@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { AppShell } from "@/components/layout/app-shell";
+import { FirstRunCallout } from "@/components/ui/first-run-callout";
 import { getRecommendations } from "@/features/recommendations/api";
 
 export const dynamic = "force-dynamic";
@@ -11,7 +12,7 @@ export default async function HomePage() {
 
   return (
     <AppShell>
-      <section className="foundation-panel" aria-labelledby="today-title">
+      <section className="foundation-panel accent-panel accent-today" aria-labelledby="today-title">
         <p className="eyebrow">Today</p>
         <h1 id="today-title">Próxima ação</h1>
         <p>A ordem é determinística: revisão vencida, erro ativo, continuidade do catálogo e aplicação em projeto.</p>
@@ -22,19 +23,13 @@ export default async function HomePage() {
             <span>{primaryRecommendation.reason}</span>
           </Link>
         ) : (
-          <div className="lesson-callout" role="status">
-            <strong>Nenhuma ação disponível.</strong>
-            <span>Importe uma trilha para iniciar recomendações locais.</span>
-            <Link className="secondary-action" href="/import">
-              Abrir importação
-            </Link>
-          </div>
+          <FirstRunCallout description="Ainda não existe catálogo local para calcular a próxima aula, revisão ou prática." />
         )}
 
         <section className="module-section" aria-labelledby="recommendations-title">
           <h2 id="recommendations-title">Recomendações</h2>
           {recommendations.length === 0 ? (
-            <p className="lesson-text">Sem recomendações calculadas.</p>
+            <p className="lesson-text">As recomendações aparecem depois que uma aula for ativada.</p>
           ) : (
             <ol className="record-list" aria-label="Recomendações determinísticas">
               {recommendations.map((recommendation) => (

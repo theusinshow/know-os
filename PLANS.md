@@ -10,14 +10,14 @@ Deliver the approved KNOW/OS V1 through verified roadmap phases, without collaps
 
 ## Current phase
 
-Status: `IN PROGRESS`
+Status: `READY FOR REVIEW`
 Owner: Codex lead agent
-Phase: `STEP 14 — GENERATION MODES AND DEEPSEEK PROVIDER`
+Phase: `STEP 15 — FIRST-RUN, MOBILE STUDY FLOW AND VISUAL ROUTING`
 Autonomy: `HIGH WITH GUARDRAILS`
 
 ### Objective
 
-Implement first-release content generation with two modes: Manual Copy and Paste and Direct AI Generation with DeepSeek. Both modes must use the same normalized `GenerationSpec`, prompt compiler, JSON parsing, Pack schema validation, semantic validation, preview/diff and atomic import pipeline. DeepSeek integration must be server-only, provider-abstracted and visibly available even when unconfigured.
+Make the product usable for study on mobile and empty catalogs by establishing a clear first-run path, a simpler route hierarchy, a lesson-first study flow and scoped visual accents by product area. Keep theoretical lesson content, concepts, practice, review, mistakes and progress as distinct but connected surfaces. Preserve the approved technical-brutalist Design System: solid borders, low radius, no gradients, no decorative color, no dark-mode expansion and no AI dependency for core study.
 
 ### Acceptance criteria
 
@@ -56,6 +56,59 @@ Implement first-release content generation with two modes: Manual Copy and Paste
 - [x] Provider usage is persisted when returned with model, input tokens, output tokens, cache-hit tokens, estimated cost and timestamp; pricing lives in one versioned configuration module and UI labels cost as an estimate.
 - [x] Manual and DeepSeek outputs use exactly the same parser, schema validator, business validator, preview, diff and atomic importer. No raw model response can be imported directly.
 - [x] Required tests cover unconfigured DeepSeek, client secret isolation, model defaults, mode switching state preservation, valid/invalid DeepSeek JSON validation, empty-response retry, auth failure no-retry, failure-to-manual fallback, usage persistence and import bypass prevention.
+
+### Step 15 acceptance criteria
+
+- [x] Empty-catalog use is explicit: `Today` explains that no lesson is available, offers one primary path to activate a first Track/Lesson, and does not present dead-end study routes as equivalent choices.
+- [x] First-run flow is ordered: Start -> Import example or create/import lesson -> Preview -> Activate catalog -> Open first lesson -> Practice -> Submit -> Return to next action.
+- [x] Mobile navigation is simplified into primary study destinations, with advanced/secondary routes moved behind a `More` pattern or equivalent progressive navigation.
+- [x] The lesson page treats theoretical content as the main study object, replacing generic "Blocos" language with learner-facing lesson structure: read, understand concepts, then practice.
+- [x] Concepts remain evidence objects and navigation aids, not a replacement for lessons. Activities remain practice/evidence objects, not the only learning surface.
+- [x] `/import` distinguishes "activate existing Pack", "create/import one lesson" and provider-assisted generation without overwhelming first-run users.
+- [x] A scoped accent-color system is defined in Design System docs/tokens for product areas such as onboarding/import, learn/lesson, practice/lab, review, mistakes, progress and generation.
+- [x] Yellow remains the canonical `signal` for primary action/current state/focus, not a global decorative color.
+- [x] All new visual accents include non-color cues and pass existing accessibility rules for contrast, focus and state communication.
+- [x] Desktop keeps the technical-brutalist operational density; mobile prioritizes one visible next action and avoids long sidebar-style route lists.
+- [x] Tests cover empty-catalog first-run, imported-catalog study flow, mobile navigation, lesson reading order and no regression to RUN/SUBMIT semantics.
+- [x] Documentation, `PROJECT_STATUS.md`, `CHANGELOG.md` and this plan record behavior and validation results before the Step 15 gate is considered complete.
+
+### Step 15 planned increments for today
+
+- [x] 15.0 Orientation and current-flow audit.
+  - Inspect `Today`, `Tracks`, `Import`, `Lesson`, `PrimaryNav`, app shell CSS and existing Playwright mobile coverage.
+  - Confirm whether local memory-mode first-run has zero imported content and whether example Pack activation is enough for a complete study loop.
+  - Output: file-level implementation notes and any discovered blockers.
+- [x] 15.1 Information architecture and navigation simplification.
+  - Redefine visible navigation groups for empty state and normal study state.
+  - Candidate primary nav: `Hoje`, `Aprender`, `Praticar`, `Progresso`, `Mais`.
+  - Keep secondary routes accessible: Importar, Historico, Projetos, Mapa, Exports, Badges, Review, Erros, depending on available data and route readiness.
+  - Add mobile behavior tests for the reduced navigation surface.
+- [x] 15.2 First-run empty-catalog experience.
+  - Turn empty `Today` into a guided start screen with one primary CTA and clear explanation that lessons appear after activating/importing content.
+  - Make empty `Tracks`, `Review`, `Mistakes`, `Progress`, `Knowledge Map` and `Achievements` point back to the same first-run path instead of feeling like separate failures.
+  - Prefer real example Pack activation over mock/demo data.
+- [x] 15.3 Import/generation flow hierarchy.
+  - Reorganize `/import` so first-run users see the quickest safe action first: example Pack or validated lesson import.
+  - Keep Manual and DeepSeek generation visible but secondary unless the user chooses creation.
+  - Preserve the shared validation/preview/import pipeline and never expose provider keys.
+- [x] 15.4 Lesson-first study page.
+  - Rename learner-facing "Blocos" to "Aula" or equivalent.
+  - Recompose lesson content as: lesson body, concepts referenced, activities/practice.
+  - On mobile, keep reading first and move activity actions after theory unless a focused activity route is explicitly opened.
+  - Preserve concept links and activity progress evidence.
+- [x] 15.5 Product-area accent palette.
+  - Add approved semantic accent roles in `design-system/design-tokens.json` and `COLOR_SYSTEM.md`.
+  - Suggested roles: import/onboarding, learn, practice, review, mistakes, progress, generation.
+  - Apply accents to headers, badges, controls or small brutalist blocks, not decorative full-card coloring.
+  - Regenerate CSS tokens with `pnpm generate:tokens`.
+- [x] 15.6 Responsive and accessibility hardening.
+  - Audit 375px/390px mobile, tablet and desktop.
+  - Check focus order, touch targets, no text overlap, no color-only state, reduced motion and screen-reader status messages.
+  - Capture Playwright screenshots for empty and imported states.
+- [x] 15.7 Validation and documentation gate.
+  - Run focused component/unit tests, `pnpm lint`, `pnpm typecheck`, `pnpm test`, focused Playwright mobile/import/lesson tests, `pnpm test:e2e` if time permits, `pnpm build` and `git diff --check`.
+  - Update `PROJECT_STATUS.md`, `CHANGELOG.md`, this verification log and a precise `NEXT ACTION`.
+  - Do not push, deploy or apply production Neon migrations without explicit confirmation.
 
 ### Post-V1 hardening increments
 
@@ -914,6 +967,33 @@ Add timestamped commands and exact outcomes during implementation.
 2026-07-31 BRT — pnpm lint after final Step 14 tests — passed.
 2026-07-31 BRT — pnpm test after final Step 14 tests — passed, 41 files and 107 tests, plus 1 skipped real-Postgres file/test.
 2026-07-31 BRT — git diff --check after final Step 14 docs — passed with LF/CRLF normalization warnings only.
+2026-08-04 BRT — Step 15.0 orientation: reviewed autonomy/status/plans/scope/design-system docs plus Today, Tracks, Import, Lesson, PrimaryNav, app-shell CSS and Playwright route coverage; first-run confusion was caused by empty catalog routes exposing equivalent dead ends before an imported or generated lesson was activated.
+2026-08-04 BRT — Step 15.1-15.2 implementation: simplified primary navigation to Hoje, Aprender, Praticar, Progresso and Mais; added a shared first-run callout that routes empty Today, Tracks, Review, Mistakes and Knowledge Map states to `/import`.
+2026-08-04 BRT — Step 15.3-15.5 implementation: moved existing Track Pack activation above generation on `/import`, recomposed lessons as Aula -> Conceitos -> Pratica, added scoped accent tokens for import/learn/practice/review/mistakes/progress/generation and regenerated CSS tokens.
+2026-08-04 BRT — pnpm exec vitest run tests/component/app-shell.test.tsx tests/component/lesson-block-renderer.test.tsx — passed, 2 files and 4 tests.
+2026-08-04 BRT — pnpm exec playwright test tests/e2e/shell.spec.ts tests/e2e/import-ui.spec.ts tests/e2e/vertical-slice.spec.ts --project=chromium — passed, 5 tests.
+2026-08-04 BRT — pnpm exec vitest run tests/component/app-shell.test.tsx tests/component/track-pack-importer-generation.test.tsx — passed, 2 files and 2 tests.
+2026-08-04 BRT — pnpm exec playwright test tests/e2e/import-ui.spec.ts tests/e2e/vertical-slice.spec.ts --project=chromium — passed, 3 tests.
+2026-08-04 BRT — pnpm generate:tokens — passed, generated 157 design tokens.
+2026-08-04 BRT — pnpm exec vitest run tests/unit/design-tokens.test.mjs tests/component/app-shell.test.tsx tests/component/track-pack-importer-generation.test.tsx tests/component/lesson-block-renderer.test.tsx — passed, 4 files and 6 tests.
+2026-08-04 BRT — pnpm lint — passed after Step 15 accent/navigation changes.
+2026-08-04 BRT — pnpm typecheck — passed after Step 15 accent/navigation changes.
+2026-08-04 BRT — pnpm exec playwright test tests/e2e/shell.spec.ts tests/e2e/import-ui.spec.ts tests/e2e/accessibility.spec.ts --project=chromium — passed, 6 tests.
+2026-08-04 BRT — pnpm build — passed after Step 15 accent/navigation changes; generated 157 design tokens and built all implemented app/API routes.
+2026-08-04 BRT — pnpm test — passed after Step 15 docs, 41 files and 107 tests, plus 1 skipped real-Postgres file/test.
+2026-08-04 BRT — git diff --check — passed after Step 15 docs with LF/CRLF normalization warnings only.
+2026-08-04 BRT — Step 15.6 screenshot QA: captured empty and imported states at 375, 390, 768 and 1440 px under `test-results/step15-responsive`; no auth redirect and no global horizontal overflow, but mobile navigation still used a clipped horizontal rail.
+2026-08-04 BRT — Step 15.6 repair: changed mobile/tablet sidebar navigation from horizontal rail to a two-column grid with `Mais` as a full-width progressive disclosure item; desktop sidebar remains one column.
+2026-08-04 BRT — Step 15.6 follow-up screenshots: captured fixed mobile states under `test-results/step15-responsive-after-nav`; 375 px Today, Import, Tracks and Lesson show no horizontal overflow and no clipped primary route labels.
+2026-08-04 BRT — Visual identity guide: added `design-system/VISUAL_IDENTITY.md` with exact logo, lockup, color, typography, accent, app usage and implementation checklist rules; indexed it in Design System docs.
+2026-08-04 BRT — pnpm exec playwright test tests/e2e/shell.spec.ts tests/e2e/import-ui.spec.ts tests/e2e/accessibility.spec.ts --project=chromium --project=mobile-chrome — passed, 14 tests after mobile navigation grid and visual identity docs.
+2026-08-04 BRT — pnpm exec vitest run tests/unit/design-tokens.test.mjs tests/component/app-shell.test.tsx — passed, 2 files and 2 tests after mobile navigation grid.
+2026-08-04 BRT — pnpm lint — passed after mobile navigation grid and visual identity docs.
+2026-08-04 BRT — pnpm typecheck — passed after mobile navigation grid and visual identity docs.
+2026-08-04 BRT — pnpm test — passed for Step 15.7, 41 files and 107 tests, plus 1 skipped real-Postgres file/test.
+2026-08-04 BRT — pnpm test:e2e — passed for Step 15.7, 24 tests across desktop Chromium and mobile Chrome.
+2026-08-04 BRT — pnpm build — passed for Step 15.7; generated 157 design tokens and built all implemented app/API routes.
+2026-08-04 BRT — git diff --check — passed for Step 15.7 with LF/CRLF normalization warnings only.
 ```
 
 ## Blockers
@@ -923,8 +1003,9 @@ No real local PostgreSQL service is available outside `.env.local`; `pnpm test:p
 Authenticated Chrome walkthrough is available, but `/exports` and `/achievements` fail in production with Server Components render errors after Step 11 deployment. The likely repair is applying checked-in migrations `0007_icy_vengeance.sql` and `0008_pale_shiver_man.sql` to Neon production with `pnpm db:migrate`, which requires explicit user confirmation as an external database schema write.
 Step 13 UI alignment has been checkpointed and pushed as `81f4ce3`.
 Step 14.0 through 14.8 are implemented locally and validated. No DeepSeek credentials should be requested or exposed; use an unconfigured provider state unless the user configures `DEEPSEEK_API_KEY` in ignored server environment.
+Step 15.0 through 15.7 are implemented and validated locally. Do not push, deploy or apply production Neon migrations without explicit confirmation.
 ```
 
 ## NEXT ACTION
 
-Local Step 14 implementation is complete. Do not push, deploy or apply production Neon migrations without explicit confirmation.
+Step 15 is ready for review. Next safe action is a local checkpoint commit if the user approves the current scope; do not push, deploy or apply production Neon migrations without explicit confirmation.

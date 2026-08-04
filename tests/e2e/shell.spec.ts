@@ -6,7 +6,26 @@ test("foundation shell renders on desktop", async ({ page }) => {
   await expect(page.getByRole("link", { name: "KNOW/OS página inicial" })).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Navegação principal" })).toBeVisible();
   await expect(page.getByRole("main")).toContainText("Próxima ação");
+  await expect(page.getByRole("link", { name: /Aprender/ })).toBeVisible();
+  await expect(page.getByText("Mais", { exact: true })).toBeVisible();
   await expect(page.getByText("Fundação ativa")).toBeVisible();
+});
+
+test("mobile shell keeps primary study navigation visible", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto("/");
+
+  await expect(page.getByRole("link", { name: /Hoje/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Aprender/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Praticar/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Progresso/ })).toBeVisible();
+  await expect(page.getByText("Mais", { exact: true })).toBeVisible();
+
+  await expect
+    .poll(async () =>
+      page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1)
+    )
+    .toBe(true);
 });
 
 test("skip link targets the main landmark", async ({ page }) => {

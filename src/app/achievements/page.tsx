@@ -8,7 +8,7 @@ export default async function AchievementsPage() {
 
   return (
     <AppShell>
-      <section className="foundation-panel content-panel" aria-labelledby="achievements-title">
+      <section className="foundation-panel content-panel accent-panel accent-progress" aria-labelledby="achievements-title">
         <p className="eyebrow">Achievements</p>
         <h1 id="achievements-title">Rank, badges e missões</h1>
         <p>Critérios são determinísticos. XP mede jornada; Mastery continua separado.</p>

@@ -5,7 +5,7 @@ Pacote consolidado da fonte de verdade visual, de interação e de identidade do
 Comece por `DESIGN_SYSTEM_INDEX.md`.
 
 - Valores literais: `design-tokens.json`.
-- Identidade e arquivos de logo: `BRAND_ASSETS.md` e `assets/`.
+- Identidade e arquivos de logo: `BRAND_ASSETS.md`, `VISUAL_IDENTITY.md` e `assets/`.
 - Iconografia da interface: `ICONOGRAPHY.md`.
 - Protótipos `.dc.html`: referências visuais, não especificações normativas.
 

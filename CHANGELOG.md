@@ -77,6 +77,9 @@ The format follows Keep a Changelog principles. Product versions will follow Sem
 - Versioned DeepSeek usage/cost estimates for generated content, including persisted pricing metadata and an estimated-cost label in the DeepSeek preview flow.
 - DeepSeek failure-recovery UI with Retry, Switch to Manual, Copy Prompt and sanitized technical details while preserving the fallback prompt for the same generation spec.
 - Manual generation provider abstraction and DeepSeek route validation tests covering valid and invalid generated JSON before preview/import.
+- Step 15 first-run callout for empty-catalog study surfaces, routing Today, Tracks, Review, Mistakes and Knowledge Map back to the content activation path.
+- Scoped product-area accent tokens for import/onboarding, learn, practice, review, mistakes, progress and generation surfaces.
+- Visual identity guide for exact logo, lockup, clear space, size, color, typography, area accents, app usage and implementation checklist rules.
 - Zod server-environment validation.
 - Vitest, Testing Library and Playwright smoke coverage.
 - GitHub Actions baseline CI and separate Playwright E2E workflow.
@@ -96,6 +99,11 @@ The format follows Keep a Changelog principles. Product versions will follow Sem
 - App shell and shared page primitives now align more closely with the approved Claude Design direction: signal window chrome, bordered workspace, boxed module sections, differentiated record/progress/import surfaces and stronger technical-brutalist separation across implemented routes.
 - Playwright E2E now forces local no-OAuth mode with a disposable test secret so ignored production OAuth values do not redirect local smoke tests to sign-in.
 - Empty Today and Tracks states now route users to the import product surface instead of asking them to call an API endpoint manually.
+- Primary navigation is simplified around the study flow: `Hoje`, `Aprender`, `Praticar`, `Progresso` and progressive `Mais` access for secondary routes.
+- Mobile navigation now uses a two-column grid with full-width `Mais` instead of a clipped horizontal rail.
+- Lesson pages now present theory as the main `Aula` surface before linked concepts and practice activities.
+- `/import` now prioritizes activating existing Track Packs before lesson creation or provider-assisted generation.
+- Area accents now use small brutalist border/shadow cues while keeping yellow reserved for signal/action/current/focus roles.
 - Central route/API guard moved from legacy `middleware.ts` to `src/proxy.ts` so Next.js 16 recognizes the network boundary.
 - Initial Codex prompt now authorizes phase-by-phase V1 execution instead of stopping after Phase 0.
 - `AGENTS.md`, `PLANS.md`, `PROJECT_STATUS.md`, `README.md`, `START-HERE.md`, and roadmap now support high-autonomy execution with repository guardrails.

@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { AppShell } from "@/components/layout/app-shell";
+import { FirstRunCallout } from "@/components/ui/first-run-callout";
 import { listKnowledgeMapConcepts } from "@/features/concepts/knowledge-map-api";
 
 export const dynamic = "force-dynamic";
@@ -10,13 +11,16 @@ export default async function KnowledgeMapPage() {
 
   return (
     <AppShell>
-      <section className="foundation-panel content-panel" aria-labelledby="knowledge-map-title">
+      <section className="foundation-panel content-panel accent-panel accent-learn" aria-labelledby="knowledge-map-title">
         <p className="eyebrow">Knowledge Map</p>
         <h1 id="knowledge-map-title">Mapa de conhecimento</h1>
         <p>Lista hierárquica completa dos conceitos importados. Esta versão não depende de canvas.</p>
 
         {concepts.length === 0 ? (
-          <p className="lesson-text">Importe uma trilha para montar o mapa.</p>
+          <FirstRunCallout
+            title="Mapa ainda vazio."
+            description="O mapa é montado a partir dos conceitos das aulas importadas."
+          />
         ) : (
           <ol className="record-list" aria-label="Mapa de conceitos">
             {concepts.map((concept) => (

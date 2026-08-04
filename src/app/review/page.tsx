@@ -2,6 +2,7 @@ import Link from "next/link";
 import { revalidatePath } from "next/cache";
 
 import { AppShell } from "@/components/layout/app-shell";
+import { FirstRunCallout } from "@/components/ui/first-run-callout";
 import { completeConceptReview, getDueReviews } from "@/features/review/api";
 
 export const dynamic = "force-dynamic";
@@ -23,7 +24,7 @@ export default async function ReviewPage() {
 
   return (
     <AppShell>
-      <section className="foundation-panel content-panel" aria-labelledby="review-title">
+      <section className="foundation-panel content-panel accent-panel accent-review" aria-labelledby="review-title">
         <p className="eyebrow">Review</p>
         <h1 id="review-title">Revisões de hoje</h1>
         <p>
@@ -32,10 +33,10 @@ export default async function ReviewPage() {
         </p>
 
         {dueReviews.length === 0 ? (
-          <div className="lesson-callout" role="status">
-            <strong>Nenhuma revisão vencida.</strong>
-            <span>As próximas revisões aparecem quando a agenda determinística vencer.</span>
-          </div>
+          <FirstRunCallout
+            title="Nenhuma prática disponível ainda."
+            description="A fila de prática nasce depois que você ativa uma aula e registra evidência com SUBMIT SOLUTION."
+          />
         ) : (
           <ol className="record-list" aria-label="Revisões vencidas">
             {dueReviews.map((review) => (

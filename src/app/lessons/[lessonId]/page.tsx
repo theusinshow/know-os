@@ -22,13 +22,20 @@ export default async function LessonPage({ params }: LessonPageProps) {
 
   return (
     <AppShell>
-      <article className="foundation-panel content-panel" aria-labelledby="lesson-title">
+      <article className="foundation-panel content-panel accent-panel accent-learn" aria-labelledby="lesson-title">
         <p className="eyebrow">{lesson.trackTitle}</p>
         <h1 id="lesson-title">{lesson.title}</h1>
         <ProgressSummary progress={progress} />
 
+        <section className="module-section lesson-study-section" aria-labelledby="lesson-body-title">
+          <p className="technical-label">Ler primeiro</p>
+          <h2 id="lesson-body-title">Aula</h2>
+          <LessonBlockList blocks={lesson.blocks} />
+        </section>
+
         <section className="module-section" aria-labelledby="concepts-title">
-          <h2 id="concepts-title">Conceitos</h2>
+          <p className="technical-label">Entender</p>
+          <h2 id="concepts-title">Conceitos desta aula</h2>
           <ul className="concept-list">
             {lesson.concepts.map((concept) => (
               <li key={concept.stableId}>
@@ -41,13 +48,9 @@ export default async function LessonPage({ params }: LessonPageProps) {
           </ul>
         </section>
 
-        <section className="module-section" aria-labelledby="blocks-title">
-          <h2 id="blocks-title">Blocos</h2>
-          <LessonBlockList blocks={lesson.blocks} />
-        </section>
-
         <section className="module-section" aria-labelledby="activities-title">
-          <h2 id="activities-title">Atividades</h2>
+          <p className="technical-label">Praticar depois</p>
+          <h2 id="activities-title">Prática</h2>
           <ActivityList activities={lesson.activities} />
         </section>
       </article>

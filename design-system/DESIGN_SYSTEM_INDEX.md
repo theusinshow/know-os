@@ -19,7 +19,7 @@ Em caso de divergência entre documentos, vence o mais alto desta lista:
 4. **SCREEN_SPECS.md** — layout, hierarquia, ações e estados por tela.
 5. **PROGRAMMING_LAB.md** — autoridade final para editor, terminal, testes e RUN/SUBMIT; sobrepõe SCREEN_SPECS na Atividade de Código.
 6. **RESPONSIVE.md** — recomposição por breakpoint.
-7. **COLOR_SYSTEM.md · TYPOGRAPHY.md · MOTION.md · ICONOGRAPHY.md · BRAND_ASSETS.md · DENSITY.md** — regras por disciplina e marca.
+7. **COLOR_SYSTEM.md · TYPOGRAPHY.md · MOTION.md · ICONOGRAPHY.md · BRAND_ASSETS.md · VISUAL_IDENTITY.md · DENSITY.md** — regras por disciplina e marca.
 8. **COMPONENT_SYSTEM.md** — inventário, anatomia e variantes dos componentes.
 9. **DESIGN_DIRECTION.md** — tese e princípios; contexto, não especificação literal.
 10. **KNOW-OS.dc.html** — referência visual somente; nunca é fonte normativa.
@@ -46,6 +46,7 @@ Corrija o protótipo; não enfraqueça a especificação.
 | `COLOR_SYSTEM.md` | papel e contenção de cada cor; política de tema | hexes canônicos |
 | `ICONOGRAPHY.md` | biblioteca, aplicação e símbolos de domínio da interface | arquivos da marca |
 | `BRAND_ASSETS.md` | símbolo, wordmark, lockup, assets e uso da marca | iconografia de ações e estados |
+| `VISUAL_IDENTITY.md` | regras operacionais de identidade visual, logo, acentos e aplicação no software | valores canônicos ou novos assets |
 | `DENSITY.md` | regimes de densidade e regras de conforto | quantidade de dados do produto |
 | `UX_RECOMMENDATIONS.md` | recomendações de produto ainda não normativas | contrato visual |
 | `KNOW-OS.dc.html` | ritmo e referência visual navegável | qualquer decisão normativa |

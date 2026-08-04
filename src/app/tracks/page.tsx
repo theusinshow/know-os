@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { AppShell } from "@/components/layout/app-shell";
+import { FirstRunCallout } from "@/components/ui/first-run-callout";
 import { listTracks } from "@/features/tracks/api";
 
 export const dynamic = "force-dynamic";
@@ -10,19 +11,16 @@ export default async function TracksPage() {
 
   return (
     <AppShell>
-      <section className="foundation-panel content-panel" aria-labelledby="tracks-title">
+      <section className="foundation-panel content-panel accent-panel accent-learn" aria-labelledby="tracks-title">
         <p className="eyebrow">Trilhas importadas</p>
         <h1 id="tracks-title">Catálogo</h1>
         {tracks.status === "not_configured" ? (
           <p>Configure `DATABASE_URL` ou use `pglite://memory` em desenvolvimento para importar conteúdo.</p>
         ) : tracks.items.length === 0 ? (
-          <div className="lesson-callout" role="status">
-            <strong>Nenhuma trilha importada.</strong>
-            <span>Use a tela de importação para validar o Pack antes de aplicar ao catálogo.</span>
-            <Link className="secondary-action" href="/import">
-              Importar Track Pack
-            </Link>
-          </div>
+          <FirstRunCallout
+            title="Nenhuma trilha importada."
+            description="O catálogo fica vazio até você validar e ativar um Pack ou uma lição."
+          />
         ) : (
           <ul className="record-list" aria-label="Trilhas disponíveis">
             {tracks.items.map((track) => (

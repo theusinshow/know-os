@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { AppShell } from "@/components/layout/app-shell";
+import { FirstRunCallout } from "@/components/ui/first-run-callout";
 import { listMistakes } from "@/features/mistakes/api";
 
 export const dynamic = "force-dynamic";
@@ -10,7 +11,7 @@ export default async function MistakesPage() {
 
   return (
     <AppShell>
-      <section className="foundation-panel content-panel" aria-labelledby="mistakes-title">
+      <section className="foundation-panel content-panel accent-panel accent-mistakes" aria-labelledby="mistakes-title">
         <p className="eyebrow">Mistakes</p>
         <h1 id="mistakes-title">Erros registrados</h1>
         <p>
@@ -19,10 +20,10 @@ export default async function MistakesPage() {
         </p>
 
         {mistakes.length === 0 ? (
-          <div className="lesson-callout" role="status">
-            <strong>Nenhum erro categorizado.</strong>
-            <span>Falhas em SUBMIT SOLUTION aparecerão aqui com conceito, categoria e estado.</span>
-          </div>
+          <FirstRunCallout
+            title="Nenhum erro categorizado."
+            description="Erros úteis aparecem depois de praticar uma atividade importada e enviar uma solução."
+          />
         ) : (
           <ol className="record-list" aria-label="Erros categorizados">
             {mistakes.map((mistake) => (

@@ -320,6 +320,77 @@ export function TrackPackImporter({ deepSeek }: Readonly<{ deepSeek: DeepSeekRea
 
   return (
     <div className="import-workspace">
+      <section className="import-step-panel" aria-labelledby="direct-import-title">
+        <div className="test-panel-header">
+          <strong id="direct-import-title">1. Ativar conteúdo existente</strong>
+          <span>primeiro uso</span>
+        </div>
+
+        <p className="lesson-text">
+          Caminho mais curto para estudar hoje: carregue o exemplo, execute o preview e aplique o catálogo validado.
+        </p>
+
+        <div className="import-actions" aria-label="Entrada do Pack">
+          <button className="primary-action" type="button" onClick={handleExampleLoad} disabled={isBusy}>
+            <Upload aria-hidden="true" />
+            Carregar exemplo
+          </button>
+          <label className="secondary-action import-file-action" htmlFor={fileId}>
+            Selecionar JSON
+          </label>
+          <input
+            className="visually-hidden-file"
+            id={fileId}
+            type="file"
+            accept="application/json,.json"
+            onChange={(event) => handleFileChange(event.target.files?.[0])}
+          />
+        </div>
+
+        <label className="code-editor-label" htmlFor={inputId}>
+          JSON do Track Pack
+        </label>
+        <textarea
+          id={inputId}
+          className="code-editor import-source"
+          spellCheck={false}
+          value={source}
+          onChange={(event) => {
+            setFileName(null);
+            resetResult(event.target.value);
+          }}
+          placeholder={'{\n  "schema": "caderno.track.v1"\n}'}
+        />
+
+        <div className="activity-actions">
+          <button className="secondary-action" type="button" onClick={handlePreview} disabled={isBusy}>
+            Preview
+          </button>
+          <button className="primary-action" type="button" onClick={handleApply} disabled={!canApply}>
+            Aplicar
+          </button>
+        </div>
+
+        <p className="activity-status" role="status" aria-label="Estado da importação" aria-live="polite">
+          {fileName ? `${fileName}: ` : ""}
+          {message}
+        </p>
+
+        {error ? (
+          <div className="lesson-callout" data-variant="invalid" role="alert">
+            <strong>Importação bloqueada.</strong>
+            <span>{error}</span>
+          </div>
+        ) : null}
+
+        {preview ? <ImportPreview preview={preview} /> : null}
+        {importResult ? <ImportResultPanel result={importResult} /> : null}
+      </section>
+
+      <div className="import-divider" role="separator">
+        2. Criar ou importar uma lição nova
+      </div>
+
       <div className="generation-mode-selector" role="tablist" aria-label="Modo de geração">
         <button
           className={mode === "manual" ? "primary-action" : "secondary-action"}
@@ -353,66 +424,6 @@ export function TrackPackImporter({ deepSeek }: Readonly<{ deepSeek: DeepSeekRea
           }}
         />
       </div>
-
-      <div className="import-divider" role="separator">
-        Importação direta de Track Pack
-      </div>
-
-      <div className="import-actions" aria-label="Entrada do Pack">
-        <button className="primary-action" type="button" onClick={handleExampleLoad} disabled={isBusy}>
-          <Upload aria-hidden="true" />
-          Carregar exemplo
-        </button>
-        <label className="secondary-action import-file-action" htmlFor={fileId}>
-          Selecionar JSON
-        </label>
-        <input
-          className="visually-hidden-file"
-          id={fileId}
-          type="file"
-          accept="application/json,.json"
-          onChange={(event) => handleFileChange(event.target.files?.[0])}
-        />
-      </div>
-
-      <label className="code-editor-label" htmlFor={inputId}>
-        JSON do Track Pack
-      </label>
-      <textarea
-        id={inputId}
-        className="code-editor import-source"
-        spellCheck={false}
-        value={source}
-        onChange={(event) => {
-          setFileName(null);
-          resetResult(event.target.value);
-        }}
-        placeholder={'{\n  "schema": "caderno.track.v1"\n}'}
-      />
-
-      <div className="activity-actions">
-        <button className="secondary-action" type="button" onClick={handlePreview} disabled={isBusy}>
-          Preview
-        </button>
-        <button className="primary-action" type="button" onClick={handleApply} disabled={!canApply}>
-          Aplicar
-        </button>
-      </div>
-
-      <p className="activity-status" role="status" aria-label="Estado da importação" aria-live="polite">
-        {fileName ? `${fileName}: ` : ""}
-        {message}
-      </p>
-
-      {error ? (
-        <div className="lesson-callout" data-variant="invalid" role="alert">
-          <strong>Importação bloqueada.</strong>
-          <span>{error}</span>
-        </div>
-      ) : null}
-
-      {preview ? <ImportPreview preview={preview} /> : null}
-      {importResult ? <ImportResultPanel result={importResult} /> : null}
     </div>
   );
 }

@@ -20,7 +20,7 @@ export default async function TrackPage({ params }: TrackPageProps) {
 
   return (
     <AppShell>
-      <section className="foundation-panel content-panel" aria-labelledby="track-title">
+      <section className="foundation-panel content-panel accent-panel accent-learn" aria-labelledby="track-title">
         <p className="eyebrow">Trilha</p>
         <h1 id="track-title">{track.title}</h1>
         <p>{track.description}</p>

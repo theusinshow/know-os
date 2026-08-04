@@ -18,7 +18,7 @@ export default async function ConceptPage({ params }: ConceptPageProps) {
 
   return (
     <AppShell>
-      <article className="foundation-panel content-panel" aria-labelledby="concept-title">
+      <article className="foundation-panel content-panel accent-panel accent-learn" aria-labelledby="concept-title">
         <p className="eyebrow">Conceito</p>
         <h1 id="concept-title">{concept.title}</h1>
         <p>{concept.summary ?? "Sem resumo importado."}</p>
