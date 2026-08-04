@@ -104,6 +104,7 @@ The format follows Keep a Changelog principles. Product versions will follow Sem
 - Lesson pages now present theory as the main `Aula` surface before linked concepts and practice activities.
 - `/import` now prioritizes activating existing Track Packs before lesson creation or provider-assisted generation.
 - `/import` mobile now keeps first Track Pack activation controls compact with scoped import-surface density rules and regression coverage for 375 px screens.
+- Track Pack JSON imports now allow complete generated tracks up to 1 MiB while retaining oversized request blocking.
 - Lesson pages now expose compact `Aula`, `Conceitos` and `Prática` anchors, with mobile practice panels tightened for shorter code editing and stacked RUN/SUBMIT controls.
 - Track detail and Progress mobile screens now keep visible continuation paths back into the study flow using scoped area-accent CTAs.
 - Area accents now use small brutalist border/shadow cues while keeping yellow reserved for signal/action/current/focus roles.

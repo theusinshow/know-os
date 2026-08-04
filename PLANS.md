@@ -12,12 +12,12 @@ Deliver the approved KNOW/OS V1 through verified roadmap phases, without collaps
 
 Status: `READY FOR REVIEW`
 Owner: Codex lead agent
-Phase: `STEP 18 — CATALOG AND PROGRESS MOBILE CONTINUITY`
+Phase: `STEP 19 — COMPLETE GENERATED TRACK PACK IMPORT`
 Autonomy: `HIGH WITH GUARDRAILS`
 
 ### Objective
 
-Reduce mobile disorientation after content activation by adding visible continuation paths from the Track detail and Progress screens back into the study flow. Keep the change local, use scoped area accents instead of expanding yellow decoration, preserve RUN versus SUBMIT SOLUTION behavior and avoid production deploy, production database migration or credential work.
+Validate and locally import the user-provided complete programming Track Pack generated outside the app. Keep all content on the normal validation/preview/import path, raise only the local JSON request ceiling needed for complete generated tracks, preserve payload-size protection and avoid production deploy, production database migration or credential work.
 
 ### Acceptance criteria
 
@@ -164,6 +164,32 @@ Reduce mobile disorientation after content activation by adding visible continua
   - Style both CTAs with `.study-next-action`, mixing paper with the active area accent and retaining solid neobrutalist borders/shadows.
   - Add focused Playwright regression coverage for 375 px Track detail and Progress continuation.
   - Validated locally and checkpointed without pushing.
+
+### Step 19 acceptance criteria
+
+- [x] The user ZIP is inspected without trusting its self-reported validation report alone.
+- [x] The contained `caderno.track.v1` JSON passes KNOW/OS Track Pack validation and semantic checks.
+- [x] The raw file SHA-256 matches the ZIP manifest.
+- [x] The import request ceiling supports complete generated Track Packs while still blocking oversized payloads.
+- [x] The pack is imported through the local app endpoint, not by bypassing validation.
+- [x] The local catalog exposes the imported Track and a lesson can be opened for study.
+- [x] Focused validation passes and docs record exact results.
+- [x] No deploy, production migration, credential handling or push is performed in this step.
+
+### Step 19 in-progress increment
+
+- [x] 19.1 ZIP and Pack validation.
+  - Extracted `KNOW-OS-Trilha-Programacao-Completa-v1.zip` to a temporary folder.
+  - Validated `content/programacao-aplicada-com-ia.track.json` with the KNOW/OS TypeScript validator.
+  - Confirmed `packId=know-os.programacao-aplicada-com-ia`, `version=1`, `track=programacao-aplicada-com-ia`, 10 modules, 58 lessons, 189 concepts and 174 activities.
+  - Confirmed raw SHA-256 `b5933c7bd79a3ec6b9be9a320f7262fcb03b6dade5f321a2fe6c005dd417f4a6`, matching the manifest.
+- [x] 19.2 Complete Pack request-size support.
+  - Raised `MAX_TRACK_PACK_BYTES` from 256 KiB to 1 MiB so complete generated tracks can pass the normal preview/import endpoint.
+  - Added unit coverage asserting the configured default ceiling while preserving the existing oversized request rejection tests.
+- [x] 19.3 Local endpoint import and study smoke.
+  - Start a local no-OAuth dev server.
+  - Preview and import the validated Track Pack through `/api/import/track/preview` and `/api/import/track`.
+  - Open `/tracks/programacao-aplicada-com-ia` and the first lesson to verify the study path.
 
 ### Post-V1 hardening increments
 
@@ -1073,6 +1099,18 @@ Add timestamped commands and exact outcomes during implementation.
 2026-08-04 BRT — pnpm test:e2e — passed after Step 18, 30 tests across desktop Chromium and mobile Chrome.
 2026-08-04 BRT — pnpm build — passed after Step 18; generated 157 design tokens and built all implemented app/API routes.
 2026-08-04 BRT — git diff --check — passed after Step 18 docs with LF/CRLF normalization warnings only.
+2026-08-04 BRT — Step 19 ZIP inspection: `KNOW-OS-Trilha-Programacao-Completa-v1.zip` contains manifest/report/readme, `content/programacao-aplicada-com-ia.track.json` and `.caderno` artifact; Track Pack JSON size is 309,936 bytes.
+2026-08-04 BRT — Step 19 KNOW/OS validator: passed for `caderno.track.v1`, `packId=know-os.programacao-aplicada-com-ia`, `version=1`, `track=programacao-aplicada-com-ia`, 10 modules, 58 lessons, 189 concepts and 174 activities; raw SHA-256 matched manifest.
+2026-08-04 BRT — pnpm exec vitest run tests/unit/import-request.test.ts tests/unit/track-pack-validation.test.ts tests/unit/track-import-service.test.ts — passed after raising Track Pack request ceiling to 1 MiB, 3 files and 11 tests.
+2026-08-04 BRT — local dev server on `http://127.0.0.1:3211` with `DATABASE_URL=memory://local` — started and returned `/api/health/db` status `ok`.
+2026-08-04 BRT — POST `/api/import/track/preview` with `programacao-aplicada-com-ia.track.json` — passed with status `ready`, 10 modules, 58 lessons, 174 activities and 189 concepts.
+2026-08-04 BRT — POST `/api/import/track` with `programacao-aplicada-com-ia.track.json` — passed with status `imported`, imported 58 lessons and 174 activities.
+2026-08-04 BRT — local study smoke: `/tracks`, `/tracks/programacao-aplicada-com-ia` and `/lessons/js-foundations-001` returned 200; first lesson `Ambiente, Node.js e primeiro programa` renders Aula, Conceitos, Prática, RUN and SUBMIT.
+2026-08-04 BRT — pnpm lint — passed after Step 19 complete generated Track Pack import.
+2026-08-04 BRT — pnpm typecheck — passed after Step 19 complete generated Track Pack import.
+2026-08-04 BRT — pnpm test — passed after Step 19, 41 files and 108 tests, plus 1 skipped real-Postgres file/test.
+2026-08-04 BRT — pnpm build — passed after Step 19; generated 157 design tokens and built all implemented app/API routes.
+2026-08-04 BRT — git diff --check — passed after Step 19 docs with LF/CRLF normalization warnings only.
 ```
 
 ## Blockers
@@ -1086,8 +1124,9 @@ Step 15.0 through 15.7 are implemented, validated and pushed as `1d334d6`.
 Step 16 import mobile density polish is implemented, validated and checkpointed locally.
 Step 17 lesson mobile study-flow polish is implemented and validated locally. Do not push, deploy or apply production Neon migrations without explicit confirmation.
 Step 18 catalog/progress mobile continuation polish is implemented and validated locally. Do not push, deploy or apply production Neon migrations without explicit confirmation.
+Step 19 complete generated Track Pack validation/import is implemented and validated locally. Do not push, deploy or apply production Neon migrations without explicit confirmation.
 ```
 
 ## NEXT ACTION
 
-Step 18 is ready for review and checkpointed locally. The next safe action is continuing the next local UX increment or pushing the accumulated local commits only if the user explicitly asks; do not deploy or apply production Neon migrations without explicit confirmation.
+Step 19 is ready for review. The validated programming Track Pack is imported in the running local memory server at `http://127.0.0.1:3211`; keep that server running while studying because `memory://local` content is process-local. Do not deploy or apply production Neon migrations without explicit confirmation.

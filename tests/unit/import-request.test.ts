@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { readJsonRequestWithLimit } from "@/features/import/application/import-request";
+import { MAX_TRACK_PACK_BYTES, readJsonRequestWithLimit } from "@/features/import/application/import-request";
 
 describe("readJsonRequestWithLimit", () => {
   it("rejects requests larger than the configured limit before parsing", async () => {
@@ -28,5 +28,9 @@ describe("readJsonRequestWithLimit", () => {
       ok: false,
       code: "invalid_json"
     });
+  });
+
+  it("keeps the default Track Pack import limit at one MiB for complete generated tracks", () => {
+    expect(MAX_TRACK_PACK_BYTES).toBe(1024 * 1024);
   });
 });

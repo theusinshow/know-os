@@ -1,4 +1,4 @@
-export const MAX_TRACK_PACK_BYTES = 256 * 1024;
+export const MAX_TRACK_PACK_BYTES = 1024 * 1024;
 
 export type JsonRequestReadResult =
   | Readonly<{ ok: true; body: unknown; byteLength: number }>
