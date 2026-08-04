@@ -12,12 +12,12 @@ Deliver the approved KNOW/OS V1 through verified roadmap phases, without collaps
 
 Status: `READY FOR REVIEW`
 Owner: Codex lead agent
-Phase: `STEP 20 — MOBILE STUDY FLOW DISTILLATION`
+Phase: `STEP 21 — IMPORT INTENT FLOW`
 Autonomy: `HIGH WITH GUARDRAILS`
 
 ### Objective
 
-Reduce the mobile cognitive load found by the Impeccable critique after importing the complete programming Track Pack. Keep all routes and imported content available, but make the first study path clearer through collapsed secondary navigation, progressive disclosure for large catalogs and safe renderers for imported static activity types.
+Separate `/import` by learner intent so users first choose whether they want to study a ready Track Pack or create a new AI-assisted lesson. Preserve the existing validation/preview/import pipeline and keep the complete programming Track Pack available in the running local memory server.
 
 ### Acceptance criteria
 
@@ -222,6 +222,34 @@ Reduce the mobile cognitive load found by the Impeccable critique after importin
   - Run focused component tests for the activity registry.
   - Run focused Playwright mobile coverage for navigation, track disclosure and lesson activity renderers.
   - Run lint/typecheck and update `PROJECT_STATUS.md`, `CHANGELOG.md` and this plan.
+
+### Step 21 acceptance criteria
+
+- [x] `/import` starts with an explicit intent choice instead of showing Track Pack activation and lesson generation as one continuous flow.
+- [x] The default intent is `Estudar trilha pronta`, showing the existing Track Pack activation controls and hiding Manual/DeepSeek generation controls.
+- [x] `Criar aula com IA` reveals the existing Manual/DeepSeek mode selector and generation panels without changing their validation/preview/import pipeline.
+- [x] Switching between intents preserves in-progress generation recovery state, including DeepSeek fallback to Manual.
+- [x] Mobile `/import` has no horizontal overflow and does not expose generation controls before the user chooses the creation intent.
+- [x] Existing Track Pack import, Manual generated lesson import and DeepSeek failure-recovery tests remain covered.
+- [x] Documentation, changelog, project status and this verification log record the Step 21 behavior and remaining risks.
+
+### Step 21 planned increments
+
+- [x] 21.1 Intent selector.
+  - Add a product-level intent selector above import/generation controls.
+  - Keep `Estudar trilha pronta` selected by default.
+  - Use button/pressed semantics instead of a modal or separate route.
+- [x] 21.2 Conditional workflow rendering.
+  - Render Track Pack activation only for the study intent.
+  - Render Manual/DeepSeek mode selection only for the creation intent.
+  - Preserve component state across intent changes.
+- [x] 21.3 Mobile and recovery tests.
+  - Add Playwright coverage proving generation controls are hidden on first mobile view and appear after choosing creation.
+  - Update existing generation E2E/component tests to choose creation before interacting with Manual/DeepSeek.
+  - Preserve DeepSeek failure-to-Manual recovery assertions.
+- [x] 21.4 Validation and documentation.
+  - Run focused component and E2E checks, then lint/typecheck/test/build where feasible.
+  - Update `PROJECT_STATUS.md`, `CHANGELOG.md` and this verification log.
 
 ### Post-V1 hardening increments
 
@@ -1152,6 +1180,14 @@ Add timestamped commands and exact outcomes during implementation.
 2026-08-04 BRT — pnpm typecheck — passed after Step 20 mobile study-flow distillation.
 2026-08-04 BRT — pnpm test — passed after Step 20, 41 files and 109 tests, plus 1 skipped real-Postgres file/test.
 2026-08-04 BRT — pnpm build — passed after Step 20; generated 157 design tokens and built all implemented app/API routes.
+2026-08-04 BRT — Step 21 implementation: `/import` now starts with `Estudar trilha pronta` versus `Criar aula com IA`; Track Pack activation is the default visible flow and Manual/DeepSeek generation stays hidden until the creation intent is selected.
+2026-08-04 BRT — pnpm exec vitest run tests/component/track-pack-importer-generation.test.tsx — passed after Step 21, 1 file and 1 test, including DeepSeek failure recovery after choosing the creation intent.
+2026-08-04 BRT — pnpm typecheck — passed after Step 21 import intent flow.
+2026-08-04 BRT — node test-results\step21-import-intent-smoke.cjs — passed against live `http://127.0.0.1:3211`: mobile default intent hides generation controls, creation intent reveals Manual controls, no horizontal overflow in either state.
+2026-08-04 BRT — pnpm lint — passed after Step 21 import intent flow.
+2026-08-04 BRT — pnpm exec playwright test tests/e2e/import-ui.spec.ts --project=chromium — blocked before test execution because existing `next dev` PID 30108 on port 3211 preserves the imported `memory://local` study pack.
+2026-08-04 BRT — pnpm test — passed after Step 21, 41 files and 109 tests, plus 1 skipped real-Postgres file/test.
+2026-08-04 BRT — pnpm build — passed after Step 21; generated 157 design tokens and built all implemented app/API routes.
 ```
 
 ## Blockers
@@ -1167,8 +1203,9 @@ Step 17 lesson mobile study-flow polish is implemented and validated locally. Do
 Step 18 catalog/progress mobile continuation polish is implemented and validated locally. Do not push, deploy or apply production Neon migrations without explicit confirmation.
 Step 19 complete generated Track Pack validation/import is implemented and validated locally. Do not push, deploy or apply production Neon migrations without explicit confirmation.
 Step 20 mobile study-flow distillation is implemented and validated locally. Official owned-server Playwright remains deferred while the live imported memory server stays running on port 3211.
+Step 21 import intent flow is implemented and validated locally. Official owned-server Playwright remains deferred while the live imported memory server stays running on port 3211.
 ```
 
 ## NEXT ACTION
 
-Step 20 is ready for review on the running local memory server at `http://127.0.0.1:3211`. The validated programming Track Pack is still available there; keep that server running while studying because `memory://local` content is process-local. Do not deploy or apply production Neon migrations without explicit confirmation.
+Step 21 is ready for review on the running local memory server at `http://127.0.0.1:3211`. The validated programming Track Pack is still available there; keep that server running while studying because `memory://local` content is process-local. Do not deploy or apply production Neon migrations without explicit confirmation.

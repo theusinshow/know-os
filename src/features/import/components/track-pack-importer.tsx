@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRightLeft, Check, Clipboard, Eye, FileJson, RefreshCcw, Upload } from "lucide-react";
+import { ArrowRightLeft, BookOpen, Check, Clipboard, Eye, FileJson, RefreshCcw, Sparkles, Upload } from "lucide-react";
 import { useId, useMemo, useState } from "react";
 
 type PreviewSummary = Readonly<{
@@ -94,6 +94,8 @@ type ManualRecoveryDraft = Readonly<{
   message: string;
 }>;
 
+type ImportIntent = "study" | "create";
+
 type GeneratedLessonPreview = Readonly<{
   status: "ready_to_preview";
   operation: "validate_only";
@@ -172,6 +174,9 @@ function parseConceptLines(source: string) {
 export function TrackPackImporter({ deepSeek }: Readonly<{ deepSeek: DeepSeekReadiness }>) {
   const inputId = useId();
   const fileId = useId();
+  const studyWorkflowId = useId();
+  const createWorkflowId = useId();
+  const [intent, setIntent] = useState<ImportIntent>("study");
   const [source, setSource] = useState("");
   const [fileName, setFileName] = useState<string | null>(null);
   const [preview, setPreview] = useState<PreviewResult | null>(null);
@@ -320,10 +325,45 @@ export function TrackPackImporter({ deepSeek }: Readonly<{ deepSeek: DeepSeekRea
 
   return (
     <div className="import-workspace">
-      <section className="import-step-panel" aria-labelledby="direct-import-title">
+      <section className="import-intent-panel" aria-labelledby="import-intent-title">
         <div className="test-panel-header">
-          <strong id="direct-import-title">1. Ativar conteúdo existente</strong>
-          <span>primeiro uso</span>
+          <strong id="import-intent-title">Escolha o fluxo</strong>
+          <span>{intent === "study" ? "trilha pronta" : "criação"}</span>
+        </div>
+        <div className="import-intent-selector" role="group" aria-label="Fluxo de importação">
+          <button
+            className="import-intent-option"
+            type="button"
+            aria-pressed={intent === "study"}
+            aria-controls={studyWorkflowId}
+            onClick={() => setIntent("study")}
+          >
+            <BookOpen aria-hidden="true" />
+            <span>
+              <strong>Estudar trilha pronta</strong>
+              <small>Importe um Track Pack validado e continue para a primeira aula.</small>
+            </span>
+          </button>
+          <button
+            className="import-intent-option"
+            type="button"
+            aria-pressed={intent === "create"}
+            aria-controls={createWorkflowId}
+            onClick={() => setIntent("create")}
+          >
+            <Sparkles aria-hidden="true" />
+            <span>
+              <strong>Criar aula com IA</strong>
+              <small>Compile um prompt, valide o JSON gerado e importe uma lição.</small>
+            </span>
+          </button>
+        </div>
+      </section>
+
+      <section id={studyWorkflowId} className="import-step-panel" aria-labelledby="direct-import-title" hidden={intent !== "study"}>
+        <div className="test-panel-header">
+          <strong id="direct-import-title">Ativar conteúdo existente</strong>
+          <span>estudar hoje</span>
         </div>
 
         <p className="lesson-text">
@@ -387,43 +427,46 @@ export function TrackPackImporter({ deepSeek }: Readonly<{ deepSeek: DeepSeekRea
         {importResult ? <ImportResultPanel result={importResult} /> : null}
       </section>
 
-      <div className="import-divider" role="separator">
-        2. Criar ou importar uma lição nova
-      </div>
+      <section id={createWorkflowId} className="generation-workflow" aria-labelledby="generation-workflow-title" hidden={intent !== "create"}>
+        <div className="import-divider" role="separator" id="generation-workflow-title">
+          Criar ou importar uma lição nova
+        </div>
 
-      <div className="generation-mode-selector" role="tablist" aria-label="Modo de geração">
-        <button
-          className={mode === "manual" ? "primary-action" : "secondary-action"}
-          type="button"
-          role="tab"
-          aria-selected={mode === "manual"}
-          onClick={() => setMode("manual")}
-        >
-          Manual / Copy Paste
-        </button>
-        <button
-          className={mode === "deepseek" ? "primary-action" : "secondary-action"}
-          type="button"
-          role="tab"
-          aria-selected={mode === "deepseek"}
-          onClick={() => setMode("deepseek")}
-        >
-          AI / DeepSeek
-        </button>
-      </div>
+        <div className="generation-mode-selector" role="tablist" aria-label="Modo de geração">
+          <button
+            className={mode === "manual" ? "primary-action" : "secondary-action"}
+            type="button"
+            role="tab"
+            aria-selected={mode === "manual"}
+            onClick={() => setMode("manual")}
+          >
+            Manual / Copy Paste
+          </button>
+          <button
+            className={mode === "deepseek" ? "primary-action" : "secondary-action"}
+            type="button"
+            role="tab"
+            aria-selected={mode === "deepseek"}
+            onClick={() => setMode("deepseek")}
+          >
+            AI / DeepSeek
+          </button>
+        </div>
 
-      <div hidden={mode !== "manual"}>
-        <ManualGenerationPanel key={manualRecovery?.id ?? "manual"} recovery={manualRecovery} />
-      </div>
-      <div hidden={mode !== "deepseek"}>
-        <DeepSeekGenerationPanel
-          deepSeek={deepSeek}
-          onSwitchToManual={(recovery) => {
-            setManualRecovery(recovery);
-            setMode("manual");
-          }}
-        />
-      </div>
+        <div hidden={mode !== "manual"}>
+          <ManualGenerationPanel key={manualRecovery?.id ?? "manual"} recovery={manualRecovery} />
+        </div>
+        <div hidden={mode !== "deepseek"}>
+          <DeepSeekGenerationPanel
+            deepSeek={deepSeek}
+            onSwitchToManual={(recovery) => {
+              setManualRecovery(recovery);
+              setMode("manual");
+              setIntent("create");
+            }}
+          />
+        </div>
+      </section>
     </div>
   );
 }

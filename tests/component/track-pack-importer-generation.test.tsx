@@ -58,6 +58,7 @@ describe("TrackPackImporter generation recovery", () => {
 
     render(<TrackPackImporter deepSeek={configuredDeepSeek} />);
 
+    await user.click(screen.getByRole("button", { name: /Criar aula com IA/ }));
     await user.click(screen.getByRole("tab", { name: "AI / DeepSeek" }));
     await user.click(screen.getByRole("button", { name: "Gerar com DeepSeek" }));
 

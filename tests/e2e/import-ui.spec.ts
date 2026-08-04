@@ -4,6 +4,7 @@ test("imports the bundled example Track Pack through the product surface", async
   await page.goto("/import");
 
   await expect(page.getByRole("heading", { name: "Ativar catálogo" })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Estudar trilha pronta/ })).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByRole("button", { name: "Aplicar" })).toBeDisabled();
 
   await page.getByRole("button", { name: "Carregar exemplo" }).click();
@@ -30,8 +31,10 @@ test("keeps the first import step compact on mobile", async ({ page }) => {
   await page.goto("/import");
 
   await expect(page.getByRole("heading", { name: "Ativar catálogo" })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Estudar trilha pronta/ })).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByRole("button", { name: "Carregar exemplo" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Preview" })).toBeVisible();
+  await expect(page.getByRole("tab", { name: "Manual / Copy Paste" })).toBeHidden();
 
   await expect
     .poll(async () =>
@@ -45,11 +48,16 @@ test("keeps the first import step compact on mobile", async ({ page }) => {
   const loadExampleBox = await page.getByRole("button", { name: "Carregar exemplo" }).boundingBox();
   const previewBox = await page.getByRole("button", { name: "Preview" }).boundingBox();
   expect(previewBox?.y).toBeGreaterThan((loadExampleBox?.y ?? 0) + (loadExampleBox?.height ?? 0));
+
+  await page.getByRole("button", { name: /Criar aula com IA/ }).click();
+  await expect(page.getByRole("tab", { name: "Manual / Copy Paste" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Carregar exemplo" })).toBeHidden();
 });
 
 test("validates and imports a manually generated Lesson Pack through the product surface", async ({ page }) => {
   await page.goto("/import");
 
+  await page.getByRole("button", { name: /Criar aula com IA/ }).click();
   await expect(page.getByRole("tab", { name: "Manual / Copy Paste" })).toHaveAttribute("aria-selected", "true");
   await page.getByRole("button", { name: "Compilar prompt" }).click();
   await expect(page.getByRole("status", { name: "Estado da geração" })).toContainText("Prompt compilado");

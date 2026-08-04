@@ -13,8 +13,8 @@ export default function ImportPage() {
         <p className="eyebrow">Import Pack</p>
         <h1 id="import-title">Ativar catálogo</h1>
         <p>
-          Cole, selecione ou carregue o Pack exemplo. O KNOW/OS sempre faz preview e bloqueia aplicação quando
-          houver conflito.
+          Escolha entre estudar uma trilha pronta ou criar uma aula nova. Em ambos os caminhos, o KNOW/OS faz
+          preview antes de aplicar e bloqueia conflitos.
         </p>
 
         <TrackPackImporter deepSeek={deepSeek} />

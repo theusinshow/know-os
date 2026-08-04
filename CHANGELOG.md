@@ -110,6 +110,7 @@ The format follows Keep a Changelog principles. Product versions will follow Sem
 - Track detail and Progress mobile screens now keep visible continuation paths back into the study flow using scoped area-accent CTAs.
 - Secondary navigation now stays collapsed behind `Mais` by default on mobile, while preserving access to secondary routes and 44 px touch targets.
 - Track detail and Knowledge Map now use progressive disclosure so complete imported catalogs do not dominate the first mobile study view.
+- `/import` now starts with an intent selector, defaulting to ready Track Pack study and hiding Manual/DeepSeek generation until `Criar aula com IA` is selected.
 - Area accents now use small brutalist border/shadow cues while keeping yellow reserved for signal/action/current/focus roles.
 - Central route/API guard moved from legacy `middleware.ts` to `src/proxy.ts` so Next.js 16 recognizes the network boundary.
 - Initial Codex prompt now authorizes phase-by-phase V1 execution instead of stopping after Phase 0.

@@ -933,6 +933,77 @@ a {
   margin-top: var(--kos-spacing-10);
 }
 
+.import-intent-panel {
+  display: grid;
+  gap: var(--kos-spacing-6);
+  border: var(--kos-border-rule) solid var(--kos-color-ink);
+  background: var(--kos-color-paper);
+  box-shadow: var(--kos-shadow-pressed);
+  padding: var(--kos-spacing-8);
+}
+
+.import-intent-selector {
+  display: grid;
+  gap: var(--kos-spacing-5);
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.import-intent-option {
+  min-height: var(--kos-touch-minimum);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: var(--kos-spacing-5);
+  border: var(--kos-border-rule) solid var(--kos-color-ink);
+  background: var(--kos-color-panel);
+  color: var(--kos-color-ink);
+  cursor: pointer;
+  padding: var(--kos-spacing-6);
+  text-align: left;
+  transition:
+    box-shadow var(--kos-motion-fast) var(--kos-motion-easing),
+    transform var(--kos-motion-fast) var(--kos-motion-easing),
+    background-color var(--kos-motion-fast) var(--kos-motion-linear);
+}
+
+.import-intent-option[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--kos-color-accent-import) 18%, var(--kos-color-paper));
+  box-shadow: var(--kos-shadow-hard);
+  transform: translate(
+    calc(-1 * var(--kos-motion-travel-min)),
+    calc(-1 * var(--kos-motion-travel-min))
+  );
+}
+
+.import-intent-option:hover,
+.import-intent-option:focus-visible {
+  box-shadow: var(--kos-shadow-raised);
+}
+
+.import-intent-option svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  margin-top: var(--kos-spacing-1);
+}
+
+.import-intent-option span {
+  display: grid;
+  gap: var(--kos-spacing-2);
+}
+
+.import-intent-option strong {
+  font-family: var(--kos-typography-technical-family), monospace;
+  font-size: var(--kos-typography-technical-sizes-sm);
+  letter-spacing: var(--kos-typography-technical-tracking);
+  text-transform: uppercase;
+}
+
+.import-intent-option small {
+  color: var(--kos-color-dim);
+  font-size: var(--kos-typography-body-sizes-sm);
+  line-height: 1.35;
+}
+
 .import-actions {
   display: flex;
   flex-wrap: wrap;
@@ -957,6 +1028,11 @@ a {
   background: var(--kos-color-paper);
   box-shadow: var(--kos-shadow-pressed);
   padding: var(--kos-spacing-8);
+}
+
+.generation-workflow {
+  display: grid;
+  gap: var(--kos-spacing-6);
 }
 
 .generation-form {
@@ -1641,11 +1717,13 @@ a {
   }
 
   .import-workspace .generation-panel,
+  .import-workspace .import-intent-panel,
   .import-workspace .import-step-panel {
     gap: var(--kos-spacing-6);
     padding: var(--kos-spacing-6);
   }
 
+  .import-workspace .import-intent-selector,
   .import-workspace .import-actions,
   .import-workspace .generation-mode-selector,
   .import-workspace .activity-actions {
