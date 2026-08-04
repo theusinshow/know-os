@@ -12,12 +12,12 @@ Deliver the approved KNOW/OS V1 through verified roadmap phases, without collaps
 
 Status: `READY FOR REVIEW`
 Owner: Codex lead agent
-Phase: `STEP 15 — FIRST-RUN, MOBILE STUDY FLOW AND VISUAL ROUTING`
+Phase: `STEP 16 — IMPORT MOBILE DENSITY POLISH`
 Autonomy: `HIGH WITH GUARDRAILS`
 
 ### Objective
 
-Make the product usable for study on mobile and empty catalogs by establishing a clear first-run path, a simpler route hierarchy, a lesson-first study flow and scoped visual accents by product area. Keep theoretical lesson content, concepts, practice, review, mistakes and progress as distinct but connected surfaces. Preserve the approved technical-brutalist Design System: solid borders, low radius, no gradients, no decorative color, no dark-mode expansion and no AI dependency for core study.
+Reduce the remaining mobile density in the `/import` activation flow so a first-run learner can activate an existing Track Pack without being overwhelmed by oversized controls. Keep the change scoped to import/generation surfaces, preserve desktop operational density and avoid production deploy, production database migration or credential work.
 
 ### Acceptance criteria
 
@@ -109,6 +109,24 @@ Make the product usable for study on mobile and empty catalogs by establishing a
   - Run focused component/unit tests, `pnpm lint`, `pnpm typecheck`, `pnpm test`, focused Playwright mobile/import/lesson tests, `pnpm test:e2e` if time permits, `pnpm build` and `git diff --check`.
   - Update `PROJECT_STATUS.md`, `CHANGELOG.md`, this verification log and a precise `NEXT ACTION`.
   - Do not push, deploy or apply production Neon migrations without explicit confirmation.
+
+### Step 16 acceptance criteria
+
+- [x] `/import` mobile keeps the first Pack activation step visually compact at 375 px.
+- [x] Import action buttons stack into a predictable one-column touch layout on mobile.
+- [x] Import and generation textareas use shorter mobile minimum heights without changing desktop density.
+- [x] CSS changes are scoped to `.import-workspace` so lesson activity editors and practice actions do not inherit the import-specific density rules.
+- [x] Playwright coverage verifies no horizontal overflow, compact source input height and stacked first-step actions on mobile.
+- [x] Lint, typecheck, unit tests, full Playwright E2E, build and diff checks pass locally.
+- [x] No deploy, production migration, credential handling or push is performed in this step.
+
+### Step 16 implemented increment
+
+- [x] 16.1 `/import` mobile density polish.
+  - Added mobile-only `.import-workspace` rules for tighter panel padding/gaps, stacked import/generation/action buttons, shorter import/generation textareas and full-width import-surface actions.
+  - Added a regression test in `tests/e2e/import-ui.spec.ts` for 375 px `/import` bounds, compact textarea height and stacked first activation controls.
+  - Stopped the stale local `next dev` server on port 3211 only after Playwright reported it blocked the owned test server.
+  - Validation passed locally; production deployment remains unvalidated by user and untouched by this step.
 
 ### Post-V1 hardening increments
 
@@ -994,6 +1012,16 @@ Add timestamped commands and exact outcomes during implementation.
 2026-08-04 BRT — pnpm test:e2e — passed for Step 15.7, 24 tests across desktop Chromium and mobile Chrome.
 2026-08-04 BRT — pnpm build — passed for Step 15.7; generated 157 design tokens and built all implemented app/API routes.
 2026-08-04 BRT — git diff --check — passed for Step 15.7 with LF/CRLF normalization warnings only.
+2026-08-04 BRT — pnpm exec playwright test tests/e2e/import-ui.spec.ts --project=mobile-chrome — initially failed because a stale local `next dev` server was running for this repo on port 3211 and blocked Playwright's owned server startup.
+2026-08-04 BRT — Stop-Process -Id 37112 -Force — passed; stopped only the stale local development server reported by Playwright.
+2026-08-04 BRT — pnpm exec playwright test tests/e2e/import-ui.spec.ts --project=mobile-chrome — passed for Step 16, 3 mobile import tests including compact 375 px activation controls.
+2026-08-04 BRT — pnpm lint — passed after Step 16 import mobile density polish.
+2026-08-04 BRT — pnpm typecheck — passed after Step 16 import mobile density polish.
+2026-08-04 BRT — pnpm test — passed after Step 16, 41 files and 107 tests, plus 1 skipped real-Postgres file/test.
+2026-08-04 BRT — pnpm test:e2e — passed after Step 16, 26 tests across desktop Chromium and mobile Chrome.
+2026-08-04 BRT — pnpm build — passed after Step 16; generated 157 design tokens and built all implemented app/API routes.
+2026-08-04 BRT — Step 16 Playwright screenshot capture for `/import` at 375 px produced `test-results/step16-import-density/import-mobile-375.png`; visual inspection confirmed stacked first-step controls and no horizontal clipping. The inline capture command timed out while cleaning up the child process, then the leftover port 3211 owner was stopped.
+2026-08-04 BRT — git diff --check — passed after Step 16 docs with LF/CRLF normalization warnings only.
 ```
 
 ## Blockers
@@ -1003,9 +1031,10 @@ No real local PostgreSQL service is available outside `.env.local`; `pnpm test:p
 Authenticated Chrome walkthrough is available, but `/exports` and `/achievements` fail in production with Server Components render errors after Step 11 deployment. The likely repair is applying checked-in migrations `0007_icy_vengeance.sql` and `0008_pale_shiver_man.sql` to Neon production with `pnpm db:migrate`, which requires explicit user confirmation as an external database schema write.
 Step 13 UI alignment has been checkpointed and pushed as `81f4ce3`.
 Step 14.0 through 14.8 are implemented locally and validated. No DeepSeek credentials should be requested or exposed; use an unconfigured provider state unless the user configures `DEEPSEEK_API_KEY` in ignored server environment.
-Step 15.0 through 15.7 are implemented and validated locally. Do not push, deploy or apply production Neon migrations without explicit confirmation.
+Step 15.0 through 15.7 are implemented, validated and pushed as `1d334d6`.
+Step 16 import mobile density polish is implemented, validated and checkpointed locally. Do not push, deploy or apply production Neon migrations without explicit confirmation.
 ```
 
 ## NEXT ACTION
 
-Step 15 is ready for review. Next safe action is a local checkpoint commit if the user approves the current scope; do not push, deploy or apply production Neon migrations without explicit confirmation.
+Step 16 is ready for review and checkpointed locally. The next safe action is continuing the next local UX increment; do not push, deploy or apply production Neon migrations without explicit confirmation.

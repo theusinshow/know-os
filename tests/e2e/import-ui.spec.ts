@@ -25,6 +25,28 @@ test("imports the bundled example Track Pack through the product surface", async
   await expect(page.getByRole("link", { name: /JavaScript/ }).first()).toBeVisible();
 });
 
+test("keeps the first import step compact on mobile", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto("/import");
+
+  await expect(page.getByRole("heading", { name: "Ativar catálogo" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Carregar exemplo" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Preview" })).toBeVisible();
+
+  await expect
+    .poll(async () =>
+      page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1)
+    )
+    .toBe(true);
+
+  const sourceBox = await page.getByLabel("JSON do Track Pack").boundingBox();
+  expect(sourceBox?.height).toBeLessThanOrEqual(230);
+
+  const loadExampleBox = await page.getByRole("button", { name: "Carregar exemplo" }).boundingBox();
+  const previewBox = await page.getByRole("button", { name: "Preview" }).boundingBox();
+  expect(previewBox?.y).toBeGreaterThan((loadExampleBox?.y ?? 0) + (loadExampleBox?.height ?? 0));
+});
+
 test("validates and imports a manually generated Lesson Pack through the product surface", async ({ page }) => {
   await page.goto("/import");
 

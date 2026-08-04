@@ -1500,6 +1500,39 @@ a {
     padding: var(--kos-spacing-8);
   }
 
+  .import-workspace {
+    gap: var(--kos-spacing-8);
+  }
+
+  .import-workspace .generation-panel,
+  .import-workspace .import-step-panel {
+    gap: var(--kos-spacing-6);
+    padding: var(--kos-spacing-6);
+  }
+
+  .import-workspace .import-actions,
+  .import-workspace .generation-mode-selector,
+  .import-workspace .activity-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--kos-spacing-4);
+  }
+
+  .import-workspace .import-source,
+  .import-workspace .generation-prompt {
+    min-height: 180px;
+  }
+
+  .import-workspace .code-editor {
+    padding: var(--kos-spacing-6);
+  }
+
+  .import-workspace .primary-action,
+  .import-workspace .secondary-action {
+    width: 100%;
+    padding-inline: var(--kos-spacing-6);
+  }
+
   .foundation-panel {
     box-shadow: var(--kos-shadow-raised);
     padding: 0;

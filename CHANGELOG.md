@@ -103,6 +103,7 @@ The format follows Keep a Changelog principles. Product versions will follow Sem
 - Mobile navigation now uses a two-column grid with full-width `Mais` instead of a clipped horizontal rail.
 - Lesson pages now present theory as the main `Aula` surface before linked concepts and practice activities.
 - `/import` now prioritizes activating existing Track Packs before lesson creation or provider-assisted generation.
+- `/import` mobile now keeps first Track Pack activation controls compact with scoped import-surface density rules and regression coverage for 375 px screens.
 - Area accents now use small brutalist border/shadow cues while keeping yellow reserved for signal/action/current/focus roles.
 - Central route/API guard moved from legacy `middleware.ts` to `src/proxy.ts` so Next.js 16 recognizes the network boundary.
 - Initial Codex prompt now authorizes phase-by-phase V1 execution instead of stopping after Phase 0.
