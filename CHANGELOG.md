@@ -112,6 +112,8 @@ The format follows Keep a Changelog principles. Product versions will follow Sem
 - Track detail and Knowledge Map now use progressive disclosure so complete imported catalogs do not dominate the first mobile study view.
 - `/import` now starts with an intent selector, defaulting to ready Track Pack study and hiding Manual/DeepSeek generation until `Criar aula com IA` is selected.
 - Area accents now use small brutalist border/shadow cues while keeping yellow reserved for signal/action/current/focus roles.
+- Activity RUN/SUBMIT actions now surface HTTP, non-JSON and network failures in the terminal instead of crashing the lesson page, with explicit pending state and `aria-busy`.
+- Lesson study pages now show session-state next actions and collapse persisted terminal/tests/diff output behind a technical summary, while fresh RUN/SUBMIT feedback still opens immediately.
 - Central route/API guard moved from legacy `middleware.ts` to `src/proxy.ts` so Next.js 16 recognizes the network boundary.
 - Initial Codex prompt now authorizes phase-by-phase V1 execution instead of stopping after Phase 0.
 - `AGENTS.md`, `PLANS.md`, `PROJECT_STATUS.md`, `README.md`, `START-HERE.md`, and roadmap now support high-autonomy execution with repository guardrails.

@@ -26,6 +26,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
         <p className="eyebrow">{lesson.trackTitle}</p>
         <h1 id="lesson-title">{lesson.title}</h1>
         <ProgressSummary progress={progress} />
+        <LessonSessionCallout progress={progress} />
 
         <nav className="lesson-flow-nav" aria-label="Fluxo da aula">
           <a href="#lesson-body-title">
@@ -71,4 +72,71 @@ export default async function LessonPage({ params }: LessonPageProps) {
       </article>
     </AppShell>
   );
+}
+
+function LessonSessionCallout({ progress }: Readonly<{ progress: Awaited<ReturnType<typeof getLessonProgress>> }>) {
+  if (!progress) {
+    return null;
+  }
+
+  const hasPractice = progress.totalActivities > 0;
+  const isComplete = hasPractice && progress.passedActivities === progress.totalActivities;
+  const hasStarted = progress.attemptedActivities > 0;
+
+  return (
+    <aside
+      className={`study-session-callout ${isComplete ? "is-complete" : "is-active"}`}
+      aria-label="Estado da sessão de estudo"
+    >
+      <div>
+        <p className="technical-label">{isComplete ? "Sessão concluída" : hasStarted ? "Sessão em andamento" : "Próximo passo"}</p>
+        <strong>{getSessionTitle({ isComplete, hasStarted })}</strong>
+        <span>{getSessionCopy({ isComplete, hasStarted, passedActivities: progress.passedActivities, totalActivities: progress.totalActivities })}</span>
+      </div>
+      <nav aria-label="Ações da sessão">
+        {isComplete ? (
+          <>
+            <Link href="/progress">Ver progresso</Link>
+            <Link href="/history">Abrir histórico</Link>
+            <Link href="/review">Revisar depois</Link>
+          </>
+        ) : (
+          <>
+            <a href="#lesson-body-title">Ler aula</a>
+            <a href="#concepts-title">Rever conceitos</a>
+            <a href="#activities-title">Praticar</a>
+          </>
+        )}
+      </nav>
+    </aside>
+  );
+}
+
+function getSessionTitle({ isComplete, hasStarted }: Readonly<{ isComplete: boolean; hasStarted: boolean }>) {
+  if (isComplete) {
+    return "Todas as atividades desta aula foram aprovadas.";
+  }
+
+  if (hasStarted) {
+    return "Continue pela prática que ainda falta evidência.";
+  }
+
+  return "Leia a teoria, conecte os conceitos e pratique depois.";
+}
+
+function getSessionCopy({
+  isComplete,
+  hasStarted,
+  passedActivities,
+  totalActivities
+}: Readonly<{ isComplete: boolean; hasStarted: boolean; passedActivities: number; totalActivities: number }>) {
+  if (isComplete) {
+    return "Agora vale conferir o progresso, revisar o histórico e decidir se abre a fila de revisão.";
+  }
+
+  if (hasStarted) {
+    return `${passedActivities}/${totalActivities} atividades aprovadas. RUN continua livre; SUBMIT registra a próxima evidência oficial.`;
+  }
+
+  return "O laboratório está no final da aula para que o código confirme o que foi lido, não substitua a leitura.";
 }

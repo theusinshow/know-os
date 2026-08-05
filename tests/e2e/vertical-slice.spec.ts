@@ -18,6 +18,9 @@ test("mobile lesson page exposes the study flow and compact practice controls", 
   await page.goto("/lessons/js-fundamentals-001");
 
   const lessonFlow = page.getByRole("navigation", { name: "Fluxo da aula" });
+  await expect(page.getByLabel("Estado da sessão de estudo")).toContainText(
+    /Leia a teoria|Continue pela prática|Todas as atividades desta aula foram aprovadas/
+  );
   await expect(lessonFlow.getByRole("link", { name: /Aula/ })).toBeVisible();
   await expect(lessonFlow.getByRole("link", { name: /Conceitos/ })).toBeVisible();
   await lessonFlow.getByRole("link", { name: /Prática/ }).click();
@@ -117,12 +120,32 @@ test("imports a Track Pack, browses the lesson, runs code, submits and shows his
   const reloadedCodePanel = page.getByRole("region", { name: /Crie uma condição/ });
   const reloadedDebugPanel = page.getByRole("region", { name: /Corrija o bug/ });
   await expect(reloadedCodePanel.getByLabel("Última tentativa")).toContainText(/Tentativa \d+: passed/);
+  await expect
+    .poll(async () =>
+      reloadedCodePanel.locator("details.activity-technical-details").evaluate((details) => details.hasAttribute("open"))
+    )
+    .toBe(false);
+  await reloadedCodePanel.getByText("Terminal, testes e diff").click();
   await expect(reloadedCodePanel.getByLabel("Saída da execução")).toContainText("false");
   await expect(reloadedCodePanel.getByLabel("Diff da tentativa")).toContainText("documentExists && userAuthorized");
   await expect(reloadedDebugPanel.getByLabel("Última tentativa")).toContainText(/Tentativa \d+: passed/);
+  await reloadedDebugPanel.getByText("Terminal, testes e diff").click();
   await expect(page.getByLabel("Progresso")).toContainText("Atividades aprovadas");
   await expect(page.getByLabel("Progresso")).toContainText("2/2");
   await expect(page.getByLabel("Progresso")).toContainText("Ainda não calculado");
+  await expect(page.getByLabel("Estado da sessão de estudo")).toContainText("Todas as atividades desta aula foram aprovadas");
+
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.reload();
+  await expect(page.getByLabel("Estado da sessão de estudo")).toContainText("Todas as atividades desta aula foram aprovadas");
+  await expect
+    .poll(async () =>
+      page
+        .getByRole("region", { name: /Crie uma condição/ })
+        .locator("details.activity-technical-details")
+        .evaluate((details) => details.hasAttribute("open"))
+    )
+    .toBe(false);
 
   await page.goto("/concepts/js-logical-and");
   await expect(page.getByLabel("Mastery do conceito")).toContainText("POLICY mastery.v1");

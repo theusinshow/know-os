@@ -1,10 +1,10 @@
 # KNOW/OS — Project Status
 
-Last updated: 2026-08-04
+Last updated: 2026-08-05
 
 ## Current phase
 
-`STEP 21 READY FOR REVIEW — IMPORT INTENT FLOW`
+`STEP 23 READY FOR REVIEW — DOGFOOD STUDY FLOW UX PASS`
 
 Phase 0 repository foundation is implemented and verified. The repository now contains a Next.js App Router scaffold with TypeScript strict mode, Tailwind/token generation, minimal accessible shell, Drizzle/PostgreSQL foundation, Zod validation, Vitest/Testing Library/Playwright smoke tests and GitHub Actions CI.
 
@@ -20,7 +20,7 @@ Phase 5 projects and gamification is implemented and verified. The implemented s
 
 Phase 6 portability and hardening is implemented and verified. The V1 local product now includes import preview/hardening, Backup/Progress/Teacher Context exports, non-destructive Backup restore for Pack manifests, accessibility/responsive audit coverage, baseline security headers, security audit documentation and deployment preparation within local-only guardrails.
 
-Production deployment is live at `https://know-os.vercel.app` using the ADR 0015 stack: Vercel, Neon Postgres and Auth.js Google OAuth. Step 2 implementation includes the Auth.js Google foundation, production environment contract, central session guard and Neon/Vercel runbook. Neon migrations have been applied and unauthenticated production smoke checks pass. The sign-in surface now uses the custom `/auth/signin` page following the KNOW/OS Design System, and Google OAuth requests include `prompt=select_account` so account selection is explicit. After a Google `invalid_client` response, Vercel Production OAuth/Auth environment values were re-applied from ignored local values, production was redeployed and the Google page was verified without `invalid_client`. A design-system motion pass now applies approved short motion tokens to app shell, sign-in and recurring content primitives while preserving reduced-motion behavior. Step 3 adds a real `/import` product surface for example/paste/file Track Pack activation with preview-before-apply semantics, deploys it to production and validates the first production learning loop at service level. Step 4 adds and runs guarded real-PostgreSQL validation through a disposable schema, covering checked-in migrations plus import/RUN/SUBMIT/progress behavior without touching production application tables. Step 5 adds production dependency vulnerability scanning, patched transitive runtime overrides and an enforced CSP candidate with Playwright coverage. Step 6 adds a Pack publication catalog and verifier so the accepted example Pack has immutable schema/ID/version/hash metadata before broader distribution. Step 7 adds persisted gamification projections for badge awards, mission progress and mission status-change audit events while keeping XP/review/mistake/mastery rules authoritative. Step 8 accepts ADR 0016 for conflict-safe full user-state restore replay policy. Step 9 implements the restore provenance schema foundation and a blocked `user_state_dry_run` plan in restore preview. Step 10 exposes that dry-run plan in `/exports` with product UI coverage. Step 11 moves the central guard to the Next.js 16 `src/proxy.ts` convention and applies nonce-bearing CSP to runtime responses. Step 12 authenticated production walkthrough confirms most protected pages load, but `/exports` and `/achievements` fail with production Server Components render errors until Neon production migrations are explicitly approved and applied; append-only user-state replay/merge remains blocked until a future explicit apply mode is approved and implemented. Step 13 UI alignment is implemented, validated and pushed as commit `81f4ce3`: the app shell now uses stronger window chrome, route-aware navigation, boxed sections, differentiated surfaces and fixed sidebar/terminal visual issues. Step 14 generation modes are implemented locally through 14.8, including Manual and DeepSeek generation through the same validation/preview/import pipeline. Step 15 is implemented, validated and pushed as commit `1d334d6`: first-run navigation is simpler, empty-catalog guidance is explicit, Pack activation comes before generation, lessons are theory-first and scoped product-area accents reduce the previous yellow dominance. Step 16 is implemented and checkpointed locally: `/import` now uses scoped mobile density rules for compact first activation controls without changing desktop density or touching production. Step 17 is implemented locally: imported lessons now expose compact `Aula / Conceitos / Prática` anchors and mobile practice panels are denser without changing RUN/SUBMIT behavior. Step 18 is implemented locally: Track detail and Progress now keep visible mobile continuation CTAs so the imported-catalog flow does not strand the learner after browsing progress or a track. Step 19 is implemented locally: the user-provided complete programming Track Pack validates against KNOW/OS, the import request ceiling now supports complete generated tracks up to 1 MiB, and the pack is imported in the running local memory server for study. Step 20 is implemented locally: the Impeccable audit findings were addressed for mobile secondary navigation, Track/Knowledge Map progressive disclosure and safe static imported activities without changing RUN/SUBMIT semantics. Step 21 is implemented locally: `/import` now asks for intent first, defaults to studying a ready Track Pack and hides Manual/DeepSeek generation until the user chooses `Criar aula com IA`.
+Production deployment is live at `https://know-os.vercel.app` using the ADR 0015 stack: Vercel, Neon Postgres and Auth.js Google OAuth. Step 2 implementation includes the Auth.js Google foundation, production environment contract, central session guard and Neon/Vercel runbook. Neon migrations have been applied and unauthenticated production smoke checks pass. The sign-in surface now uses the custom `/auth/signin` page following the KNOW/OS Design System, and Google OAuth requests include `prompt=select_account` so account selection is explicit. After a Google `invalid_client` response, Vercel Production OAuth/Auth environment values were re-applied from ignored local values, production was redeployed and the Google page was verified without `invalid_client`. A design-system motion pass now applies approved short motion tokens to app shell, sign-in and recurring content primitives while preserving reduced-motion behavior. Step 3 adds a real `/import` product surface for example/paste/file Track Pack activation with preview-before-apply semantics, deploys it to production and validates the first production learning loop at service level. Step 4 adds and runs guarded real-PostgreSQL validation through a disposable schema, covering checked-in migrations plus import/RUN/SUBMIT/progress behavior without touching production application tables. Step 5 adds production dependency vulnerability scanning, patched transitive runtime overrides and an enforced CSP candidate with Playwright coverage. Step 6 adds a Pack publication catalog and verifier so the accepted example Pack has immutable schema/ID/version/hash metadata before broader distribution. Step 7 adds persisted gamification projections for badge awards, mission progress and mission status-change audit events while keeping XP/review/mistake/mastery rules authoritative. Step 8 accepts ADR 0016 for conflict-safe full user-state restore replay policy. Step 9 implements the restore provenance schema foundation and a blocked `user_state_dry_run` plan in restore preview. Step 10 exposes that dry-run plan in `/exports` with product UI coverage. Step 11 moves the central guard to the Next.js 16 `src/proxy.ts` convention and applies nonce-bearing CSP to runtime responses. Step 12 authenticated production walkthrough confirms most protected pages load, but `/exports` and `/achievements` fail with production Server Components render errors until Neon production migrations are explicitly approved and applied; append-only user-state replay/merge remains blocked until a future explicit apply mode is approved and implemented. Step 13 UI alignment is implemented, validated and pushed as commit `81f4ce3`: the app shell now uses stronger window chrome, route-aware navigation, boxed sections, differentiated surfaces and fixed sidebar/terminal visual issues. Step 14 generation modes are implemented locally through 14.8, including Manual and DeepSeek generation through the same validation/preview/import pipeline. Step 15 is implemented, validated and pushed as commit `1d334d6`: first-run navigation is simpler, empty-catalog guidance is explicit, Pack activation comes before generation, lessons are theory-first and scoped product-area accents reduce the previous yellow dominance. Step 16 is implemented and checkpointed locally: `/import` now uses scoped mobile density rules for compact first activation controls without changing desktop density or touching production. Step 17 is implemented locally: imported lessons now expose compact `Aula / Conceitos / Prática` anchors and mobile practice panels are denser without changing RUN/SUBMIT behavior. Step 18 is implemented locally: Track detail and Progress now keep visible mobile continuation CTAs so the imported-catalog flow does not strand the learner after browsing progress or a track. Step 19 is implemented locally: the user-provided complete programming Track Pack validates against KNOW/OS, the import request ceiling now supports complete generated tracks up to 1 MiB, and the pack is imported in the running local memory server for study. Step 20 is implemented locally: the Impeccable audit findings were addressed for mobile secondary navigation, Track/Knowledge Map progressive disclosure and safe static imported activities without changing RUN/SUBMIT semantics. Step 21 is implemented locally: `/import` now asks for intent first, defaults to studying a ready Track Pack and hides Manual/DeepSeek generation until the user chooses `Criar aula com IA`. Step 22 hotfix is implemented locally: the code activity panel now tolerates failed/non-JSON RUN/SUBMIT responses without crashing the lesson page, normalizes omitted runtime `result` fields, and uses explicit pending action state for immediate feedback. Step 23 is implemented locally after dogfooding the JavaScript example lesson as a learner: lesson pages now expose a session-state callout, post-attempt activity panels show immediate next steps, and persisted terminal/tests/diff output collapses behind a technical summary so repeated study and mobile review are easier to scan without changing RUN/SUBMIT semantics.
 
 ## Agent operating mode
 
@@ -252,6 +252,21 @@ Codex may progress through approved V1 roadmap phases without routine user confi
 - Intent switching keeps the Manual/DeepSeek subtree mounted, preserving DeepSeek failure recovery and fallback-to-Manual state.
 - Mobile smoke against the running `3211` memory server confirms generation controls are hidden on first view, appear after the creation intent and do not introduce horizontal overflow.
 - The official owned-server Playwright command remains deferred while the local imported `memory://local` pack is preserved on port 3211.
+
+## Step 22 activity RUN/SUBMIT resilience
+
+- The code activity panel now handles HTTP errors, non-JSON responses and network failures from RUN/SUBMIT as visible terminal feedback instead of letting the lesson page crash.
+- Runtime payloads whose JSON omits `result` after an `undefined` JavaScript result are normalized to `result: null` before updating the UI.
+- RUN/SUBMIT action pending state is explicit, disables both buttons during the request and exposes `aria-busy` on the activity panel.
+- Focused component coverage reproduces a non-JSON 500 response from RUN and verifies the page remains mounted.
+
+## Step 23 dogfood study flow UX pass
+
+- A no-OAuth memory-mode Playwright dogfood imported the bundled JavaScript example Pack, opened the JavaScript fundamentals lesson, read the theory/concept flow, ran and submitted code/debug activities, then visited Today, Tracks, Review, Mistakes, Progress, Achievements, Knowledge Map, Projects, History, Import and Exports.
+- The main learner friction was not the learning model; it was scan load after attempts. Completed activities reloaded with terminal output, tests and diffs expanded, making the lesson feel slow and especially tall on mobile.
+- Lesson pages now include a session-state callout that tells the learner whether to read, continue practice or review completed evidence, with direct links back into the active study flow.
+- Activity panels now keep the latest attempt summary visible, add explicit post-attempt next-step links to Progress and History, and collapse persisted terminal/tests/diff output behind a compact technical summary. Fresh RUN/SUBMIT output still opens immediately so debugging remains direct.
+- The dogfood run saw dev-mode first-route delays from Next.js compilation and repeated console CSP inline-style warnings without page errors. Treat these as follow-up observations; production performance should be judged from build/preview validation rather than first-load `next dev` timings.
 
 ## Implemented in Phase 6
 
@@ -704,11 +719,30 @@ pnpm test after final Step 14 tests — passed, 41 files and 107 tests, plus 1 s
 git diff --check after final Step 14 docs — passed with LF/CRLF normalization warnings only.
 ```
 
+```text
+pnpm exec vitest run tests/component/code-activity-panel.test.tsx tests/component/activity-registry.test.tsx after Step 22 — passed, 2 files and 4 tests.
+pnpm typecheck after Step 22 — passed.
+pnpm lint after Step 22 — passed.
+pnpm exec playwright test tests/e2e/vertical-slice.spec.ts --project=chromium after Step 22 — passed, 3 tests including RUN, SUBMIT, reload and history.
+pnpm test after Step 22 — passed, 42 files and 110 tests, plus 1 skipped real-Postgres file/test.
+pnpm build after Step 22 — passed, generated 157 design tokens and built all implemented app/API routes.
+git diff --check after Step 22 — passed with LF/CRLF normalization warnings only.
+pnpm typecheck after Step 23 — passed.
+pnpm lint after Step 23 — passed.
+pnpm exec vitest run tests/component/code-activity-panel.test.tsx tests/component/activity-registry.test.tsx after Step 23 — passed, 2 files and 5 tests.
+pnpm exec playwright test tests/e2e/vertical-slice.spec.ts --project=chromium after Step 23 — passed, 3 tests including collapsed persisted details and completed lesson session state.
+pnpm test after Step 23 — passed, 42 files and 111 tests, plus 1 skipped real-Postgres file/test.
+pnpm build after Step 23 — passed, generated 157 design tokens and built all implemented app/API routes.
+pnpm test:e2e after Step 23 — first attempt failed before completion because stale local `next dev` PID 48384 on port 3224 blocked Playwright's owned server; after `Stop-Process -Id 48384 -Force`, rerun passed, 32 tests across desktop Chromium and mobile Chrome.
+git diff --check after Step 23 — passed with LF/CRLF normalization warnings only.
+Local no-OAuth `memory://local` review server after Step 23 — running at `http://127.0.0.1:3211` with launcher PID 35308 and listener PID 40540; imported `packs/examples/javascript-fundamentals.track.json`; `/tracks/javascript` and `/lessons/js-fundamentals-001` return 200.
+```
+
 Do not run `pnpm typecheck` concurrently with `pnpm build`; Next mutates generated `.next` types during build.
 
 ## Next milestone
 
-Step 21 is ready for local review. Do not push, deploy or apply production Neon migrations without explicit confirmation.
+Step 23 is ready for local review on `http://127.0.0.1:3211/lessons/js-fundamentals-001` while listener PID 40540 stays alive. The bundled JavaScript example Pack is imported there; reimport the desired complete programming Track Pack if needed because imported content only survives while that exact dev server process stays alive. Do not push, deploy or apply production Neon migrations without explicit confirmation.
 
 ## Risk register
 
@@ -728,12 +762,14 @@ Step 21 is ready for local review. Do not push, deploy or apply production Neon 
 - Step 17 lesson mobile study-flow polish is implemented and validated locally. Push/deploy remain separate approval boundaries.
 - Step 18 catalog/progress mobile continuation polish is implemented and validated locally. Push/deploy remain separate approval boundaries.
 - Step 19 complete generated Track Pack validation/import is implemented and validated locally. Push/deploy remain separate approval boundaries.
-- Step 20 mobile study-flow distillation is implemented and validated locally. The official owned-server Playwright run remains deferred while the live imported memory server stays running on port 3211.
-- Step 21 import intent flow is implemented and validated locally. The official owned-server Playwright run remains deferred while the live imported memory server stays running on port 3211.
+- Step 20 mobile study-flow distillation is implemented and validated locally.
+- Step 21 import intent flow is implemented and validated locally.
+- Step 22 activity RUN/SUBMIT resilience is implemented and validated locally. The previous `memory://local` process on port 3211 was no longer running during diagnosis, so the complete Track Pack imported there must be imported again for live study.
+- Step 23 dogfood study-flow UX pass is implemented and validated locally. Dev-mode route delays and CSP inline-style console warnings were observed without page errors and remain follow-up observations.
 - Playwright uses `memory://local` because PGlite works for Vitest/Drizzle integration but cannot be bundled reliably inside the Next dev server.
 - Backup restore applies Pack manifests only in V1. User-state replay/merge is intentionally blocked by ADR 0014 until a conflict-safe append-only restore policy exists.
 - Full dev dependency audit has one residual `eslint -> minimatch@3 -> brace-expansion` advisory path; production dependency audit is clean and the compatible dev pin is documented until the ESLint/minimatch path can move safely.
 
 ## NEXT ACTION
 
-Review Step 21 on the running local memory server at `http://127.0.0.1:3211`. Keep that server alive while studying because `memory://local` content is process-local; persistent database import remains a separate approval boundary.
+Review Step 23 on `http://127.0.0.1:3211/lessons/js-fundamentals-001` while listener PID 40540 stays alive. The bundled JavaScript example Pack is already imported in that `memory://local` process; persistent database import, push, deploy and production migrations remain separate approval boundaries.

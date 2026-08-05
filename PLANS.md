@@ -12,12 +12,12 @@ Deliver the approved KNOW/OS V1 through verified roadmap phases, without collaps
 
 Status: `READY FOR REVIEW`
 Owner: Codex lead agent
-Phase: `STEP 21 — IMPORT INTENT FLOW`
+Phase: `STEP 23 — DOGFOOD STUDY FLOW UX PASS`
 Autonomy: `HIGH WITH GUARDRAILS`
 
 ### Objective
 
-Separate `/import` by learner intent so users first choose whether they want to study a ready Track Pack or create a new AI-assisted lesson. Preserve the existing validation/preview/import pipeline and keep the complete programming Track Pack available in the running local memory server.
+Use KNOW/OS as a learner studying the JavaScript lesson, complete the available activities, audit the complete local product surface from that experience, and implement focused UX/UI improvements without changing the approved Design System or learning-domain semantics.
 
 ### Acceptance criteria
 
@@ -249,6 +249,52 @@ Separate `/import` by learner intent so users first choose whether they want to 
   - Preserve DeepSeek failure-to-Manual recovery assertions.
 - [x] 21.4 Validation and documentation.
   - Run focused component and E2E checks, then lint/typecheck/test/build where feasible.
+  - Update `PROJECT_STATUS.md`, `CHANGELOG.md` and this verification log.
+
+### Step 22 acceptance criteria
+
+- [x] RUN/SUBMIT client calls tolerate non-JSON server responses, HTTP errors and network failures without unmounting or crashing the lesson page.
+- [x] Failed RUN/SUBMIT requests render as terminal feedback with `request_error` status and an actionable learner-facing message.
+- [x] Valid RUN/SUBMIT payloads still update terminal output, tests, latest attempt feedback and source diff.
+- [x] Pending action state is explicit, disables both activity actions during the request and exposes `aria-busy` on the activity panel.
+- [x] Existing RUN semantics remain unchanged: RUN records no official attempt.
+- [x] Existing SUBMIT semantics remain unchanged: SUBMIT records the official attempt and progress evidence.
+- [x] Focused component tests, typecheck, lint and vertical-slice Playwright validation pass.
+
+### Step 22 implemented increment
+
+- [x] 22.1 Activity panel resilience hotfix.
+  - Replaced the unguarded `response.json()` activity client path with checked HTTP/JSON parsing and request-error terminal feedback.
+  - Normalized API execution payloads whose JSON omits `result` when the evaluated JavaScript result is `undefined`.
+  - Replaced async `useTransition` action handling with explicit `pendingAction` state so RUN/SUBMIT feedback appears immediately and duplicate clicks are blocked predictably.
+  - Added component regression coverage for a non-JSON 500 response from RUN while keeping the page mounted.
+
+### Step 23 acceptance criteria
+
+- [x] Complete a learner dogfood loop through the available JavaScript Track Pack: import, browse catalog, read lesson theory, inspect concepts, run code, submit solutions, review progress/history and visit secondary surfaces.
+- [x] Record UX/UI findings from the actual flow, prioritizing issues that affect comprehension, speed, wayfinding, trust, error recovery or repeated study.
+- [x] Improve the activity study experience so reading, coding, output and next-step feedback are easier to scan without altering RUN/SUBMIT rules.
+- [x] Improve cross-surface wayfinding so Today, Tracks, Lesson, Review/Mistakes, Progress, Achievements, Knowledge Map, Projects, History, Import and Exports feel like one study system.
+- [x] Keep the technical-brutalist Design System intact: no new off-token colors, no rounded-card redesign, no decorative animation, no dark-mode pivot.
+- [x] Preserve all existing route/API contracts, imported content boundaries, append-only attempts and deterministic progress/mastery rules.
+- [x] Add or update focused tests for changed UX behavior.
+- [x] Run relevant component/unit/E2E checks, lint, typecheck, build and `git diff --check`.
+
+### Step 23 planned increments
+
+- [x] 23.1 Dogfood walkthrough and evidence capture.
+  - Use Playwright/no-OAuth memory harness to import the example JavaScript Pack and complete the learner loop.
+  - Capture timings, console/page errors, route notes and screenshots for desktop/mobile.
+  - Visit all major implemented app surfaces after attempting activities.
+- [x] 23.2 Findings and scope selection.
+  - Identify the highest-impact UX/UI fixes inside current V1 scope.
+  - Prefer structural clarity and speed of use over cosmetic changes.
+- [x] 23.3 Implement focused UI/UX improvements.
+  - Improve activity panel scan hierarchy, action feedback and post-submit next steps.
+  - Improve global wayfinding/route context where the dogfood session exposes confusion.
+- [x] 23.4 Validation and documentation.
+  - Add tests for changed behavior.
+  - Run focused and broad validation.
   - Update `PROJECT_STATUS.md`, `CHANGELOG.md` and this verification log.
 
 ### Post-V1 hardening increments
@@ -1188,6 +1234,29 @@ Add timestamped commands and exact outcomes during implementation.
 2026-08-04 BRT — pnpm exec playwright test tests/e2e/import-ui.spec.ts --project=chromium — blocked before test execution because existing `next dev` PID 30108 on port 3211 preserves the imported `memory://local` study pack.
 2026-08-04 BRT — pnpm test — passed after Step 21, 41 files and 109 tests, plus 1 skipped real-Postgres file/test.
 2026-08-04 BRT — pnpm build — passed after Step 21; generated 157 design tokens and built all implemented app/API routes.
+2026-08-05 BRT — Step 22 diagnosis: the previous `http://127.0.0.1:3211` memory server refused connections, so the complete Track Pack imported in that process was no longer available; the example Pack vertical slice still passed before the hotfix.
+2026-08-05 BRT — Step 22 implementation: hardened `CodeActivityPanel` request handling for HTTP errors, non-JSON responses and network failures; normalized omitted runtime `result` fields; replaced async `useTransition` with explicit pending action state and `aria-busy`.
+2026-08-05 BRT — pnpm exec vitest run tests/component/code-activity-panel.test.tsx tests/component/activity-registry.test.tsx — passed after Step 22, 2 files and 4 tests.
+2026-08-05 BRT — pnpm typecheck — passed after Step 22 activity panel resilience.
+2026-08-05 BRT — pnpm lint — passed after Step 22 activity panel resilience.
+2026-08-05 BRT — pnpm exec playwright test tests/e2e/vertical-slice.spec.ts --project=chromium — passed after Step 22, 3 tests including RUN, SUBMIT, reload and history.
+2026-08-05 BRT — pnpm test — passed after Step 22, 42 files and 110 tests, plus 1 skipped real-Postgres file/test.
+2026-08-05 BRT — pnpm build — passed after Step 22; generated 157 design tokens and built all implemented app/API routes.
+2026-08-05 BRT — git diff --check — passed after Step 22 with LF/CRLF normalization warnings only.
+2026-08-05 BRT — Step 23 dogfood: imported the bundled JavaScript example Pack through the no-OAuth memory harness, studied `/lessons/js-fundamentals-001`, ran and submitted code/debug activities, then visited Today, Tracks, Review, Mistakes, Progress, Achievements, Knowledge Map, Projects, History, Import and Exports.
+2026-08-05 BRT — Step 23 findings: persisted activity attempts made completed lessons feel slow and visually heavy because terminal output, tests and diffs stayed expanded for every activity; route changes in dev mode showed first-load compile delays, and console logs included CSP inline-style violations without page errors.
+2026-08-05 BRT — Step 23 implementation: added a lesson session callout with next actions, compact post-attempt next-step links, and collapsible persisted technical details for terminal/tests/diff while keeping fresh RUN/SUBMIT output expanded.
+2026-08-05 BRT — pnpm typecheck — passed after Step 23 dogfood UX pass.
+2026-08-05 BRT — pnpm lint — passed after Step 23 dogfood UX pass.
+2026-08-05 BRT — pnpm exec vitest run tests/component/code-activity-panel.test.tsx tests/component/activity-registry.test.tsx — passed after Step 23, 2 files and 5 tests.
+2026-08-05 BRT — pnpm exec playwright test tests/e2e/vertical-slice.spec.ts --project=chromium — passed after Step 23, 3 tests including the collapsed persisted details regression and completed lesson session state.
+2026-08-05 BRT — pnpm test — passed after Step 23, 42 files and 111 tests, plus 1 skipped real-Postgres file/test.
+2026-08-05 BRT — pnpm build — passed after Step 23; generated 157 design tokens and built all implemented app/API routes.
+2026-08-05 BRT — pnpm test:e2e — first attempt failed before the suite completed because a stale local `next dev` PID 48384 on port 3224 blocked Playwright's owned server.
+2026-08-05 BRT — Stop-Process -Id 48384 -Force — passed; stopped only the stale local development server reported by Playwright.
+2026-08-05 BRT — pnpm test:e2e — passed after Step 23, 32 tests across desktop Chromium and mobile Chrome.
+2026-08-05 BRT — git diff --check — passed after Step 23 with LF/CRLF normalization warnings only.
+2026-08-05 BRT — local review server: started no-OAuth `memory://local` Next dev server on `http://127.0.0.1:3211` with launcher PID 35308 and listener PID 40540, imported `packs/examples/javascript-fundamentals.track.json`, and verified `/tracks/javascript` plus `/lessons/js-fundamentals-001` return 200.
 ```
 
 ## Blockers
@@ -1202,10 +1271,12 @@ Step 16 import mobile density polish is implemented, validated and checkpointed 
 Step 17 lesson mobile study-flow polish is implemented and validated locally. Do not push, deploy or apply production Neon migrations without explicit confirmation.
 Step 18 catalog/progress mobile continuation polish is implemented and validated locally. Do not push, deploy or apply production Neon migrations without explicit confirmation.
 Step 19 complete generated Track Pack validation/import is implemented and validated locally. Do not push, deploy or apply production Neon migrations without explicit confirmation.
-Step 20 mobile study-flow distillation is implemented and validated locally. Official owned-server Playwright remains deferred while the live imported memory server stays running on port 3211.
-Step 21 import intent flow is implemented and validated locally. Official owned-server Playwright remains deferred while the live imported memory server stays running on port 3211.
+Step 20 mobile study-flow distillation is implemented and validated locally.
+Step 21 import intent flow is implemented and validated locally.
+Step 22 activity RUN/SUBMIT resilience is implemented and validated locally. The previous port 3211 `memory://local` server was no longer running when this diagnosis started, so its imported complete Track Pack must be imported again for live study.
+Step 23 dogfood study flow UX pass is implemented and validated locally. Dev-mode route changes still include Next.js compilation delay, so production performance should be judged from `pnpm build`/production preview instead of first-load `next dev` timings.
 ```
 
 ## NEXT ACTION
 
-Step 21 is ready for review on the running local memory server at `http://127.0.0.1:3211`. The validated programming Track Pack is still available there; keep that server running while studying because `memory://local` content is process-local. Do not deploy or apply production Neon migrations without explicit confirmation.
+Review Step 23 on the running no-OAuth local memory server at `http://127.0.0.1:3211/lessons/js-fundamentals-001` while the listener PID 40540 stays alive. The bundled JavaScript example Pack is imported there; import the desired complete Track Pack again if needed because `memory://local` content only survives in that exact process. Do not deploy, push or apply production Neon migrations without explicit confirmation.

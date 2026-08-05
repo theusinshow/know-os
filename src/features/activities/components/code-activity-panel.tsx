@@ -1,32 +1,38 @@
 "use client";
 
 import { CheckCircle2, Play, Terminal } from "lucide-react";
-import { useState, useTransition } from "react";
+import Link from "next/link";
+import { useState } from "react";
 
 import { diffSourceLines } from "@/features/attempts/source-diff";
 import type { ActivityAttemptFeedback } from "@/features/activities/registry";
 
-type ExecutionPayload = Readonly<{
-  status: string;
+type RequestErrorExecutionPayload = Readonly<{
+  status: "request_error";
   stdout: string[];
   stderr: string[];
-  runtimeVersion?: string;
-  limits?: Readonly<{
-    timeoutMs: number;
-    outputLimit: number;
-  }>;
-  capabilities?: Readonly<{
-    dom: boolean;
-    network: boolean;
-    ambientSecrets: boolean;
-  }>;
 }>;
+
+type ExecutionPayload = ActivityAttemptFeedback["execution"] | RequestErrorExecutionPayload;
+
+type SuccessfulExecutionPayload = ActivityAttemptFeedback["execution"];
 
 type TestPayload = Readonly<{
   name: string;
   status: string;
   message: string;
 }>;
+
+type SubmissionPayload = Readonly<{
+  attemptNumber: number;
+  outcome: ActivityAttemptFeedback["outcome"];
+  execution: ActivityAttemptFeedback["execution"];
+  tests: ActivityAttemptFeedback["tests"];
+}>;
+
+type PostCodeResult =
+  | Readonly<{ ok: true; body: Record<string, unknown> }>
+  | Readonly<{ ok: false; message: string; statusCode?: number }>;
 
 type CodeActivityPanelProps = Readonly<{
   activityStableId: string;
@@ -48,51 +54,99 @@ export function CodeActivityPanel({
   const [tests, setTests] = useState<TestPayload[]>(initialFeedback?.tests ?? []);
   const [latestFeedback, setLatestFeedback] = useState<ActivityAttemptFeedback | null>(initialFeedback);
   const [status, setStatus] = useState("Pronto");
-  const [isPending, startTransition] = useTransition();
+  const [pendingAction, setPendingAction] = useState<"run" | "submit" | null>(null);
+  const [detailsOpen, setDetailsOpen] = useState(() => !initialFeedback);
 
-  function run() {
-    startTransition(async () => {
+  async function run() {
+    if (pendingAction) {
+      return;
+    }
+
+    try {
+      setPendingAction("run");
+      setDetailsOpen(true);
       setStatus("Executando RUN");
       setTests([]);
       const result = await postCode(`/api/activities/${activityStableId}/run`, source);
 
-      if (result.status === "executed") {
-        setExecution(result.execution);
+      if (!result.ok) {
+        showRequestError("RUN", result);
+        return;
+      }
+
+      const execution = normalizeExecutionPayload(result.body.execution);
+
+      if (result.body.status === "executed" && execution) {
+        setExecution(execution);
         setLatestFeedback(initialFeedback);
         setStatus("RUN concluído sem registrar tentativa");
         return;
       }
 
       setStatus("Não foi possível executar RUN");
-    });
+    } finally {
+      setPendingAction(null);
+    }
   }
 
-  function submit() {
-    startTransition(async () => {
+  async function submit() {
+    if (pendingAction) {
+      return;
+    }
+
+    try {
+      setPendingAction("submit");
+      setDetailsOpen(true);
       setStatus("Enviando solução");
       const result = await postCode(`/api/activities/${activityStableId}/submit`, source);
 
-      if (result.status === "submitted") {
-        setExecution(result.evaluation.execution);
-        setTests(result.evaluation.tests);
+      if (!result.ok) {
+        showRequestError("SUBMIT", result);
+        return;
+      }
+
+      const submission = readSubmissionPayload(result.body);
+
+      if (submission) {
+        setExecution(submission.execution);
+        setTests(submission.tests);
         setLatestFeedback({
-          attemptNumber: result.submission.attemptNumber,
-          outcome: result.submission.outcome,
-          execution: result.evaluation.execution,
-          tests: result.evaluation.tests,
+          attemptNumber: submission.attemptNumber,
+          outcome: submission.outcome,
+          execution: submission.execution,
+          tests: submission.tests,
           sourceDiff: diffSourceLines(starterCode, source),
           submittedAt: new Date().toISOString()
         });
-        setStatus(`SUBMIT registrou tentativa ${result.submission.attemptNumber}`);
+        setStatus(`SUBMIT registrou tentativa ${submission.attemptNumber}`);
         return;
       }
 
       setStatus("Não foi possível registrar SUBMIT");
+    } finally {
+      setPendingAction(null);
+    }
+  }
+
+  function showRequestError(action: "RUN" | "SUBMIT", result: Extract<PostCodeResult, { ok: false }>) {
+    const prefix = result.statusCode ? `${action} falhou (${result.statusCode})` : `${action} falhou`;
+
+    setExecution({
+      status: "request_error",
+      stdout: [],
+      stderr: [result.message]
     });
+    setDetailsOpen(true);
+    setStatus(prefix);
   }
 
   return (
-    <section className="activity-panel" id={`activity-${activityStableId}`} aria-labelledby={`${activityStableId}-title`}>
+    <section
+      className="activity-panel"
+      id={`activity-${activityStableId}`}
+      aria-labelledby={`${activityStableId}-title`}
+      aria-busy={pendingAction ? "true" : "false"}
+    >
       <div>
         <p className="eyebrow">{activityLabel}</p>
         <h3 id={`${activityStableId}-title`}>{prompt}</h3>
@@ -110,11 +164,11 @@ export function CodeActivityPanel({
       />
 
       <div className="activity-actions">
-        <button type="button" className="secondary-action" onClick={run} disabled={isPending}>
+        <button type="button" className="secondary-action" onClick={run} disabled={pendingAction !== null}>
           <Play aria-hidden="true" />
           <span>RUN</span>
         </button>
-        <button type="button" className="primary-action" onClick={submit} disabled={isPending}>
+        <button type="button" className="primary-action" onClick={submit} disabled={pendingAction !== null}>
           <CheckCircle2 aria-hidden="true" />
           <span>SUBMIT SOLUTION</span>
         </button>
@@ -125,28 +179,53 @@ export function CodeActivityPanel({
       </div>
 
       {latestFeedback ? (
-        <aside className="attempt-feedback" aria-label="Última tentativa">
-          <p className="eyebrow">Última tentativa</p>
-          <strong>
-            Tentativa {latestFeedback.attemptNumber}: {latestFeedback.outcome}
-          </strong>
-          <span>{formatSubmittedAt(latestFeedback.submittedAt)}</span>
-        </aside>
-      ) : null}
-
-      <div className="terminal-panel" aria-label="Saída da execução">
-        <div className="terminal-title">
-          <Terminal aria-hidden="true" />
-          <span>Terminal</span>
+        <div className="activity-feedback-row">
+          <aside className="attempt-feedback" aria-label="Última tentativa">
+            <p className="eyebrow">Última tentativa</p>
+            <strong>
+              Tentativa {latestFeedback.attemptNumber}: {latestFeedback.outcome}
+            </strong>
+            <span>{formatSubmittedAt(latestFeedback.submittedAt)}</span>
+          </aside>
+          <aside className="activity-next-step" aria-label="Próximo passo da atividade">
+            <p className="eyebrow">Próximo passo</p>
+            <strong>{latestFeedback.outcome === "passed" ? "Evidência registrada" : "Revisar antes de reenviar"}</strong>
+            <span>
+              {latestFeedback.outcome === "passed"
+                ? "Confira progresso ou histórico sem perder esta aula."
+                : "Use RUN para testar ajustes sem criar tentativa oficial."}
+            </span>
+            <div className="activity-next-links">
+              <Link href="/progress">Progresso</Link>
+              <Link href="/history">Histórico</Link>
+            </div>
+          </aside>
         </div>
-        <ExecutionOutput execution={execution} />
-      </div>
-
-      {tests.length > 0 ? (
-        <TestResults tests={tests} />
       ) : null}
 
-      {latestFeedback?.sourceDiff.length ? <AttemptDiff lines={latestFeedback.sourceDiff} /> : null}
+      <details
+        className="activity-technical-details"
+        open={detailsOpen}
+        onToggle={(event) => setDetailsOpen(event.currentTarget.open)}
+      >
+        <summary>
+          <span>Terminal, testes e diff</span>
+          <small>{getTechnicalSummary(execution, tests, latestFeedback)}</small>
+        </summary>
+        <div className="activity-technical-stack">
+          <div className="terminal-panel" aria-label="Saída da execução">
+            <div className="terminal-title">
+              <Terminal aria-hidden="true" />
+              <span>Terminal</span>
+            </div>
+            <ExecutionOutput execution={execution} />
+          </div>
+
+          {tests.length > 0 ? <TestResults tests={tests} /> : null}
+
+          {latestFeedback?.sourceDiff.length ? <AttemptDiff lines={latestFeedback.sourceDiff} /> : null}
+        </div>
+      </details>
     </section>
   );
 }
@@ -163,13 +242,13 @@ function ExecutionOutput({ execution }: Readonly<{ execution: ExecutionPayload |
           <dt>Status</dt>
           <dd>{execution.status}</dd>
         </div>
-        {execution.runtimeVersion ? (
+        {"runtimeVersion" in execution ? (
           <div>
             <dt>Runtime</dt>
             <dd>{execution.runtimeVersion}</dd>
           </div>
         ) : null}
-        {execution.limits ? (
+        {"limits" in execution ? (
           <div>
             <dt>Limites</dt>
             <dd>
@@ -177,7 +256,7 @@ function ExecutionOutput({ execution }: Readonly<{ execution: ExecutionPayload |
             </dd>
           </div>
         ) : null}
-        {execution.capabilities ? (
+        {"capabilities" in execution ? (
           <div>
             <dt>Capacidades bloqueadas</dt>
             <dd>{formatBlockedCapabilities(execution.capabilities)}</dd>
@@ -244,16 +323,173 @@ function AttemptDiff({ lines }: Readonly<{ lines: ActivityAttemptFeedback["sourc
   );
 }
 
-async function postCode(url: string, source: string) {
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json"
-    },
-    body: JSON.stringify({ source })
-  });
+async function postCode(url: string, source: string): Promise<PostCodeResult> {
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json"
+      },
+      body: JSON.stringify({ source })
+    });
+    const body = await readJsonBody(response);
 
-  return response.json();
+    if (!response.ok) {
+      return {
+        ok: false,
+        statusCode: response.status,
+        message: readErrorMessage(body) ?? "A API recusou a execução. Tente novamente ou revise esta atividade."
+      };
+    }
+
+    if (!body || typeof body !== "object" || Array.isArray(body)) {
+      return {
+        ok: false,
+        statusCode: response.status,
+        message: "A API respondeu em um formato inesperado."
+      };
+    }
+
+    return { ok: true, body: body as Record<string, unknown> };
+  } catch {
+    return {
+      ok: false,
+      message: "Não foi possível falar com a API local. Verifique se o servidor continua aberto."
+    };
+  }
+}
+
+async function readJsonBody(response: Response) {
+  try {
+    return (await response.json()) as unknown;
+  } catch {
+    return null;
+  }
+}
+
+function readErrorMessage(body: unknown) {
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    return null;
+  }
+
+  const message = (body as { message?: unknown }).message;
+
+  return typeof message === "string" && message.trim().length > 0 ? message : null;
+}
+
+function readSubmissionPayload(body: Record<string, unknown>): SubmissionPayload | null {
+  if (body.status !== "submitted" || !body.evaluation || typeof body.evaluation !== "object") {
+    return null;
+  }
+
+  const evaluation = body.evaluation as { execution?: unknown; tests?: unknown };
+  const submission = body.submission as { attemptNumber?: unknown; outcome?: unknown } | undefined;
+
+  const execution = normalizeExecutionPayload(evaluation.execution);
+
+  if (!submission || !execution || !isTestPayloadArray(evaluation.tests)) {
+    return null;
+  }
+
+  if (typeof submission.attemptNumber !== "number") {
+    return null;
+  }
+
+  if (submission.outcome !== "passed" && submission.outcome !== "failed") {
+    return null;
+  }
+
+  return {
+    attemptNumber: submission.attemptNumber,
+    outcome: submission.outcome,
+    execution,
+    tests: evaluation.tests
+  };
+}
+
+function normalizeExecutionPayload(value: unknown): SuccessfulExecutionPayload | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return null;
+  }
+
+  const execution = value as {
+    status?: unknown;
+    stdout?: unknown;
+    stderr?: unknown;
+    result?: unknown;
+    runtimeVersion?: unknown;
+    limits?: unknown;
+    capabilities?: unknown;
+  };
+
+  if (
+    isExecutionStatus(execution.status) &&
+    Array.isArray(execution.stdout) &&
+    execution.stdout.every((line) => typeof line === "string") &&
+    Array.isArray(execution.stderr) &&
+    execution.stderr.every((line) => typeof line === "string") &&
+    typeof execution.runtimeVersion === "string" &&
+    isExecutionLimits(execution.limits) &&
+    isExecutionCapabilities(execution.capabilities)
+  ) {
+    return {
+      status: execution.status,
+      stdout: execution.stdout,
+      stderr: execution.stderr,
+      result: "result" in execution ? execution.result : null,
+      runtimeVersion: execution.runtimeVersion,
+      limits: execution.limits,
+      capabilities: execution.capabilities
+    };
+  }
+
+  return null;
+}
+
+function isTestPayloadArray(value: unknown): value is ActivityAttemptFeedback["tests"] {
+  return Array.isArray(value) && value.every(isTestPayload);
+}
+
+function isTestPayload(value: unknown): value is ActivityAttemptFeedback["tests"][number] {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return false;
+  }
+
+  const test = value as { name?: unknown; status?: unknown; message?: unknown };
+
+  return (
+    typeof test.name === "string" &&
+    (test.status === "passed" || test.status === "failed") &&
+    typeof test.message === "string"
+  );
+}
+
+function isExecutionStatus(value: unknown): value is SuccessfulExecutionPayload["status"] {
+  return value === "completed" || value === "runtime_error" || value === "timeout" || value === "output_limit_exceeded";
+}
+
+function isExecutionLimits(value: unknown): value is SuccessfulExecutionPayload["limits"] {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return false;
+  }
+
+  const limits = value as { timeoutMs?: unknown; outputLimit?: unknown };
+
+  return typeof limits.timeoutMs === "number" && typeof limits.outputLimit === "number";
+}
+
+function isExecutionCapabilities(value: unknown): value is SuccessfulExecutionPayload["capabilities"] {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return false;
+  }
+
+  const capabilities = value as { dom?: unknown; network?: unknown; ambientSecrets?: unknown };
+
+  return (
+    typeof capabilities.dom === "boolean" &&
+    typeof capabilities.network === "boolean" &&
+    typeof capabilities.ambientSecrets === "boolean"
+  );
 }
 
 function formatSubmittedAt(value: string) {
@@ -263,7 +499,25 @@ function formatSubmittedAt(value: string) {
   }).format(new Date(value));
 }
 
-function formatBlockedCapabilities(capabilities: NonNullable<ExecutionPayload["capabilities"]>) {
+function getTechnicalSummary(
+  execution: ExecutionPayload | null,
+  tests: TestPayload[],
+  latestFeedback: ActivityAttemptFeedback | null
+) {
+  if (tests.length > 0) {
+    const passed = tests.filter((test) => test.status === "passed").length;
+
+    return `${passed}/${tests.length} testes, tentativa ${latestFeedback?.attemptNumber ?? "local"}`;
+  }
+
+  if (execution) {
+    return `Status ${execution.status}`;
+  }
+
+  return "Sem execução";
+}
+
+function formatBlockedCapabilities(capabilities: SuccessfulExecutionPayload["capabilities"]) {
   return [
     capabilities.dom ? null : "DOM",
     capabilities.network ? null : "network",
